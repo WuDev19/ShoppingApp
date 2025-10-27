@@ -59,5 +59,6 @@ dependencies {
     implementation(libs.circleimageview)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
 
 }

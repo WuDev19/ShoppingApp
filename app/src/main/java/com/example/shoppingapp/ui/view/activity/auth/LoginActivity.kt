@@ -27,12 +27,6 @@ class LoginActivity : AppCompatActivity() {
         viewBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        viewBinding.btnSignIn.setOnClickListener{
-            val email = viewBinding.edtEmail.text.toString()
-            val password = viewBinding.edtPassword.text.toString()
-            viewModel.loginWithEmail(email, password)
-        }
-
         lifecycleScope.launch {
             viewModel.state.collectLatest {
                 when(it){
@@ -48,6 +42,16 @@ class LoginActivity : AppCompatActivity() {
                     is StateListener.Idle -> viewBinding.progressBar.visibility = View.GONE
                 }
             }
+        }
+
+        viewBinding.btnSignIn.setOnClickListener{
+            val email = viewBinding.edtEmail.text.toString()
+            val password = viewBinding.edtPassword.text.toString()
+            viewModel.loginWithEmail(email, password)
+        }
+
+        viewBinding.btnCreateAccount.setOnClickListener{
+            startActivity(Intent(this@LoginActivity, CreateAccountActivity::class.java))
         }
 
     }

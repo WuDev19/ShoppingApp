@@ -9,4 +9,8 @@
     <string name="sign_in">Sign In</string>
     <string name="create_account">Create Account</string>
     <string name="or_sign_in_with">Or Sign In With</string>
+    <string name="let_s_get_you_registered">Let\'s Get You Registered</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="phone_number">Phone Number</string>
 </resources>
