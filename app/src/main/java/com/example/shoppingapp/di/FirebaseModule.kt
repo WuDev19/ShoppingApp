@@ -1,16 +1,14 @@
 package com.example.shoppingapp.di
 
-import android.content.Context
 import com.example.shoppingapp.data.repository.AuthRepositoryImpl
-import com.example.shoppingapp.domain.repository.AuthRepository
-import com.google.firebase.FirebaseApp
+import com.example.shoppingapp.domain.repository.authrepo.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jakarta.inject.Singleton
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)

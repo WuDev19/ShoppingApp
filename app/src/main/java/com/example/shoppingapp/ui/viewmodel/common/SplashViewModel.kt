@@ -1,8 +1,8 @@
-package com.example.shoppingapp.ui.viewmodel
+package com.example.shoppingapp.ui.viewmodel.common
 
 import androidx.lifecycle.ViewModel
 import com.example.shoppingapp.domain.model.AuthUser
-import com.example.shoppingapp.domain.usecase.CheckLoginUseCase
+import com.example.shoppingapp.domain.usecase.authusecase.CheckLoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

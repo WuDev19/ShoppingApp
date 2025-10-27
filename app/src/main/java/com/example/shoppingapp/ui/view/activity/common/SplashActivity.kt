@@ -1,4 +1,4 @@
-package com.example.shoppingapp.ui.view.activity
+package com.example.shoppingapp.ui.view.activity.common
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -7,9 +7,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.ActivitySplashBinding
-import com.example.shoppingapp.ui.viewmodel.SplashViewModel
+import com.example.shoppingapp.ui.view.activity.auth.LoginActivity
+import com.example.shoppingapp.ui.viewmodel.common.SplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -38,10 +38,12 @@ class SplashActivity : AppCompatActivity() {
             delay(2000)
             val user = viewModel.uiState.value
             if(user.id == ""){
-                ToastUtils.showToast(this@SplashActivity, "hihi")
+                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                finishAffinity()
             }
             else{
                 startActivity(Intent(this@SplashActivity, MainActivity::class.java))
+                finishAffinity()
             }
         }
 

@@ -1,4 +1,4 @@
-package com.example.shoppingapp.ui.view.activity
+package com.example.shoppingapp.ui.view.activity.common
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge

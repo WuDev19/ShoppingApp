@@ -54,7 +54,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     implementation(libs.hilt.android)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     ksp(libs.hilt.android.compiler)
+    implementation(libs.circleimageview)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
 
