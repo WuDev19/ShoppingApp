@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">ShoppingApp</string>
+    <string name="web_client_id">401007906707-ibdnht4foheu0kmbgnpgoint268gh7ae.apps.googleusercontent.com</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="logintoaccess">Log in to Access Esxclusive Deals and Simplify Your Shopping Experience</string>
@@ -13,4 +14,12 @@
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="phone_number">Phone Number</string>
+    <string name="forget_password">Forget Password</string>
+    <string name="no_worries_enter_your_registered_email_address_and_we_ll_help_you_reset_your_password">No worries! Enter your registered email address, and we’ll help you reset your password</string>
+    <string name="submit">Submit</string>
+    <string name="password_reset_email_sent">Password Reset Email Sent</string>
+    <string name="example_gmail_com">example@gmail.com</string>
+    <string name="guide">We’ve sent a password reset link to your email. Please check your inbox and follow the instructions to reset your password</string>
+    <string name="done">Done</string>
+    <string name="resend_email"><u>Resend Email</u></string>
 </resources>

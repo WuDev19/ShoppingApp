@@ -63,5 +63,10 @@ class CreateAccountActivity : AppCompatActivity() {
             }
             viewModel.createAccount(email, password, phone, "$firstName $lastName")
         }
+
+        viewBinding.imgBack.setOnClickListener {
+            finish()
+        }
+
     }
 }
