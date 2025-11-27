@@ -67,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                     is StateListener.Error -> {
                         ToastUtils.showToast(this@LoginActivity, StringConstants.HAS_ERROR)
+                        Log.e("checkkk", "onCreate: ${it.e.toString()}")
                         viewBinding.progressBar.visibility = View.GONE
                     }
                     is StateListener.Idle -> viewBinding.progressBar.visibility = View.GONE

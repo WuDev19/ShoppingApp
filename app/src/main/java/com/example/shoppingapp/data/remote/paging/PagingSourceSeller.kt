@@ -1,0 +1,47 @@
+package com.example.shoppingapp.data.remote.paging
+
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
+import com.example.shoppingapp.data.model.SellerDTO
+import com.example.shoppingapp.data.remote.api.SellerAPI
+import com.example.shoppingapp.domain.model.SellerInStore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+class PagingSourceSeller(private val sellerAPI: SellerAPI) :
+    PagingSource<Int, SellerInStore>() {
+
+    override fun getRefreshKey(state: PagingState<Int, SellerInStore>): Int? {
+        return state.anchorPosition?.let { position ->
+            state.closestPageToPosition(position)?.prevKey
+                ?: state.closestPageToPosition(position)?.nextKey
+        }
+    }
+
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SellerInStore> {
+        return try {
+            val offset = params.key ?: 0
+            val response = sellerAPI.getAllSeller(offset)
+            if (response.isSuccessful) {
+                val data = response.body()
+                val listSeller = data?.contents?.map {
+                    it.mapToSellerInStore()
+                } ?: emptyList()
+                LoadResult.Page(
+                    listSeller,
+                    prevKey = if (offset == 0) null else offset - 1,
+                    nextKey = if (listSeller.isEmpty()) null else offset + 1
+                )
+            } else {
+                LoadResult.Error(Exception("API ERROR"))
+            }
+        } catch (e: Exception) {
+            LoadResult.Error(e)
+        }
+    }
+
+    private fun SellerDTO.mapToSellerInStore(): SellerInStore {
+        return SellerInStore(this.maNguoiBan, this.avtShop, this.tenShop, this.sanphams?.size ?: 0)
+    }
+
+}

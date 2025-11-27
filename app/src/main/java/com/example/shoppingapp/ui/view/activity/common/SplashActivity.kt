@@ -30,8 +30,8 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewBinding.imgLogo
                 .animate()
-                .scaleX(1f)
-                .scaleY(1f)
+                .scaleX(0.7f)
+                .scaleY(0.7f)
                 .setDuration(1000)
                 .start()
             viewModel.checkLogin()

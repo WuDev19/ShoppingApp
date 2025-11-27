@@ -1,5 +1,7 @@
 package com.example.shoppingapp.data.repository
 
+import android.util.Log
+import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.domain.model.AuthUser
 import com.example.shoppingapp.domain.model.User
 import com.example.shoppingapp.domain.repository.authrepo.AuthRepository
@@ -15,7 +17,8 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    private val userAPI: UserAPI
 ) : AuthRepository {
 
     override suspend fun getCurrentUser(): AuthUser? {
@@ -42,20 +45,37 @@ class AuthRepositoryImpl @Inject constructor(
         password: String,
         phone: String,
         username: String
-    ): Flow<StateListener<User>> {
+    ): Flow<StateListener<AuthResult>> {
         return flow {
             emit(StateListener.Loading)
             try {
                 val createResult = auth.createUserWithEmailAndPassword(email, password).await()
-                createResult?.let {
-                    val user = User(createResult.user!!.uid, username, email, phone, "")
-                    val createUserFireStore = firestore
+                createResult.user?.let {
+                    val user: User = if(phone.isEmpty()){
+                        User(it.uid, username, email, null, null, null)
+                    } else{
+                        User(it.uid, username, email, phone, null, null)
+                    }
+                    firestore
                         .collection("user")
-                        .add(user)
+                        .document(it.uid)
+                        .set(user)
                         .await()
-                    createUserFireStore?.let {
-                        emit(StateListener.Success(user))
-                    } ?: emit(StateListener.Error(Exception("Can't not create user")))
+                    val responsePostUser = userAPI.createUser(user)
+                    if(responsePostUser.isSuccessful){
+                        val useTmp = responsePostUser.body()
+                        if(useTmp == null){
+                            emit(StateListener.Error(Exception("Can't not create user")))
+                            it.delete()
+                        }
+                        else{
+                            emit(StateListener.Success(createResult))
+                        }
+                    }
+                    else{
+                        emit(StateListener.Error(Exception("Internet Issue")))
+                        it.delete()
+                    }
                 } ?: emit(StateListener.Error(Exception("User not exist")))
             } catch (e: Exception) {
                 emit(StateListener.Error(e))
@@ -79,9 +99,17 @@ class AuthRepositoryImpl @Inject constructor(
             try {
                 val credential = GoogleAuthProvider.getCredential(idToken, null)
                 val result = auth.signInWithCredential(credential).await()
-                emit(StateListener.Success(result))
-            }
-            catch (e: Exception){
+                result.user?.let {
+                    val user = User(it.uid, it.displayName ?: "", it.email ?: "",
+                        it.phoneNumber, null, null)
+                    firestore
+                        .collection("user")
+                        .document(user.maND!!)
+                        .set(user)
+                        .await()
+                    emit(StateListener.Success(result))
+                } ?: emit(StateListener.Error(Exception("User not exist")))
+            } catch (e: Exception) {
                 emit(StateListener.Error(e))
             }
         }

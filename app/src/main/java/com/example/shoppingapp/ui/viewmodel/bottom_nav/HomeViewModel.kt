@@ -1,0 +1,53 @@
+package com.example.shoppingapp.ui.viewmodel.bottom_nav
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.example.shoppingapp.domain.model.Product
+import com.example.shoppingapp.domain.usecase.authusecase.GetUserCurrentUseCase
+import com.example.shoppingapp.domain.usecase.productusecase.GetProductUseCase
+import com.example.shoppingapp.domain.usecase.productusecase.SearchProductUseCase
+import com.example.shoppingapp.ui.state.StateListener
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class HomeViewModel @Inject constructor(
+    private val getUserUseCase: GetUserCurrentUseCase,
+    private val getProductsUseCase: GetProductUseCase,
+    private val searchProductUseCase: SearchProductUseCase
+) : ViewModel() {
+
+    private val _stateUserName = MutableStateFlow<StateListener<String>>(StateListener.Idle)
+    val stateUserName = _stateUserName.asStateFlow()
+
+    private val _searchProduct = MutableStateFlow("")
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    val searchProduct = _searchProduct.debounce(500).flatMapLatest {
+        searchProductUseCase(it)
+    }.cachedIn(viewModelScope)
+
+    fun getUserName() {
+        viewModelScope.launch {
+            getUserUseCase().collect {
+                _stateUserName.value = it
+            }
+        }
+    }
+
+    fun getProduct(): Flow<PagingData<Product>> = getProductsUseCase().cachedIn(viewModelScope)
+
+    fun setSearchProductStateFlow(text: String){
+        _searchProduct.value = text
+    }
+
+}

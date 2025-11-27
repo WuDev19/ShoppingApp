@@ -1,9 +1,10 @@
 package com.example.shoppingapp.domain.model
 
 data class User(
-    var id: String,
-    var username: String,
-    var email: String,
-    var phone: String,
-    var avt: String,
+    var maND: String? = null,
+    var ten: String? = null,
+    var email: String? = null,
+    var sdt: String? = null,
+    var gioitinh: String? = null,
+    var anhdaidien: String? = null
 )

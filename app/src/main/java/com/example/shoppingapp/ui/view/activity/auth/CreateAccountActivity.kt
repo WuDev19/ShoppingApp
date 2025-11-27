@@ -2,6 +2,7 @@ package com.example.shoppingapp.ui.view.activity.auth
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -33,6 +34,7 @@ class CreateAccountActivity : AppCompatActivity() {
                     is StateListener.Loading -> viewBinding.progressBarCreate.visibility = View.VISIBLE
                     is StateListener.Error -> {
                         ToastUtils.showToast(this@CreateAccountActivity, it.e.toString())
+                        Log.e("CheckUser", "onCreate: ${it.e.toString()}")
                         viewBinding.progressBarCreate.visibility = View.GONE
                     }
                     is StateListener.Success -> {
