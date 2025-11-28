@@ -32,6 +32,9 @@
         <action
             android:id="@+id/action_detailProductFragment_to_imageDescriptionProductFragment"
             app:destination="@id/imageDescriptionProductFragment" />
+        <action
+            android:id="@+id/action_detailProductFragment_to_sellerFragment"
+            app:destination="@id/sellerFragment" />
     </fragment>
 
     <fragment
@@ -48,5 +51,10 @@
         android:name="com.example.shoppingapp.ui.view.fragment.product.ImageDescriptionProductFragment"
         android:label="fragment_image_description_product"
         tools:layout="@layout/fragment_image_description_product" />
+    <fragment
+        android:id="@+id/sellerFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.SellerFragment"
+        android:label="fragment_seller"
+        tools:layout="@layout/fragment_seller" />
 
 </navigation>

@@ -124,7 +124,8 @@
             app:backgroundTint="@android:color/transparent"
             app:cornerRadius="10dp"
             app:strokeColor="@color/button_color"
-            app:strokeWidth="2dp" />
+            app:strokeWidth="2dp"
+            app:rippleColor="@color/button_color"/>
 
     </RelativeLayout>
 

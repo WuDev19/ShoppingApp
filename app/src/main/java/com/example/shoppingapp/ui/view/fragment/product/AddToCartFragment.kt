@@ -12,7 +12,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.bumptech.glide.Glide
@@ -74,17 +76,18 @@ class AddToCartFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.sanPhamChiTietState.collectLatest {
-                when (it) {
-                    is StateListener.Idle -> Unit
-                    is StateListener.Loading -> Unit
-                    is StateListener.Error -> {
-                        ToastUtils.showToast(requireContext(), it.e.toString())
-                    }
-                    is StateListener.Success -> {
-                        val data = it.result
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            launch(Dispatchers.Default) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sanPhamChiTietState.collectLatest {
+                    when (it) {
+                        is StateListener.Idle -> Unit
+                        is StateListener.Loading -> Unit
+                        is StateListener.Error -> {
+                            ToastUtils.showToast(requireContext(), it.e.toString())
+                        }
+
+                        is StateListener.Success -> {
+                            val data = it.result
+                            withContext(Dispatchers.Default) {
                                 val listColor = data.map { it1 ->
                                     SizeColorModel(it1.color, false)
                                 }.distinct()
@@ -99,20 +102,20 @@ class AddToCartFragment : BottomSheetDialogFragment() {
                                                 FlexDirection.ROW,
                                                 FlexWrap.WRAP,
                                             )
-                                            adapter = SizeAndColorAdapter(listColor) { data, selected ->
-                                                if(selected){
-                                                    viewModel.selectedColor.value = data
+                                            adapter =
+                                                SizeAndColorAdapter(listColor) { data, selected ->
+                                                    if (selected) {
+                                                        viewModel.selectedColor.value = data
+                                                    } else {
+                                                        viewModel.selectedColor.value = ""
+                                                    }
                                                 }
-                                                else{
-                                                    viewModel.selectedColor.value = ""
-                                                }
-                                            }
                                             addItemDecoration(MarginItemDecoration(5))
                                         }
                                     }
                                 }
                             }
-                            launch(Dispatchers.Default) {
+                            withContext(Dispatchers.Default) {
                                 val listSize = data.map { it1 ->
                                     SizeColorModel(it1.kichco, false)
                                 }.distinct()
@@ -127,22 +130,19 @@ class AddToCartFragment : BottomSheetDialogFragment() {
                                                 FlexDirection.ROW,
                                                 FlexWrap.WRAP
                                             )
-                                            adapter = SizeAndColorAdapter(listSize) { data, selected ->
-                                                if(selected){
-                                                    viewModel.selectedSize.value = data
+                                            adapter =
+                                                SizeAndColorAdapter(listSize) { data, selected ->
+                                                    if (selected) {
+                                                        viewModel.selectedSize.value = data
+                                                    } else {
+                                                        viewModel.selectedSize.value = ""
+                                                    }
                                                 }
-                                                else{
-                                                    viewModel.selectedSize.value = ""
-                                                }
-                                            }
                                             addItemDecoration(MarginItemDecoration(5))
                                         }
                                     }
                                 }
                             }
-                        }
-
-                        viewLifecycleOwner.lifecycleScope.launch {
                             viewModel.displayCorrespondingProduct.collectLatest { it1 ->
                                 val list = it1.split("_")
                                 if (list[0].isEmpty() || list[1].isEmpty()) {
@@ -166,25 +166,27 @@ class AddToCartFragment : BottomSheetDialogFragment() {
                                 }
                             }
                         }
-
                     }
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.createCart.collectLatest {
-                when (it) {
-                    is StateListener.Idle -> Unit
-                    is StateListener.Loading -> Unit
-                    is StateListener.Error -> {
-                        ToastUtils.showToast(requireContext(), it.e.toString())
-                        Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e.toString()}")
-                    }
-                    is StateListener.Success -> {
-                        val response = it.result
-                        Log.e(StringConstants.DEBUG, "onViewCreated: $response")
-                        this@AddToCartFragment.dismiss()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.createCart.collectLatest {
+                    when (it) {
+                        is StateListener.Idle -> Unit
+                        is StateListener.Loading -> Unit
+                        is StateListener.Error -> {
+                            ToastUtils.showToast(requireContext(), it.e.toString())
+                            Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e.toString()}")
+                        }
+
+                        is StateListener.Success -> {
+                            val response = it.result
+                            Log.e(StringConstants.DEBUG, "onViewCreated: $response")
+                            this@AddToCartFragment.dismiss()
+                        }
                     }
                 }
             }
@@ -204,7 +206,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
 
         binding.btnAddToCart.setOnClickListener {
             val number = binding.edtNumber.text.toString().toInt()
-            if(number > productChiTiet.inStock!!){
+            if (number > productChiTiet.inStock!!) {
                 ToastUtils.showToast(requireContext(), "Exceed the quantity in stock")
                 return@setOnClickListener
             }
@@ -258,7 +260,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
             .into(binding.imgAnhDetail)
     }
 
-    private fun disableBtnAddCart(){
+    private fun disableBtnAddCart() {
         binding.btnAddToCart.isEnabled = false
         binding.btnAddToCart.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(

@@ -255,6 +255,7 @@ class StoreFragment : Fragment() {
             }
         }
     }
+
 }
 
 class MarginItemDecoration(private val spaceSize: Int) : ItemDecoration() {

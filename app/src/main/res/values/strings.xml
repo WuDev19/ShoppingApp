@@ -82,4 +82,8 @@
     <string name="add_to_cart">Add To Cart</string>
     <string name="number">Number</string>
     <string name="_1">1</string>
+    <string name="category">Category</string>
+    <string name="chat">Chat</string>
+    <string name="best_sellers">Best Sellers</string>
+    <string name="search_in_shop">Search in Shop</string>
 </resources>

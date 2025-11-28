@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -103,65 +105,81 @@ class DetailProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val headerDetailAdapter =
+            HeaderDetailAdapter(
+                onImageClick = {it1 ->
+                    val bundle = bundleOf(
+                        StringConstants.IMAGE_DESCRIPTION to it1
+                    )
+                    findNavController().navigate(R.id.action_detailProductFragment_to_imageDescriptionProductFragment, bundle)
+                },
+                onShowShopClick = {it1 ->
+                    val bundle = bundleOf(
+                        StringConstants.ID_SELLER to it1
+                    )
+                    findNavController().navigate(R.id.action_detailProductFragment_to_sellerFragment, bundle)
+                }
+            )
+        val concatAdapter = ConcatAdapter(
+            headerDetailAdapter,
+            TitleDetailAdapter(
+                "",
+                StringConstants.TITLE_OTHER_PRODUCT,
+                "",
+                null,
+                null
+            ),
+            HorizontalAdapterInsideConcatAdapter(otherProductOfShopAdapter),
+            TitleDetailAdapter(
+                "4.9",
+                StringConstants.TITLE_PRODUCT_REVIEWS,
+                StringConstants.ALL,
+                idProduct
+            ) { it1 ->
+                Log.e(StringConstants.DEBUG, "onViewCreated: $it1")
+            },
+            TitleDetailAdapter(
+                "",
+                StringConstants.TITLE_RELATED_PRODUCT,
+                "",
+                null,
+                null
+            ),
+            GridAdapterInsideConcatAdapter(productAdapter)
+        )
+
+        binding.recyclerViewConcat.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = concatAdapter
+        }
+
+        // TODO: toi uu lai concat adapter thoi
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.productDetailStateFLow.collectLatest {
-                when (it) {
-                    is StateListener.Idle -> Unit
-                    is StateListener.Loading -> Unit
-                    is StateListener.Error -> {
-                        ToastUtils.showToast(requireContext(), it.e.toString())
-                    }
-
-                    is StateListener.Success -> {
-                        productDetail = it.result
-                        val headerDetailAdapter = HeaderDetailAdapter(productDetail) { it1 ->
-                            Log.e(StringConstants.DEBUG, "onViewCreated: $it1")
-                            val bundle = bundleOf(
-                                StringConstants.IMAGE_DESCRIPTION to it1
-                            )
-                            findNavController().navigate(R.id.action_detailProductFragment_to_imageDescriptionProductFragment, bundle)
-                        }
-                        val concatAdapter = ConcatAdapter(
-                            headerDetailAdapter,
-                            TitleDetailAdapter(
-                                "",
-                                StringConstants.TITLE_OTHER_PRODUCT,
-                                "",
-                                null,
-                                null
-                            ),
-                            HorizontalAdapterInsideConcatAdapter(otherProductOfShopAdapter),
-                            TitleDetailAdapter(
-                                "4.9",
-                                StringConstants.TITLE_PRODUCT_REVIEWS,
-                                StringConstants.ALL,
-                                idProduct
-                            ) { it1 ->
-                                Log.e(StringConstants.DEBUG, "onViewCreated: $it1")
-                            },
-                            TitleDetailAdapter(
-                                "",
-                                StringConstants.TITLE_RELATED_PRODUCT,
-                                "",
-                                null,
-                                null
-                            ),
-                            GridAdapterInsideConcatAdapter(productAdapter)
-                        )
-
-                        binding.recyclerViewConcat.apply {
-                            layoutManager = LinearLayoutManager(requireContext())
-                            adapter = concatAdapter
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.productDetailStateFLow.collectLatest {
+                    when (it) {
+                        is StateListener.Idle -> Unit
+                        is StateListener.Loading -> Unit
+                        is StateListener.Error -> {
+                            ToastUtils.showToast(requireContext(), it.e.toString())
                         }
 
+                        is StateListener.Success -> {
+                            productDetail = it.result
+                            headerDetailAdapter.setProductDetail(productDetail)
+                        }
                     }
                 }
             }
+
         }
 
         binding.imgBack.setOnClickListener {
             findNavController().popBackStack()
-            BottomNavigationUtils.showBottomNavigation(bottomNavigationView, findNavController()) // goi o day tai vi fragment nay chi dung sau moi home hoac store
+            BottomNavigationUtils.showBottomNavigation(
+                bottomNavigationView,
+                findNavController()
+            ) // goi o day tai vi fragment nay chi dung sau moi home hoac store
             ViewPagerUtils.enableViewPager(viewPager2, findNavController())
         }
 

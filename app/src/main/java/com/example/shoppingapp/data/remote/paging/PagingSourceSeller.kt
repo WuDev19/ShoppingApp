@@ -2,6 +2,7 @@ package com.example.shoppingapp.data.remote.paging
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.shoppingapp.data.mapper.SellerMapper
 import com.example.shoppingapp.data.model.SellerDTO
 import com.example.shoppingapp.data.remote.api.SellerAPI
 import com.example.shoppingapp.domain.model.SellerInStore
@@ -25,7 +26,7 @@ class PagingSourceSeller(private val sellerAPI: SellerAPI) :
             if (response.isSuccessful) {
                 val data = response.body()
                 val listSeller = data?.contents?.map {
-                    it.mapToSellerInStore()
+                    SellerMapper.mapToSellerInStore(it)
                 } ?: emptyList()
                 LoadResult.Page(
                     listSeller,
@@ -38,10 +39,6 @@ class PagingSourceSeller(private val sellerAPI: SellerAPI) :
         } catch (e: Exception) {
             LoadResult.Error(e)
         }
-    }
-
-    private fun SellerDTO.mapToSellerInStore(): SellerInStore {
-        return SellerInStore(this.maNguoiBan, this.avtShop, this.tenShop, this.sanphams?.size ?: 0)
     }
 
 }
