@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.repository
+package com.example.shoppingapp.data.repository.impl
 
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.domain.repository.user.UserRepository

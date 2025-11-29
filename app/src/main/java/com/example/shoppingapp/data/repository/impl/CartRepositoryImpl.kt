@@ -1,8 +1,8 @@
-package com.example.shoppingapp.data.repository
+package com.example.shoppingapp.data.repository.impl
 
 import android.util.Log
 import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.data.model.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.CartAndCartItemRequest
 import com.example.shoppingapp.data.remote.api.CartAPI
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.ui.state.StateListener

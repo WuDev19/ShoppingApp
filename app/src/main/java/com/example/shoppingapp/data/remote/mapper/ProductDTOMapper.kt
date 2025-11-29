@@ -1,13 +1,13 @@
-package com.example.shoppingapp.data.mapper
+package com.example.shoppingapp.data.remote.mapper
 
-import com.example.shoppingapp.data.model.ProductChiTietDTO
-import com.example.shoppingapp.data.model.ProductDTO
-import com.example.shoppingapp.data.model.ProductDetailDTO
+import com.example.shoppingapp.data.remote.dto.ProductChiTietDTO
+import com.example.shoppingapp.data.remote.dto.ProductDTO
+import com.example.shoppingapp.data.remote.dto.ProductDetailDTO
 import com.example.shoppingapp.domain.model.Product
 import com.example.shoppingapp.domain.model.ProductChiTiet
 import com.example.shoppingapp.domain.model.ProductDetail
 
-object ProductMapper {
+object ProductDTOMapper {
 
     fun mapToProduct(productDTO: ProductDTO): Product {
         return Product(

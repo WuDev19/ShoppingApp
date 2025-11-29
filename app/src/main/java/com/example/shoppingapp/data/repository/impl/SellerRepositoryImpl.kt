@@ -1,11 +1,11 @@
-package com.example.shoppingapp.data.repository
+package com.example.shoppingapp.data.repository.impl
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.shoppingapp.data.mapper.SellerMapper
+import com.example.shoppingapp.data.remote.mapper.SellerMapper
 import com.example.shoppingapp.data.remote.api.SellerAPI
-import com.example.shoppingapp.data.remote.paging.PagingSourceSeller
+import com.example.shoppingapp.data.paging_source.PagingSourceSeller
 import com.example.shoppingapp.domain.model.Product
 import com.example.shoppingapp.domain.model.SellerInStore
 import com.example.shoppingapp.domain.repository.seller.SellerRepository
@@ -50,9 +50,5 @@ class SellerRepositoryImpl @Inject constructor(private val sellerAPI: SellerAPI)
             emit(StateListener.Error(e))
         }
     }.flowOn(Dispatchers.IO)
-
-    override fun timKiemSanPhamCuaShop(id: Int, text: String): Flow<PagingData<Product>> {
-        TODO("Not yet implemented")
-    }
 
 }

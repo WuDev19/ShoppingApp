@@ -1,10 +1,9 @@
-package com.example.shoppingapp.data.remote.paging
+package com.example.shoppingapp.data.paging_source
 
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.data.mapper.ProductMapper
+import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
 import com.example.shoppingapp.domain.model.Product
 
@@ -26,7 +25,7 @@ class PagingSourceRelatedProduct(private val productAPI: ProductAPI, private val
             if (response.isSuccessful) {
                 val data = response.body()
                 val listProduct = data?.contents?.map {
-                    ProductMapper.mapToProduct(it)
+                    ProductDTOMapper.mapToProduct(it)
                 } ?: emptyList()
                 LoadResult.Page(
                     listProduct,

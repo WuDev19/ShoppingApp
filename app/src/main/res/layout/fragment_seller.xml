@@ -122,31 +122,44 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:backgroundTint="@color/white">
+        android:layout_height="match_parent">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_layout"
+        <LinearLayout
+            android:id="@+id/linear_tab"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:tabGravity="fill"
-            app:tabMode="fixed"
-            app:tabIndicatorAnimationMode="fade"
-            app:tabBackground="@drawable/border_view"
-            app:tabRippleColor="@color/button_color"
-            app:tabSelectedTextColor="@color/black"
-            app:tabTextColor="@color/grey"
-            app:tabIndicatorColor="@color/button_color"
-            app:tabIndicatorFullWidth="true"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:backgroundTint="@color/white">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/view_pager2"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabGravity="fill"
+                app:tabMode="fixed"
+                app:tabIndicatorAnimationMode="fade"
+                app:tabBackground="@drawable/border_view"
+                app:tabRippleColor="@color/button_color"
+                app:tabSelectedTextColor="@color/black"
+                app:tabTextColor="@color/grey"
+                app:tabIndicatorColor="@color/button_color"
+                app:tabIndicatorFullWidth="true"/>
+
+            <FrameLayout
+                android:id="@+id/frame_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_search_in_shop"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
 
-    </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

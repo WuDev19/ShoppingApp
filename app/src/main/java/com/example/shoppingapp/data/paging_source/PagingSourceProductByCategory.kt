@@ -1,15 +1,17 @@
-package com.example.shoppingapp.data.remote.paging
+package com.example.shoppingapp.data.paging_source
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.shoppingapp.data.mapper.ProductMapper
+import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
 import com.example.shoppingapp.domain.model.Product
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
-class PagingSourceSearchProduct(private val productAPI: ProductAPI, private val text: String) :
-    PagingSource<Int, Product>() {
+class PagingSourceProductByCategory(
+    private val productAPI: ProductAPI,
+    private val theLoai: String
+) : PagingSource<Int, Product>() {
 
     override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
         return state.anchorPosition?.let { position ->
@@ -21,19 +23,20 @@ class PagingSourceSearchProduct(private val productAPI: ProductAPI, private val 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
             val offset = params.key ?: 0
-            val response = productAPI.searchProduct(text, offset)
+            val response = productAPI.getProductByCategory(theLoai, offset)
+            Log.e(StringConstants.DEBUG, "load: ${params.loadSize}")
             if (response.isSuccessful) {
                 val data = response.body()
-                val productList = data?.contents?.map {
-                    ProductMapper.mapToProduct(it)
+                val listProduct = data?.contents?.map {
+                    ProductDTOMapper.mapToProduct(it)
                 } ?: emptyList()
                 LoadResult.Page(
-                    productList,
+                    listProduct,
                     prevKey = if (offset == 0) null else offset - 1,
-                    nextKey = if (productList.isEmpty()) null else offset + 1
+                    nextKey = if (listProduct.isEmpty()) null else offset + 1
                 )
             } else {
-                LoadResult.Error(Exception("API ERROR"))
+                LoadResult.Error(Exception("Api Error"))
             }
         } catch (e: Exception) {
             LoadResult.Error(e)

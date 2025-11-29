@@ -1,8 +1,9 @@
 package com.example.shoppingapp.data.remote.api
 
-import com.example.shoppingapp.data.model.ListProductDTO
-import com.example.shoppingapp.data.model.ProductChiTietDTO
-import com.example.shoppingapp.data.model.ProductDetailDTO
+import com.example.shoppingapp.data.remote.dto.ListProductDTO
+import com.example.shoppingapp.data.remote.dto.ProductChiTietDTO
+import com.example.shoppingapp.data.remote.dto.ProductDTO
+import com.example.shoppingapp.data.remote.dto.ProductDetailDTO
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -30,5 +31,8 @@ interface ProductAPI {
 
     @GET("sanpham/get/spct/{id}")
     suspend fun ganSanPhamChiTiet(@Path("id") id: Int) : Response<List<ProductChiTietDTO>>
+
+    @GET("sanpham/searchShop/{id}")
+    suspend fun timKiemSanPhamCuaShop(@Path("id") id: Int, @Query("text") text: String, @Query("offset") offset: Int): Response<ListProductDTO>
 
 }

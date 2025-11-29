@@ -1,6 +1,5 @@
-package com.example.shoppingapp.data.repository
+package com.example.shoppingapp.data.repository.impl
 
-import android.util.Log
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.domain.model.AuthUser
 import com.example.shoppingapp.domain.model.User

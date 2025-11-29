@@ -1,13 +1,10 @@
-package com.example.shoppingapp.data.remote.paging
+package com.example.shoppingapp.data.paging_source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.shoppingapp.data.mapper.SellerMapper
-import com.example.shoppingapp.data.model.SellerDTO
+import com.example.shoppingapp.data.remote.mapper.SellerMapper
 import com.example.shoppingapp.data.remote.api.SellerAPI
 import com.example.shoppingapp.domain.model.SellerInStore
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class PagingSourceSeller(private val sellerAPI: SellerAPI) :
     PagingSource<Int, SellerInStore>() {

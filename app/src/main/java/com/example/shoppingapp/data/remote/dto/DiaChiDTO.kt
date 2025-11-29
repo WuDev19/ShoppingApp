@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.model
+package com.example.shoppingapp.data.remote.dto
 
 data class DiaChiDTO(
     var maDiaChi: Int? = 0,

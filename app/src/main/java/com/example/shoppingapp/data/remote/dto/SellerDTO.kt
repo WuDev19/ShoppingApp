@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.model
+package com.example.shoppingapp.data.remote.dto
 
 data class SellerDTO(
     var maNguoiBan: Int? = 0,

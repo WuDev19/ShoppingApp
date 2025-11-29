@@ -1,6 +1,6 @@
 package com.example.shoppingapp.data.remote.api
 
-import com.example.shoppingapp.data.model.UserDTO
+import com.example.shoppingapp.data.remote.dto.UserDTO
 import com.example.shoppingapp.domain.model.User
 import retrofit2.Response
 import retrofit2.http.Body

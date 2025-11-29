@@ -31,8 +31,7 @@
             android:layout_gravity="center_vertical"
             android:background="@drawable/border_view"
             android:backgroundTint="@color/yellow"
-            android:padding="5dp"
-            android:text="@string/percent" />
+            android:padding="5dp" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_cost"
@@ -40,7 +39,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginStart="10dp"
-            android:text="@string/_200000"
             android:textColor="@color/black"
             android:textSize="20sp" />
 
@@ -50,7 +48,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginStart="10dp"
-            android:text="@string/_200000"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -61,7 +58,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="1"
-            android:text="@string/sold_50"
             android:textAlignment="textEnd"
             tools:ignore="RtlCompat" />
 
@@ -84,7 +80,6 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="10dp"
-        android:text="@string/update_your_name_to_keep_your_profile_accurate_and_personalized"
         android:textColor="@color/black" />
 
     <RelativeLayout
@@ -98,8 +93,7 @@
             android:id="@+id/img_avt_shop"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/icon_clothes" />
+            android:layout_alignParentStart="true" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_ten_shop"
@@ -109,7 +103,6 @@
             android:layout_marginStart="20dp"
             android:layout_toStartOf="@id/btn_show_shop"
             android:layout_toEndOf="@id/img_avt_shop"
-            android:text="@string/store"
             android:textStyle="bold" />
 
         <com.google.android.material.button.MaterialButton
@@ -145,7 +138,6 @@
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/_4_9"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
@@ -175,7 +167,6 @@
                 android:id="@+id/tv_number_products"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/number_cart"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 

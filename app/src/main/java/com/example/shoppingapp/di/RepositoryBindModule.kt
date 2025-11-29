@@ -1,10 +1,10 @@
 package com.example.shoppingapp.di
 
-import com.example.shoppingapp.data.repository.AuthRepositoryImpl
-import com.example.shoppingapp.data.repository.CartRepositoryImpl
-import com.example.shoppingapp.data.repository.ProductRepositoryImpl
-import com.example.shoppingapp.data.repository.SellerRepositoryImpl
-import com.example.shoppingapp.data.repository.UserRepositoryImpl
+import com.example.shoppingapp.data.repository.impl.AuthRepositoryImpl
+import com.example.shoppingapp.data.repository.impl.CartRepositoryImpl
+import com.example.shoppingapp.data.repository.impl.ProductRepositoryImpl
+import com.example.shoppingapp.data.repository.impl.SellerRepositoryImpl
+import com.example.shoppingapp.data.repository.impl.UserRepositoryImpl
 import com.example.shoppingapp.domain.repository.authrepo.AuthRepository
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.domain.repository.product.ProductRepository

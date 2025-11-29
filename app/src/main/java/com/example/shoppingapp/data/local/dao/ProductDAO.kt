@@ -10,8 +10,8 @@ import com.example.shoppingapp.data.local.entity.ProductEntity
 @Dao
 interface ProductDAO {
 
-    @Query("SELECT * FROM products ORDER BY id ASC")
-    fun getPagingSource(): PagingSource<Int, ProductEntity>
+    @Query("SELECT * FROM products WHERE maNguoiBan = :id AND motaSp LIKE '%' || :text || '%'")
+    fun getPagingSource(id: Int, text: String): PagingSource<Int, ProductEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(products: List<ProductEntity>)

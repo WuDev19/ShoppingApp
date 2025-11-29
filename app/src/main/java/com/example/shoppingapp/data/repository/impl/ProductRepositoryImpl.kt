@@ -1,15 +1,20 @@
-package com.example.shoppingapp.data.repository
+package com.example.shoppingapp.data.repository.impl
 
+import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.example.shoppingapp.data.mapper.ProductMapper
+import androidx.paging.map
+import com.example.shoppingapp.data.local.db.AppDatabase
+import com.example.shoppingapp.data.local.mapper.ProductEntityMapper
+import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
-import com.example.shoppingapp.data.remote.paging.PagingSourceOtherProductOfShop
-import com.example.shoppingapp.data.remote.paging.PagingSourceProduct
-import com.example.shoppingapp.data.remote.paging.PagingSourceProductByCategory
-import com.example.shoppingapp.data.remote.paging.PagingSourceRelatedProduct
-import com.example.shoppingapp.data.remote.paging.PagingSourceSearchProduct
+import com.example.shoppingapp.data.paging_source.PagingSourceOtherProductOfShop
+import com.example.shoppingapp.data.paging_source.PagingSourceProduct
+import com.example.shoppingapp.data.paging_source.PagingSourceProductByCategory
+import com.example.shoppingapp.data.paging_source.PagingSourceRelatedProduct
+import com.example.shoppingapp.data.paging_source.PagingSourceSearchProduct
+import com.example.shoppingapp.data.repository.mediator.SearchProductInShopRemoteMediator
 import com.example.shoppingapp.domain.model.Product
 import com.example.shoppingapp.domain.model.ProductChiTiet
 import com.example.shoppingapp.domain.model.ProductDetail
@@ -19,9 +24,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class ProductRepositoryImpl @Inject constructor(private val productAPI: ProductAPI) :
+class ProductRepositoryImpl @Inject constructor(
+    private val productAPI: ProductAPI,
+    private val appDatabase: AppDatabase
+) :
     ProductRepository {
 
     override fun getProducts(): Flow<PagingData<Product>> {
@@ -59,7 +68,7 @@ class ProductRepositoryImpl @Inject constructor(private val productAPI: ProductA
         if (response.isSuccessful) {
             val dataDTO = response.body()
             dataDTO?.let {
-                val data = ProductMapper.mapToProductDetail(it)
+                val data = ProductDTOMapper.mapToProductDetail(it)
                 emit(StateListener.Success(data))
             } ?: emit(StateListener.Error(Exception("Cast Error")))
         } else {
@@ -93,16 +102,31 @@ class ProductRepositoryImpl @Inject constructor(private val productAPI: ProductA
 
     override fun getSanPhamChiTiet(id: Int): Flow<StateListener<List<ProductChiTiet>>> = flow {
         val response = productAPI.ganSanPhamChiTiet(id)
-        if(response.isSuccessful){
+        if (response.isSuccessful) {
             val data = response.body()
             val listProductChiTiet = data?.map {
-                ProductMapper.mapToProductChiTiet(it)
+                ProductDTOMapper.mapToProductChiTiet(it)
             } ?: emptyList()
             emit(StateListener.Success(listProductChiTiet))
-        }
-        else{
+        } else {
             emit(StateListener.Error(Exception("Api Error")))
         }
     }.flowOn(Dispatchers.IO)
+
+    @OptIn(ExperimentalPagingApi::class)
+    override fun timKiemSanPhamCuaShop(id: Int, text: String): Flow<PagingData<Product>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 6,
+                enablePlaceholders = false,
+            ),
+            remoteMediator = SearchProductInShopRemoteMediator(productAPI, appDatabase, id, text),
+            pagingSourceFactory = {appDatabase.productDao().getPagingSource(id, text)}
+        ).flow.map {pagingData ->
+            pagingData.map {
+                ProductEntityMapper.mapToProduct(it)
+            }
+        }
+    }
 
 }

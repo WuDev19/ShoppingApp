@@ -2,24 +2,29 @@ package com.example.shoppingapp.ui.view.fragment.seller
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.viewpager2.widget.ViewPager2
+import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.FragmentSellerBinding
+import com.example.shoppingapp.domain.model.SearchProductShop
 import com.example.shoppingapp.ui.state.StateListener
-import com.example.shoppingapp.ui.view.adapter.ViewPagerShopAdapter
+import com.example.shoppingapp.ui.view.adapter.ProductAdapter
 import com.example.shoppingapp.ui.viewmodel.seller.SellerViewModel
-import com.google.android.material.tabs.TabLayoutMediator
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,11 +35,17 @@ class SellerFragment : Fragment() {
     private val viewModel: SellerViewModel by viewModels()
     private var _binding: FragmentSellerBinding? = null
     private val binding get() = _binding!!
-    private val shopViewPagerAdapter by lazy {
-        ViewPagerShopAdapter(requireActivity())
-    }
     private val idSeller by lazy {
         arguments?.getInt(StringConstants.ID_SELLER)
+    }
+    private lateinit var isShowing: Fragment
+    private val productShopFragment by lazy { ProductShopFragment() }
+    private val categoryShopFragment by lazy { CategoryShopFragment() }
+    private val bestSellerFragment by lazy { BestSellerFragment() }
+    private val productAdapter by lazy {
+        ProductAdapter{ productId, sellerId ->
+            Log.e(StringConstants.DEBUG, "$productId: $sellerId")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +54,12 @@ class SellerFragment : Fragment() {
         idSeller?.let {
             viewModel.getSellerDetail(it)
         } ?: ToastUtils.showToast(requireContext(), "Something went wrong")
+
+        lifecycleScope.launch {
+            viewModel.searchProductShop.collectLatest {
+                productAdapter.submitData(it)
+            }
+        }
 
     }
 
@@ -57,27 +74,48 @@ class SellerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.viewPager2.apply {
-            adapter = shopViewPagerAdapter
-            orientation = ViewPager2.ORIENTATION_HORIZONTAL
-            offscreenPageLimit = 1
+        setUpTabLayout()
+
+        binding.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                var fragment: Fragment? = null
+                when (tab?.position) {
+                    0 -> {
+                        fragment = productShopFragment
+                    }
+                    1 -> {
+                        fragment = categoryShopFragment
+                    }
+                    2 -> {
+                        fragment = bestSellerFragment
+                    }
+                }
+                fragment?.let { hideAndShow(it) }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+            }
+
+        })
+
+        binding.recyclerViewSearchInShop.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            adapter = productAdapter
         }
 
-        TabLayoutMediator(binding.tabLayout, binding.viewPager2) { tab, position ->
-            when(position){
-                0 -> tab.text = getString(R.string.products)
-                1 -> tab.text = getString(R.string.category)
-                2 -> tab.text = getString(R.string.best_sellers)
-            }
-        }.attach()
-
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.sellerDetailState.collectLatest {
                     when (it) {
                         is StateListener.Idle -> Unit
                         is StateListener.Loading -> Unit
-                        is StateListener.Error -> ToastUtils.showToast(requireContext(), it.e.toString())
+                        is StateListener.Error -> ToastUtils.showToast(
+                            requireContext(),
+                            it.e.toString()
+                        )
                         is StateListener.Success -> {
                             val seller = it.result
                             binding.tvShopName.text = seller.tenShop
@@ -96,7 +134,44 @@ class SellerFragment : Fragment() {
         binding.imgBack.setOnClickListener {
             findNavController().popBackStack()
         }
+        
+        binding.edtSearch.addTextChangedListener {
+            val productSearchShop = SearchProductShop(idSeller!!, it.toString())
+            viewModel.setSearchProductShop(productSearchShop)
+            binding.recyclerViewSearchInShop.isVisible = it.toString().isNotEmpty()
+            binding.linearTab.isVisible = it.toString().isEmpty()
+        }
 
+    }
+
+    private fun setUpTabLayout() {
+        isShowing = productShopFragment
+
+        childFragmentManager.beginTransaction()
+            .add(R.id.frame_fragment, productShopFragment, "tab1")
+            .add(R.id.frame_fragment, categoryShopFragment, "tab2").hide(categoryShopFragment)
+            .add(R.id.frame_fragment, bestSellerFragment, "tab3").hide(bestSellerFragment)
+            .commit()
+
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            text = "Products"
+        }, 0, true)
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            text = "Category"
+        }, 1, false)
+        binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
+            text = "Best Seller"
+        }, 2, false)
+
+    }
+
+    private fun hideAndShow(fragment: Fragment) {
+        if (fragment == isShowing) return
+        childFragmentManager.beginTransaction()
+            .hide(isShowing)
+            .show(fragment)
+            .commit()
+        isShowing = fragment
     }
 
     override fun onDestroyView() {
