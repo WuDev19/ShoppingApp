@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".ui.view.fragment.seller.ProductShopFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_product_of_store"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Product Shop"
-        android:id="@+id/tv"/>
+        android:layout_height="match_parent"/>
 
 </FrameLayout>

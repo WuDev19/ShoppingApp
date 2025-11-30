@@ -3,6 +3,7 @@ package com.example.shoppingapp.data.repository.impl
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.SellerMapper
 import com.example.shoppingapp.data.remote.api.SellerAPI
 import com.example.shoppingapp.data.paging_source.PagingSourceSeller
@@ -21,7 +22,7 @@ class SellerRepositoryImpl @Inject constructor(private val sellerAPI: SellerAPI)
     override fun getAllSeller(): Flow<PagingData<SellerInStore>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 6,
+                pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {

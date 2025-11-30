@@ -5,6 +5,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
+import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.mapper.ProductEntityMapper
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
@@ -14,6 +15,7 @@ import com.example.shoppingapp.data.paging_source.PagingSourceProduct
 import com.example.shoppingapp.data.paging_source.PagingSourceProductByCategory
 import com.example.shoppingapp.data.paging_source.PagingSourceRelatedProduct
 import com.example.shoppingapp.data.paging_source.PagingSourceSearchProduct
+import com.example.shoppingapp.data.repository.mediator.AllProductOfShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.SearchProductInShopRemoteMediator
 import com.example.shoppingapp.domain.model.Product
 import com.example.shoppingapp.domain.model.ProductChiTiet
@@ -35,7 +37,10 @@ class ProductRepositoryImpl @Inject constructor(
 
     override fun getProducts(): Flow<PagingData<Product>> {
         return Pager(
-            config = PagingConfig(pageSize = 6, enablePlaceholders = false),
+            config = PagingConfig(
+                pageSize = StringConstants.PAGE_SIZE,
+                enablePlaceholders = false
+            ),
             pagingSourceFactory = { PagingSourceProduct(productAPI) }
         ).flow
     }
@@ -43,7 +48,8 @@ class ProductRepositoryImpl @Inject constructor(
     override fun getProductByCategory(theLoai: String): Flow<PagingData<Product>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 6, enablePlaceholders = false
+                pageSize = StringConstants.PAGE_SIZE,
+                enablePlaceholders = false
             ),
             pagingSourceFactory = {
                 PagingSourceProductByCategory(productAPI, theLoai)
@@ -54,7 +60,7 @@ class ProductRepositoryImpl @Inject constructor(
     override fun searchProduct(text: String): Flow<PagingData<Product>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 6,
+                pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
@@ -79,7 +85,7 @@ class ProductRepositoryImpl @Inject constructor(
     override fun getOtherProductsOfShop(id: Int): Flow<PagingData<Product>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 6,
+                pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
@@ -91,7 +97,7 @@ class ProductRepositoryImpl @Inject constructor(
     override fun getSanPhamRelated(id: Int): Flow<PagingData<Product>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 6,
+                pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
@@ -117,12 +123,31 @@ class ProductRepositoryImpl @Inject constructor(
     override fun timKiemSanPhamCuaShop(id: Int, text: String): Flow<PagingData<Product>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 6,
+                pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false,
             ),
             remoteMediator = SearchProductInShopRemoteMediator(productAPI, appDatabase, id, text),
-            pagingSourceFactory = {appDatabase.productDao().getPagingSource(id, text)}
-        ).flow.map {pagingData ->
+            pagingSourceFactory = { appDatabase.productDao().getPagingSource(id, text) }
+        ).flow.map { pagingData ->
+            pagingData.map {
+                ProductEntityMapper.mapToProduct(it)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getAllProductOfShop(id: Int): Flow<PagingData<Product>> {
+        val queryKey = "Shop_$id"
+        return Pager(
+            config = PagingConfig(
+                pageSize = StringConstants.PAGE_SIZE,
+                enablePlaceholders = false,
+            ),
+            remoteMediator = AllProductOfShopRemoteMediator(productAPI, appDatabase, queryKey, id),
+            pagingSourceFactory = {
+                appDatabase.productDao().pagingSourceProductShop(id)
+            }
+        ).flow.map { pagingData ->
             pagingData.map {
                 ProductEntityMapper.mapToProduct(it)
             }

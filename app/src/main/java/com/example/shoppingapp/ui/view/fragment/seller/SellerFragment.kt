@@ -2,12 +2,11 @@ package com.example.shoppingapp.ui.view.fragment.seller
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -43,10 +42,18 @@ class SellerFragment : Fragment() {
     private val categoryShopFragment by lazy { CategoryShopFragment() }
     private val bestSellerFragment by lazy { BestSellerFragment() }
     private val productAdapter by lazy {
-        ProductAdapter{ productId, sellerId ->
-            Log.e(StringConstants.DEBUG, "$productId: $sellerId")
+        ProductAdapter { productId, sellerId ->
+            val bundle = bundleOf(
+                StringConstants.ID_PRODUCT to productId,
+                StringConstants.ID_SELLER to sellerId
+            )
+            findNavController().navigate(
+                R.id.action_sellerFragment_to_detailProductFragment,
+                bundle
+            )
         }
     }
+    private var isSearch = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,12 +61,6 @@ class SellerFragment : Fragment() {
         idSeller?.let {
             viewModel.getSellerDetail(it)
         } ?: ToastUtils.showToast(requireContext(), "Something went wrong")
-
-        lifecycleScope.launch {
-            viewModel.searchProductShop.collectLatest {
-                productAdapter.submitData(it)
-            }
-        }
 
     }
 
@@ -83,9 +84,11 @@ class SellerFragment : Fragment() {
                     0 -> {
                         fragment = productShopFragment
                     }
+
                     1 -> {
                         fragment = categoryShopFragment
                     }
+
                     2 -> {
                         fragment = bestSellerFragment
                     }
@@ -116,6 +119,7 @@ class SellerFragment : Fragment() {
                             requireContext(),
                             it.e.toString()
                         )
+
                         is StateListener.Success -> {
                             val seller = it.result
                             binding.tvShopName.text = seller.tenShop
@@ -131,15 +135,32 @@ class SellerFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.searchProductShop.collectLatest {
+                if (isSearch) {
+                    productAdapter.submitData(it)
+                }
+            }
+        }
+
         binding.imgBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        
+
         binding.edtSearch.addTextChangedListener {
-            val productSearchShop = SearchProductShop(idSeller!!, it.toString())
-            viewModel.setSearchProductShop(productSearchShop)
-            binding.recyclerViewSearchInShop.isVisible = it.toString().isNotEmpty()
-            binding.linearTab.isVisible = it.toString().isEmpty()
+            val text = it.toString()
+            isSearch = text.isNotEmpty()
+            if (text.isNotEmpty()) {
+                binding.recyclerViewSearchInShop.visibility = View.VISIBLE
+                binding.linearTab.visibility = View.GONE
+                val productSearchShop = SearchProductShop(idSeller!!, text)
+                viewModel.setSearchProductShop(productSearchShop)
+            } else {
+                binding.recyclerViewSearchInShop.visibility = View.GONE
+                binding.linearTab.visibility = View.VISIBLE
+                productShopFragment.getAdapter()
+                    .refresh() //refresh lai cua product shop frag khi ko search nua
+            }
         }
 
     }
@@ -147,11 +168,9 @@ class SellerFragment : Fragment() {
     private fun setUpTabLayout() {
         isShowing = productShopFragment
 
-        childFragmentManager.beginTransaction()
-            .add(R.id.frame_fragment, productShopFragment, "tab1")
-            .add(R.id.frame_fragment, categoryShopFragment, "tab2").hide(categoryShopFragment)
-            .add(R.id.frame_fragment, bestSellerFragment, "tab3").hide(bestSellerFragment)
-            .commit()
+        val tab1 = childFragmentManager.findFragmentByTag("tab1")
+        val tab2 = childFragmentManager.findFragmentByTag("tab2")
+        val tab3 = childFragmentManager.findFragmentByTag("tab3")
 
         binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
             text = "Products"
@@ -163,6 +182,19 @@ class SellerFragment : Fragment() {
             text = "Best Seller"
         }, 2, false)
 
+        if (tab1 == null && tab2 == null && tab3 == null) {
+            val bundle = bundleOf(
+                StringConstants.ID_SELLER to idSeller
+            )
+            productShopFragment.arguments = bundle
+            categoryShopFragment.arguments = bundle
+            bestSellerFragment.arguments = bundle
+            childFragmentManager.beginTransaction()
+                .add(R.id.frame_fragment, productShopFragment, "tab1")
+                .add(R.id.frame_fragment, categoryShopFragment, "tab2").hide(categoryShopFragment)
+                .add(R.id.frame_fragment, bestSellerFragment, "tab3").hide(bestSellerFragment)
+                .commit()
+        }
     }
 
     private fun hideAndShow(fragment: Fragment) {

@@ -2,7 +2,6 @@ package com.example.shoppingapp.data.remote.api
 
 import com.example.shoppingapp.data.remote.dto.ListProductDTO
 import com.example.shoppingapp.data.remote.dto.ProductChiTietDTO
-import com.example.shoppingapp.data.remote.dto.ProductDTO
 import com.example.shoppingapp.data.remote.dto.ProductDetailDTO
 import retrofit2.Response
 import retrofit2.http.GET
