@@ -147,6 +147,7 @@ class SellerFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        // TODO: sau toi uu bang cach them mot man khac de phuc vu viec tim kiem
         binding.edtSearch.addTextChangedListener {
             val text = it.toString()
             isSearch = text.isNotEmpty()

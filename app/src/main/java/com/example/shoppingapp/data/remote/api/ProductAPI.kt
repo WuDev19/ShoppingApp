@@ -34,4 +34,7 @@ interface ProductAPI {
     @GET("sanpham/searchShop/{id}")
     suspend fun timKiemSanPhamCuaShop(@Path("id") id: Int, @Query("text") text: String, @Query("offset") offset: Int): Response<ListProductDTO>
 
+    @GET("sanpham/bestSeller/{id}")
+    suspend fun getBestSellerProductShop(@Path("id") id: Int, @Query("offset") offset: Int) : Response<ListProductDTO>
+
 }

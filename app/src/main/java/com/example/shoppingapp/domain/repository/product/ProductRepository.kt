@@ -18,5 +18,6 @@ interface ProductRepository {
     fun getSanPhamChiTiet(id: Int): Flow<StateListener<List<ProductChiTiet>>>
     fun timKiemSanPhamCuaShop(id: Int, text: String): Flow<PagingData<Product>>
     fun getAllProductOfShop(id: Int): Flow<PagingData<Product>>
+    fun getBestSellerProductByShop(id: Int): Flow<PagingData<Product>>
 
 }

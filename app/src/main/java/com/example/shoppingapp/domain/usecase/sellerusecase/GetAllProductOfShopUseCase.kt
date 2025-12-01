@@ -1,4 +1,4 @@
-package com.example.shoppingapp.domain.usecase.productusecase
+package com.example.shoppingapp.domain.usecase.sellerusecase
 
 import androidx.paging.PagingData
 import com.example.shoppingapp.domain.model.Product

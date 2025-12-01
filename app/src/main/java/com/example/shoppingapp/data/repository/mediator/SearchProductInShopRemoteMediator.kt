@@ -61,7 +61,7 @@ class SearchProductInShopRemoteMediator(
             appDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     remoteKeyProductDAO.clearAll()
-                    productDAO.clearAll()
+                    productDAO.clearSearchProductShop(id, text)
                 }
 
                 val prevKey = if (page == 0) null else page - 1

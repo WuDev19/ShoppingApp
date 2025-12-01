@@ -53,9 +53,6 @@ class ProductShopFragment : Fragment() {
             }
         }
 
-        Log.e("fargment shop", "onCreate: ")
-
-
     }
 
     override fun onCreateView(
@@ -74,7 +71,6 @@ class ProductShopFragment : Fragment() {
             adapter = productAdapter
         }
 
-        Log.e("fargment shop", "onViewCreated: ")
     }
 
     fun getAdapter() = productAdapter
