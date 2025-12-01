@@ -33,6 +33,7 @@ import com.example.shoppingapp.databinding.FragmentStoreBinding
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
 import com.example.shoppingapp.ui.view.adapter.CategoryStoreAdapter
 import com.example.shoppingapp.ui.view.adapter.SellerInStoreAdapter
+import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.ShareViewModel
 import com.example.shoppingapp.ui.viewmodel.bottom_nav.StoreViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -165,6 +166,7 @@ class StoreFragment : Fragment() {
         binding.recyclerViewProductStore.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = productAdapter
+            addItemDecoration(MarginItemDecoration(5))
         }
 
         binding.recyclerViewCategories.apply {
@@ -256,19 +258,4 @@ class StoreFragment : Fragment() {
         }
     }
 
-}
-
-class MarginItemDecoration(private val spaceSize: Int) : ItemDecoration() {
-    override fun getItemOffsets(
-        outRect: Rect, view: View,
-        parent: RecyclerView,
-        state: RecyclerView.State
-    ) {
-        with(outRect) {
-            top = spaceSize
-            left = spaceSize
-            right = spaceSize
-            bottom = spaceSize
-        }
-    }
 }

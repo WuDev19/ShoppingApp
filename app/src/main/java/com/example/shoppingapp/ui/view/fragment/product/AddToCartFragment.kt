@@ -29,6 +29,7 @@ import com.example.shoppingapp.domain.model.ProductChiTiet
 import com.example.shoppingapp.domain.model.SizeColorModel
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.SizeAndColorAdapter
+import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.product.AddToCartViewModel
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
@@ -290,20 +291,4 @@ class AddToCartFragment : BottomSheetDialogFragment() {
         return dialog
     }
 
-}
-
-class MarginItemDecoration(private val space: Int) : ItemDecoration() {
-    override fun getItemOffsets(
-        outRect: Rect,
-        view: View,
-        parent: RecyclerView,
-        state: RecyclerView.State
-    ) {
-        outRect.apply {
-            left = space
-            right = space
-            top = space
-            bottom = space
-        }
-    }
 }

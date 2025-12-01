@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.shoppingapp.databinding.GridAndHorizontalProductItemBinding
+import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 
 class GridAdapterInsideConcatAdapter(private val productAdapter: ProductAdapter) :
     Adapter<GridAdapterInsideConcatAdapter.GridAdapterInsideConcatAdapterViewHolder>() {
@@ -32,6 +33,7 @@ class GridAdapterInsideConcatAdapter(private val productAdapter: ProductAdapter)
         holder.binding.recyclerViewRelatedProductInside.apply {
             layoutManager = GridLayoutManager(holder.binding.root.context, 2)
             adapter = productAdapter
+            addItemDecoration(MarginItemDecoration(5))
         }
     }
 

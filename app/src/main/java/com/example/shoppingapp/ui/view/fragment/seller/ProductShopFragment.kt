@@ -15,6 +15,7 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.databinding.FragmentProductShopBinding
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
+import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.seller.ProductShopViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -69,6 +70,7 @@ class ProductShopFragment : Fragment() {
         binding.recyclerViewProductOfStore.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = productAdapter
+            addItemDecoration(MarginItemDecoration(5))
         }
 
     }

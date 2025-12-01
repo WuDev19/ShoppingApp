@@ -35,6 +35,7 @@ import com.example.shoppingapp.domain.model.PopularCategories
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.PopularCategoriesAdapter
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
+import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.ShareViewModel
 import com.example.shoppingapp.ui.viewmodel.bottom_nav.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -128,6 +129,7 @@ class HomeFragment : Fragment() {
 
         binding.recyclerViewProducts.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerViewProducts.adapter = productAdapter
+        binding.recyclerViewProducts.addItemDecoration(MarginItemDecoration(5))
 
         binding.recyclerViewCategories.apply {
             layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
