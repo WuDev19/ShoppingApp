@@ -1,5 +1,6 @@
 package com.example.shoppingapp.data.remote.mapper
 
+import com.example.shoppingapp.data.remote.dto.CategoryAndProductDTO
 import com.example.shoppingapp.data.remote.dto.ProductChiTietDTO
 import com.example.shoppingapp.data.remote.dto.ProductDTO
 import com.example.shoppingapp.data.remote.dto.ProductDetailDTO

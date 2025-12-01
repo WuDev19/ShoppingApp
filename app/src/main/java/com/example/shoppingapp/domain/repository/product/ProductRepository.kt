@@ -19,5 +19,6 @@ interface ProductRepository {
     fun timKiemSanPhamCuaShop(id: Int, text: String): Flow<PagingData<Product>>
     fun getAllProductOfShop(id: Int): Flow<PagingData<Product>>
     fun getBestSellerProductByShop(id: Int): Flow<PagingData<Product>>
+    fun getCategoryAndProductByShop(id: Int, tenDanhMuc: String): Flow<PagingData<Product>>
 
 }

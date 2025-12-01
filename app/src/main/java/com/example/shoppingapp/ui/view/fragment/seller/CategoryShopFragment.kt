@@ -7,9 +7,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shoppingapp.R
@@ -33,9 +35,12 @@ class CategoryShopFragment : Fragment() {
         arguments?.getInt(StringConstants.ID_SELLER) ?: -1
     }
     private val categoryQuantityAdapter by lazy {
-        CategoryQuantityAdapter {
-            Log.e(StringConstants.ID_SELLER, "$it: $idSeller", )
-            // TODO: xu ly click chuyen man
+        CategoryQuantityAdapter {categoryName ->
+            val bundle = bundleOf(
+                StringConstants.ID_SELLER to idSeller,
+                StringConstants.CATEGORY_NAME to categoryName
+            )
+            findNavController().navigate(R.id.action_sellerFragment_to_categoryProductDetailShopFragment, bundle)
         }
     }
 

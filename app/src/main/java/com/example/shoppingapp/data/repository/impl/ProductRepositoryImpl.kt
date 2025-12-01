@@ -17,6 +17,7 @@ import com.example.shoppingapp.data.paging_source.PagingSourceRelatedProduct
 import com.example.shoppingapp.data.paging_source.PagingSourceSearchProduct
 import com.example.shoppingapp.data.repository.mediator.AllProductOfShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.BestSellerProductShopRemoteMediator
+import com.example.shoppingapp.data.repository.mediator.CategoryAndProductShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.SearchProductInShopRemoteMediator
 import com.example.shoppingapp.domain.model.Product
 import com.example.shoppingapp.domain.model.ProductChiTiet
@@ -32,7 +33,7 @@ import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
     private val productAPI: ProductAPI,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
 ) :
     ProductRepository {
 
@@ -128,7 +129,9 @@ class ProductRepositoryImpl @Inject constructor(
                 enablePlaceholders = false,
             ),
             remoteMediator = SearchProductInShopRemoteMediator(productAPI, appDatabase, id, text),
-            pagingSourceFactory = { appDatabase.productDao().getPagingSourceSearchProductShop(id, text) }
+            pagingSourceFactory = {
+                appDatabase.productDao().getPagingSourceSearchProductShop(id, text)
+            }
         ).flow.map { pagingData ->
             pagingData.map {
                 ProductEntityMapper.mapToProduct(it)
@@ -163,13 +166,47 @@ class ProductRepositoryImpl @Inject constructor(
                 pageSize = 6,
                 enablePlaceholders = false
             ),
-            remoteMediator = BestSellerProductShopRemoteMediator(productAPI, appDatabase, id, queryKey),
+            remoteMediator = BestSellerProductShopRemoteMediator(
+                productAPI,
+                appDatabase,
+                id,
+                queryKey
+            ),
             pagingSourceFactory = {
                 appDatabase.productDao().pagingSourceBestSellerProductShop(id)
             }
-        ).flow.map {pagingData ->
-            pagingData.map {entity ->
+        ).flow.map { pagingData ->
+            pagingData.map { entity ->
                 ProductEntityMapper.mapToProduct(entity)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getCategoryAndProductByShop(
+        id: Int,
+        tenDanhMuc: String
+    ): Flow<PagingData<Product>> {
+        val queryKey = "Category_Product_Shop_${id}_$tenDanhMuc"
+        return Pager(
+            config = PagingConfig(
+                pageSize = 6,
+                enablePlaceholders = false
+            ),
+            remoteMediator = CategoryAndProductShopRemoteMediator(
+                productAPI,
+                appDatabase,
+                queryKey,
+                id,
+                tenDanhMuc
+            ),
+            pagingSourceFactory = {
+                appDatabase.categoryAndProductDao()
+                    .pagingSourceCategoryAndProductShop(id, tenDanhMuc)
+            }
+        ).flow.map { pagingData ->
+            pagingData.map {
+                ProductEntityMapper.mapToProduct(it)
             }
         }
     }

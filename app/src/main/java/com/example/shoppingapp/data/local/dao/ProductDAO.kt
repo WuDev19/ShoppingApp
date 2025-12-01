@@ -18,7 +18,7 @@ interface ProductDAO {
     @Query("SELECT * FROM products WHERE maNguoiBan = :id")
     fun pagingSourceProductShop(id: Int): PagingSource<Int, ProductEntity>
 
-    //lay nhung san pham ban chay
+    //lay nhung san pham ban chay (best seller)
     @Query("SELECT * FROM products WHERE maNguoiBan = :id AND numberBought >= 50")
     fun pagingSourceBestSellerProductShop(id: Int): PagingSource<Int, ProductEntity>
 

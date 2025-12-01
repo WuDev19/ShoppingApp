@@ -2,6 +2,7 @@ package com.example.shoppingapp.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.shoppingapp.data.local.dao.CategoryAndProductDAO
 import com.example.shoppingapp.data.local.dao.ProductDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyProductDAO
@@ -38,5 +39,9 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideRemoteKeyDao(appDatabase: AppDatabase): RemoteKeyDAO = appDatabase.remoteKeyDao()
+
+    @Singleton
+    @Provides
+    fun provideCategoryAndProductDao(appDatabase: AppDatabase): CategoryAndProductDAO = appDatabase.categoryAndProductDao()
 
 }

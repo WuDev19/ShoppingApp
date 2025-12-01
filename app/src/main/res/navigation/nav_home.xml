@@ -59,6 +59,18 @@
         <action
             android:id="@+id/action_sellerFragment_to_detailProductFragment"
             app:destination="@id/detailProductFragment" />
+        <action
+            android:id="@+id/action_sellerFragment_to_categoryProductDetailShopFragment"
+            app:destination="@id/categoryProductDetailShopFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/categoryProductDetailShopFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.CategoryProductDetailShopFragment"
+        android:label="fragment_category_product_detail_shop"
+        tools:layout="@layout/fragment_category_product_detail_shop" >
+        <action
+            android:id="@+id/action_categoryProductDetailShopFragment_to_detailProductFragment"
+            app:destination="@id/detailProductFragment" />
     </fragment>
 
 </navigation>

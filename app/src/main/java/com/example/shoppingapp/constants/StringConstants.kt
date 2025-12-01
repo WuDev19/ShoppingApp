@@ -31,4 +31,5 @@ object StringConstants {
     const val DISCOUNT = "giam_gia"
     const val IMAGE_DESCRIPTION = "image_detail"
     const val PAGE_SIZE = 6
+    const val CATEGORY_NAME = "category_name"
 }
