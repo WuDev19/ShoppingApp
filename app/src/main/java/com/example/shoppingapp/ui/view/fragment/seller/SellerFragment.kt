@@ -8,20 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.FragmentSellerBinding
-import com.example.shoppingapp.domain.model.SearchProductShop
 import com.example.shoppingapp.ui.state.StateListener
-import com.example.shoppingapp.ui.view.adapter.ProductAdapter
 import com.example.shoppingapp.ui.viewmodel.seller.SellerViewModel
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
@@ -42,19 +38,6 @@ class SellerFragment : Fragment() {
     private val productShopFragment by lazy { ProductShopFragment() }
     private val categoryShopFragment by lazy { CategoryShopFragment() }
     private val bestSellerFragment by lazy { BestSellerFragment() }
-    private val productAdapter by lazy {
-        ProductAdapter { productId, sellerId ->
-            val bundle = bundleOf(
-                StringConstants.ID_PRODUCT to productId,
-                StringConstants.ID_SELLER to sellerId
-            )
-            findNavController().navigate(
-                R.id.action_sellerFragment_to_detailProductFragment,
-                bundle
-            )
-        }
-    }
-    private var isSearch = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,11 +95,6 @@ class SellerFragment : Fragment() {
 
         })
 
-        binding.recyclerViewSearchInShop.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = productAdapter
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.sellerDetailState.collectLatest {
@@ -143,32 +121,16 @@ class SellerFragment : Fragment() {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.searchProductShop.collectLatest {
-                if (isSearch) {
-                    productAdapter.submitData(it)
-                }
-            }
-        }
-
         binding.imgBack.setOnClickListener {
             findNavController().popBackStack()
         }
 
-        // TODO: sau toi uu bang cach them mot man khac de phuc vu viec tim kiem
-        binding.edtSearch.addTextChangedListener {
-            val text = it.toString()
-            isSearch = text.isNotEmpty()
-            if (text.isNotEmpty()) {
-                binding.recyclerViewSearchInShop.visibility = View.VISIBLE
-                binding.linearTab.visibility = View.GONE
-                val productSearchShop = SearchProductShop(idSeller!!, text)
-                viewModel.setSearchProductShop(productSearchShop)
-            } else {
-                binding.recyclerViewSearchInShop.visibility = View.GONE
-                binding.linearTab.visibility = View.VISIBLE
-                productShopFragment.getAdapter()
-                    .refresh() //refresh lai cua product shop frag khi ko search nua
+        binding.edtSearch.setOnFocusChangeListener { _, focus ->
+            if(focus){
+                val bundle = bundleOf(
+                    StringConstants.ID_SELLER to idSeller
+                )
+                findNavController().navigate(R.id.action_sellerFragment_to_searchProductFragment, bundle)
             }
         }
 
