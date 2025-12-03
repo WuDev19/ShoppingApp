@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.shoppingapp.databinding.CategoryOfShopItemBinding
 import com.example.shoppingapp.domain.model.CategoryAndQuantity
 
-class CategoryQuantityAdapter (private val onItemClick: (String) -> Unit) :
+class CategoryQuantityAdapter(private val onItemClick: (String, Int) -> Unit) :
     ListAdapter<CategoryAndQuantity, CategoryQuantityAdapter.CategoryQuantityViewHolder>(
         diffCallBack
     ) {
@@ -41,7 +41,7 @@ class CategoryQuantityAdapter (private val onItemClick: (String) -> Unit) :
 
     override fun onBindViewHolder(holder: CategoryQuantityViewHolder, position: Int) {
         val item = getItem(position)
-        item?.let {data ->
+        item?.let { data ->
             holder.binding.tvCategory.text = data.tenDanhMuc
             holder.binding.tvNumber.text = buildString {
                 append("(")
@@ -49,7 +49,7 @@ class CategoryQuantityAdapter (private val onItemClick: (String) -> Unit) :
                 append(")")
             }
             holder.binding.linearCategory.setOnClickListener {
-                data.tenDanhMuc?.let { it1 -> onItemClick(it1) }
+                data.tenDanhMuc?.let { it1 -> data.sl?.let { it2 -> onItemClick(it1, it2) } }
             }
         }
     }

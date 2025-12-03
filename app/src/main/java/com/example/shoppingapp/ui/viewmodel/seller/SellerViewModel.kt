@@ -1,6 +1,6 @@
 package com.example.shoppingapp.ui.viewmodel.seller
 
-import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
@@ -29,6 +29,9 @@ class SellerViewModel @Inject constructor(
     private val _sellerDetailState =
         MutableStateFlow<StateListener<SellerInStore>>(StateListener.Idle)
     val sellerDetailState = _sellerDetailState.asStateFlow()
+
+    var positionTabState: Int = 0
+    var fragment: Fragment? = null
 
     private val _searchProductShop = MutableStateFlow<SearchProductShop?>(null)
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)

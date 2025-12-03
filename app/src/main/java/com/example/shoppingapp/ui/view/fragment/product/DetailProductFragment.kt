@@ -109,7 +109,7 @@ class DetailProductFragment : Fragment() {
             HeaderDetailAdapter(
                 onImageClick = {it1 ->
                     val bundle = bundleOf(
-                        StringConstants.IMAGE_DESCRIPTION to it1
+                        StringConstants.IMAGE_DESCRIPTION_SLIDER to it1
                     )
                     findNavController().navigate(R.id.action_detailProductFragment_to_imageDescriptionProductFragment, bundle)
                 },

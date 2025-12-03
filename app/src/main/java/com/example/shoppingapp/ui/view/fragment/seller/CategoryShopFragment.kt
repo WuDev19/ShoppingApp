@@ -35,10 +35,11 @@ class CategoryShopFragment : Fragment() {
         arguments?.getInt(StringConstants.ID_SELLER) ?: -1
     }
     private val categoryQuantityAdapter by lazy {
-        CategoryQuantityAdapter {categoryName ->
+        CategoryQuantityAdapter {categoryName, sl ->
             val bundle = bundleOf(
                 StringConstants.ID_SELLER to idSeller,
-                StringConstants.CATEGORY_NAME to categoryName
+                StringConstants.CATEGORY_NAME to categoryName,
+                StringConstants.NUMBER_PRODUCT to sl
             )
             findNavController().navigate(R.id.action_sellerFragment_to_categoryProductDetailShopFragment, bundle)
         }

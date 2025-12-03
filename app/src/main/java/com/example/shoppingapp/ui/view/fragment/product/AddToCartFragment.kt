@@ -1,12 +1,13 @@
 package com.example.shoppingapp.ui.view.fragment.product
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.res.ColorStateList
 import android.graphics.Paint
-import android.graphics.Rect
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
@@ -24,6 +23,7 @@ import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.data.remote.dto.CartAndCartItemRequest
 import com.example.shoppingapp.data.remote.dto.CartItemRequest
 import com.example.shoppingapp.data.remote.dto.CartRequest
+import com.example.shoppingapp.databinding.CustomDialogImageDetailBinding
 import com.example.shoppingapp.databinding.FragmentAddToCartBinding
 import com.example.shoppingapp.domain.model.ProductChiTiet
 import com.example.shoppingapp.domain.model.SizeColorModel
@@ -58,6 +58,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
         arguments?.getInt(StringConstants.ID_SELLER)
     }
     private lateinit var productChiTiet: ProductChiTiet
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -87,7 +88,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
                         }
 
                         is StateListener.Success -> {
-                            val data = it.result
+                            val data = it.result //danh sach san pham chi tiet trong 1 san pham
                             withContext(Dispatchers.Default) {
                                 val listColor = data.map { it1 ->
                                     SizeColorModel(it1.color, false)
@@ -146,10 +147,11 @@ class AddToCartFragment : BottomSheetDialogFragment() {
                             }
                             viewModel.displayCorrespondingProduct.collectLatest { it1 ->
                                 val list = it1.split("_")
-                                if (list[0].isEmpty() || list[1].isEmpty()) {
+                                if (list[0].isEmpty() || list[1].isEmpty()) { //dau tien khi bam vao se hien item dau
                                     bindingProduct(data[0])
                                     disableBtnAddCart()
                                 } else {
+                                    //tim kiem trong data xem cai nao dau tien co color voi kich co = cai minh chon tren view
                                     val kq = data.firstOrNull { it2 ->
                                         it2.color == list[1] && it2.kichco == list[0]
                                     }
@@ -220,12 +222,29 @@ class AddToCartFragment : BottomSheetDialogFragment() {
             dismiss()
         }
 
-    }
+        binding.imgAnhDetail.setOnClickListener {
+            Log.e("ANHDETAIL", "onViewCreated: ${productChiTiet.anhDetail}")
+            val dialogView = CustomDialogImageDetailBinding.inflate(layoutInflater)
+            Glide.with(requireContext())
+                .load(productChiTiet.anhDetail ?: R.drawable.icon_avatar)
+                .error(R.drawable.place_holder)
+                .into(dialogView.imgAnh)
+            val dialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView.root)
+                .create()
+            //phai show dialog truoc roi chinh window thi moi co hieu luc
+            dialog.show()
+            dialog.window?.apply {
+                setDimAmount(0.5f)
+                setLayout(
+                    (resources.displayMetrics.widthPixels * 0.8).toInt(),
+                    (resources.displayMetrics.heightPixels * 0.6).toInt()
+                )
+                setGravity(Gravity.CENTER)
+                setBackgroundDrawableResource(R.drawable.custom_dialog)
+            }
+        }
 
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun bindingProduct(productChiTiet: ProductChiTiet) {
@@ -262,6 +281,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
     }
 
     private fun disableBtnAddCart() {
+        binding.imgAnhDetail.isEnabled = false
         binding.btnAddToCart.isEnabled = false
         binding.btnAddToCart.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
@@ -272,6 +292,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
     }
 
     private fun enableAddCart() {
+        binding.imgAnhDetail.isEnabled = true
         binding.btnAddToCart.isEnabled = true
         binding.btnAddToCart.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
@@ -289,6 +310,11 @@ class AddToCartFragment : BottomSheetDialogFragment() {
             )
         }
         return dialog
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

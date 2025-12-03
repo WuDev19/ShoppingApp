@@ -32,6 +32,9 @@ class CategoryProductDetailShopFragment : Fragment() {
     private val categoryName by lazy {
         arguments?.getString(StringConstants.CATEGORY_NAME) ?: ""
     }
+    private val numberProduct by lazy {
+        arguments?.getInt(StringConstants.NUMBER_PRODUCT) ?: 0
+    }
     private val productAdapter by lazy {
         ProductAdapter{ productId, sellerId ->
             val bundle = bundleOf(
@@ -70,8 +73,14 @@ class CategoryProductDetailShopFragment : Fragment() {
         binding.recyclerViewDetailCategoryProduct.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = productAdapter
-            addItemDecoration(MarginItemDecoration(5))
+            addItemDecoration(MarginItemDecoration(10))
         }
+
+        binding.tvCategory.text = buildString {
+            append(categoryName)
+            append(":")
+        }
+        binding.tvNumber.text = numberProduct.toString()
 
     }
 

@@ -2,7 +2,6 @@ package com.example.shoppingapp.data.local.mapper
 
 import com.example.shoppingapp.data.local.entity.CategoryAndProductEntity
 import com.example.shoppingapp.data.local.entity.ProductEntity
-import com.example.shoppingapp.data.remote.dto.CategoryAndProductDTO
 import com.example.shoppingapp.domain.model.Product
 
 object ProductEntityMapper {

@@ -2,6 +2,7 @@ package com.example.shoppingapp.ui.view.fragment.seller
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -79,18 +80,25 @@ class SellerFragment : Fragment() {
 
         binding.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                Log.e("PROSITIONTAB", "onTabSelected: " )
                 var fragment: Fragment? = null
                 when (tab?.position) {
                     0 -> {
+                        viewModel.positionTabState = 0
                         fragment = productShopFragment
+                        viewModel.fragment = fragment
                     }
 
                     1 -> {
+                        viewModel.positionTabState = 1
                         fragment = categoryShopFragment
+                        viewModel.fragment = fragment
                     }
 
                     2 -> {
+                        viewModel.positionTabState = 2
                         fragment = bestSellerFragment
+                        viewModel.fragment = fragment
                     }
                 }
                 fragment?.let { hideAndShow(it) }
@@ -182,6 +190,11 @@ class SellerFragment : Fragment() {
         binding.tabLayout.addTab(binding.tabLayout.newTab().apply {
             text = "Best Seller"
         }, 2, false)
+
+        binding.tabLayout.getTabAt(viewModel.positionTabState)?.select()
+        viewModel.fragment?.let {
+            hideAndShow(it)
+        }
 
         if (tab1 == null && tab2 == null && tab3 == null) {
             val bundle = bundleOf(
