@@ -12,33 +12,33 @@ import retrofit2.http.Query
 interface ProductAPI {
 
     @GET("sanpham/get")
-    suspend fun getProducts(@Query("offset") offset: Int) : Response<ListProductDTO>
+    suspend fun getProducts(@Query("pageNumber") pageNumber: Int) : Response<ListProductDTO>
 
     @GET("sanpham/get/{theLoai}")
-    suspend fun getProductByCategory(@Path("theLoai") theLoai: String, @Query("offset") offset: Int) : Response<ListProductDTO>
+    suspend fun getProductByCategory(@Path("theLoai") theLoai: String, @Query("pageNumber") pageNumber: Int) : Response<ListProductDTO>
 
     @GET("sanpham/search/{text}")
-    suspend fun searchProduct(@Path("text") text: String, @Query("offset") offset: Int) : Response<ListProductDTO>
+    suspend fun searchProduct(@Path("text") text: String, @Query("pageNumber") pageNumber: Int) : Response<ListProductDTO>
 
     @GET("sanpham/detail/{id}")
     suspend fun getProductDetail(@Path("id") id: Int) : Response<ProductDetailDTO>
 
     @GET("sanpham/get/shop/{id}")
-    suspend fun getOtherProductsOfShop(@Path("id") id: Int, @Query("offset") offset: Int) : Response<ListProductDTO>
+    suspend fun getOtherProductsOfShop(@Path("id") id: Int, @Query("pageNumber") pageNumber: Int) : Response<ListProductDTO>
 
     @GET("sanpham/get/related/{id}")
-    suspend fun getSanPhamRelated(@Path("id") id: Int, @Query("offset") offset: Int) : Response<ListProductDTO>
+    suspend fun getSanPhamRelated(@Path("id") id: Int, @Query("pageNumber") pageNumber: Int) : Response<ListProductDTO>
 
     @GET("sanpham/get/spct/{id}")
     suspend fun ganSanPhamChiTiet(@Path("id") id: Int) : Response<List<ProductChiTietDTO>>
 
     @GET("sanpham/searchShop/{id}")
-    suspend fun timKiemSanPhamCuaShop(@Path("id") id: Int, @Query("text") text: String, @Query("offset") offset: Int): Response<ListProductDTO>
+    suspend fun timKiemSanPhamCuaShop(@Path("id") id: Int, @Query("text") text: String, @Query("pageNumber") pageNumber: Int): Response<ListProductDTO>
 
     @GET("sanpham/bestSeller/{id}")
-    suspend fun getBestSellerProductShop(@Path("id") id: Int, @Query("offset") offset: Int) : Response<ListProductDTO>
+    suspend fun getBestSellerProductShop(@Path("id") id: Int, @Query("pageNumber") pageNumber: Int) : Response<ListProductDTO>
 
     @GET("sanpham/categoryProduct/{id}")
-    suspend fun getCategoryAndProductByShop(@Path("id") id: Int, @Query("tenDanhMuc") tenDanhMuc: String, @Query("offset") offset: Int) : Response<ListCategoryAndProductDTO>
+    suspend fun getCategoryAndProductByShop(@Path("id") id: Int, @Query("tenDanhMuc") tenDanhMuc: String, @Query("pageNumber") pageNumber: Int) : Response<ListCategoryAndProductDTO>
 
 }

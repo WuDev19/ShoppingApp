@@ -30,7 +30,6 @@ object StringConstants {
     const val STOCK = "Stock: "
     const val DISCOUNT = "giam_gia"
     const val IMAGE_DESCRIPTION_SLIDER = "image_detail_slider"
-    const val IMAGE_DESCRIPTION = "image_detail"
     const val PAGE_SIZE = 6
     const val CATEGORY_NAME = "category_name"
     const val NUMBER_PRODUCT = "number_product"

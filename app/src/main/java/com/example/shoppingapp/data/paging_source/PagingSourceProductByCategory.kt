@@ -22,8 +22,8 @@ class PagingSourceProductByCategory(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
-            val offset = params.key ?: 0
-            val response = productAPI.getProductByCategory(theLoai, offset)
+            val pageNumber = params.key ?: 0
+            val response = productAPI.getProductByCategory(theLoai, pageNumber)
             Log.e(StringConstants.DEBUG, "load: ${params.loadSize}")
             if (response.isSuccessful) {
                 val data = response.body()
@@ -32,8 +32,8 @@ class PagingSourceProductByCategory(
                 } ?: emptyList()
                 LoadResult.Page(
                     listProduct,
-                    prevKey = if (offset == 0) null else offset - 1,
-                    nextKey = if (listProduct.isEmpty()) null else offset + 1
+                    prevKey = if (pageNumber == 0) null else pageNumber - 1,
+                    nextKey = if (listProduct.isEmpty()) null else pageNumber + 1
                 )
             } else {
                 LoadResult.Error(Exception("Api Error"))

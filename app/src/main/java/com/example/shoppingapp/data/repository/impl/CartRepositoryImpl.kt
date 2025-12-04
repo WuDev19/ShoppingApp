@@ -1,9 +1,11 @@
 package com.example.shoppingapp.data.repository.impl
 
 import android.util.Log
+import androidx.paging.PagingData
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.dto.CartAndCartItemRequest
 import com.example.shoppingapp.data.remote.api.CartAPI
+import com.example.shoppingapp.domain.model.Cart
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +36,10 @@ class CartRepositoryImpl @Inject constructor(private val cartAPI: CartAPI) : Car
                 Log.e(StringConstants.DEBUG, "createCart: ${e.message.toString()}")
             }
         }.flowOn(Dispatchers.IO)
+    }
+
+    override fun getCartUser(idUser: Int): Flow<PagingData<Cart>> {
+        return flow {  }
     }
 
 }

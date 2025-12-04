@@ -10,7 +10,7 @@ import retrofit2.http.Query
 interface SellerAPI {
 
     @GET("seller/get")
-    suspend fun getAllSeller(@Query("offset") offset: Int) : Response<ListSellerDTO>
+    suspend fun getAllSeller(@Query("pageNumber") pageNumber: Int) : Response<ListSellerDTO>
 
     @GET("seller/{id}")
     suspend fun getSellerById(@Path("id") id: Int) : Response<SellerDTO>

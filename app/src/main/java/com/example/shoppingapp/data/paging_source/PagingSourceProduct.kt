@@ -19,9 +19,9 @@ class PagingSourceProduct(private val productAPI: ProductAPI) : PagingSource<Int
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
-            val offset = params.key ?: 0
+            val pageNumber = params.key ?: 0
             Log.e(StringConstants.DEBUG, "load: ${params.key} va ${params.loadSize}")
-            val response = productAPI.getProducts(offset)
+            val response = productAPI.getProducts(pageNumber)
             if (response.isSuccessful) {
                 val data = response.body()
                 val listProduct = data?.contents?.map {
@@ -29,8 +29,8 @@ class PagingSourceProduct(private val productAPI: ProductAPI) : PagingSource<Int
                 } ?: emptyList()
                 LoadResult.Page(
                     listProduct,
-                    prevKey = if (offset == 0) null else offset - 1,
-                    nextKey = if (listProduct.isEmpty()) null else offset + 1
+                    prevKey = if (pageNumber == 0) null else pageNumber - 1,
+                    nextKey = if (listProduct.isEmpty()) null else pageNumber + 1
                 )
             } else {
                 LoadResult.Error(Exception("Api Error"))

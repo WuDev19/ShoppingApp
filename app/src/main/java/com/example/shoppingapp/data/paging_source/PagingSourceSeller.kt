@@ -18,8 +18,8 @@ class PagingSourceSeller(private val sellerAPI: SellerAPI) :
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SellerInStore> {
         return try {
-            val offset = params.key ?: 0
-            val response = sellerAPI.getAllSeller(offset)
+            val pageNumber = params.key ?: 0
+            val response = sellerAPI.getAllSeller(pageNumber)
             if (response.isSuccessful) {
                 val data = response.body()
                 val listSeller = data?.contents?.map {
@@ -27,8 +27,8 @@ class PagingSourceSeller(private val sellerAPI: SellerAPI) :
                 } ?: emptyList()
                 LoadResult.Page(
                     listSeller,
-                    prevKey = if (offset == 0) null else offset - 1,
-                    nextKey = if (listSeller.isEmpty()) null else offset + 1
+                    prevKey = if (pageNumber == 0) null else pageNumber - 1,
+                    nextKey = if (listSeller.isEmpty()) null else pageNumber + 1
                 )
             } else {
                 LoadResult.Error(Exception("API ERROR"))

@@ -18,8 +18,8 @@ class PagingSourceOtherProductOfShop(private val productAPI: ProductAPI, private
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
         return try {
-            val offset = params.key ?: 0
-            val response = productAPI.getOtherProductsOfShop(id, offset)
+            val pageNumber = params.key ?: 0
+            val response = productAPI.getOtherProductsOfShop(id, pageNumber)
             if(response.isSuccessful){
                 val data = response.body()
                 val listSanPham = data?.contents?.map {
@@ -27,8 +27,8 @@ class PagingSourceOtherProductOfShop(private val productAPI: ProductAPI, private
                 } ?: emptyList()
                 LoadResult.Page(
                     listSanPham,
-                    prevKey = if(offset == 0) null else offset - 1,
-                    nextKey = if(listSanPham.isEmpty()) null else offset + 1
+                    prevKey = if(pageNumber == 0) null else pageNumber - 1,
+                    nextKey = if(listSanPham.isEmpty()) null else pageNumber + 1
                 )
             }
             else{

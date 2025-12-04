@@ -73,6 +73,7 @@
     <string name="products">Products</string>
     <string name="product_reviews">Product Reviews</string>
     <string name="all"><u>All</u></string>
+    <string name="allCart">All</string>
     <string name="buy_now">Buy Now</string>
     <string name="other_products_of_shop">Other Products of Shop</string>
     <string name="related_products">Related Products</string>
@@ -87,4 +88,8 @@
     <string name="best_sellers">Best Sellers</string>
     <string name="search_in_shop">Search in Shop</string>
     <string name="_10">(10)</string>
+    <string name="edit"><u>Edit</u></string>
+    <string name="minus">-</string>
+    <string name="plus">+</string>
+    <string name="buy">Buy</string>
 </resources>
