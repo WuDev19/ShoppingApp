@@ -1,20 +1,22 @@
 package com.example.shoppingapp.data.local.dao
 
 import androidx.paging.PagingSource
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.shoppingapp.data.local.entity.CartEntity
 
+@Dao
 interface CartDAO {
 
     @Query("SELECT * FROM carts WHERE maND = :id ORDER BY updateTime DESC")
-    fun getCartUser(id: Int): PagingSource<Int, CartEntity>
+    fun getPagingSourceCartUser(id: String): PagingSource<Int, CartEntity>
 
     @Query("DELETE FROM carts WHERE maND = :id")
-    fun clearCartUser(id: Int)
+    suspend fun clearCartUser(id: String)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(carts: List<CartEntity>)
+    suspend fun insert(carts: List<CartEntity>)
 
 }

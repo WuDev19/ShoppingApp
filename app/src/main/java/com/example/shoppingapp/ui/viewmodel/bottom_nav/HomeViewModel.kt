@@ -9,6 +9,7 @@ import com.example.shoppingapp.domain.usecase.authusecase.GetUserCurrentUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.GetProductUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.SearchProductUseCase
 import com.example.shoppingapp.ui.state.StateListener
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val getUserUseCase: GetUserCurrentUseCase,
     private val getProductsUseCase: GetProductUseCase,
-    private val searchProductUseCase: SearchProductUseCase
+    private val searchProductUseCase: SearchProductUseCase,
+    private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _stateUserName = MutableStateFlow<StateListener<String>>(StateListener.Idle)
@@ -48,6 +50,10 @@ class HomeViewModel @Inject constructor(
 
     fun setSearchProductStateFlow(text: String){
         _searchProduct.value = text
+    }
+
+    fun getCurrentUserId(): String {
+        return auth.currentUser?.uid ?: ""
     }
 
 }

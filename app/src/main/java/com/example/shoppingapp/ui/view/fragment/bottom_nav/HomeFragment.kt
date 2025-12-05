@@ -210,7 +210,10 @@ class HomeFragment : Fragment() {
         binding.imgCart.setOnClickListener {
             ViewPagerUtils.disableViewPager(viewPager2)
             BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
-            controller.navigate(R.id.action_homeFragment_to_cartFragment)
+            val bundle = bundleOf(
+                StringConstants.CURRENT_USER_ID to viewModel.getCurrentUserId()
+            )
+            controller.navigate(R.id.action_homeFragment_to_cartFragment, bundle)
         }
 
         binding.edtSearch.addTextChangedListener {

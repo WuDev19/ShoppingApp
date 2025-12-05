@@ -16,6 +16,7 @@
         android:layout_marginStart="20dp">
 
         <ImageView
+            android:id="@+id/img_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:importantForAccessibility="no"
@@ -34,6 +35,7 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_cart"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -53,6 +55,7 @@
         android:orientation="horizontal">
 
         <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/check_box_all_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/allCart"
@@ -60,16 +63,17 @@
             app:buttonTint="@color/button_color"/>
 
         <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_cost"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/_200000"
             android:textAlignment="viewEnd"
             android:textColor="@color/black"
             android:textStyle="bold"
             android:layout_marginEnd="15dp"/>
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_buy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"

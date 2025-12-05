@@ -2,6 +2,7 @@ package com.example.shoppingapp.data.remote.api
 
 import com.example.shoppingapp.data.remote.dto.CartAndCartItemRequest
 import com.example.shoppingapp.data.remote.dto.ListCartDTO
+import com.example.shoppingapp.data.remote.dto.ListCartItemDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,6 +16,9 @@ interface CartAPI {
     suspend fun createCart(@Body cartAndCartItemRequest: CartAndCartItemRequest): Response<Any>
 
     @GET("cart/get/{id}")
-    suspend fun getCartUser(@Path("id") id: Int, @Query("pageNumber") pageNumber: Int): Response<ListCartDTO>
+    suspend fun getCartUser(@Path("id") id: String, @Query("pageNumber") pageNumber: Int): Response<ListCartDTO>
+
+    @GET("cartItem/get/ofCart/{id}")
+    suspend fun getCartItemInCart(@Path("id") id: Int, @Query("pageNumber") pageNumber: Int): Response<ListCartItemDTO>
 
 }
