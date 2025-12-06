@@ -13,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.FragmentProductShopBinding
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
@@ -27,6 +28,7 @@ class ProductShopFragment : Fragment() {
     private val viewModel: ProductShopViewModel by viewModels()
     private var _binding: FragmentProductShopBinding? = null
     private val binding get() = _binding!!
+    private val controller by lazy { findNavController() }
     private val idSeller by lazy {
         arguments?.getInt(StringConstants.ID_SELLER)
     }
@@ -36,10 +38,19 @@ class ProductShopFragment : Fragment() {
                 StringConstants.ID_PRODUCT to productId,
                 StringConstants.ID_SELLER to sellerId
             )
-            findNavController().navigate(
-                R.id.action_sellerFragment_to_detailProductFragment,
-                bundle
-            )
+            if(controller.graph.id == R.id.nav_home){
+                controller.navigate(
+                    R.id.action_sellerFragment_to_detailProductFragment,
+                    bundle
+                )
+            }
+            else {
+                controller.navigate(
+                    R.id.action_sellerFragment2_to_detailProductFragment2,
+                    bundle
+                )
+            }
+            Log.e("testcontroller", "controller: ${controller.graph.id == R.id.nav_home}")
         }
     }
 

@@ -1,5 +1,8 @@
 package com.example.shoppingapp.ui.view.fragment
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.inputmethodservice.InputMethodService
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
@@ -55,6 +59,11 @@ class SearchProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.edtSearch.requestFocus()
+
+        val keyboard = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        keyboard.showSoftInput(binding.edtSearch, InputMethodManager.SHOW_IMPLICIT)
 
         binding.recyclerViewSearchProduct.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)

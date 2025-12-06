@@ -1,7 +1,6 @@
 package com.example.shoppingapp.ui.view.fragment.bottom_nav
 
 import android.content.res.ColorStateList
-import android.graphics.Rect
 import android.graphics.Typeface
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -12,17 +11,18 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ItemDecoration
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
@@ -40,6 +40,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class StoreFragment : Fragment() {
@@ -81,8 +82,13 @@ class StoreFragment : Fragment() {
         ProductAdapter(onItemClick = {
             productId, sellerId ->
             BottomNavigationUtils.hideBottomNavigation(bottomView)
-            controller.navigate(R.id.action_storeFragment_to_detailProductFragment2)
+            ViewPagerUtils.disableViewPager(viewPager2)
             categoryStoreAdapter.setListSaveTrace()
+            val bundle = bundleOf(
+                StringConstants.ID_PRODUCT to productId,
+                StringConstants.ID_SELLER to sellerId
+            )
+            controller.navigate(R.id.action_storeFragment_to_detailProductFragment2, bundle)
         })
     }
     private val categoryStoreAdapter: CategoryStoreAdapter by lazy {
@@ -102,7 +108,10 @@ class StoreFragment : Fragment() {
     }
     private val sellerInStoreAdapter: SellerInStoreAdapter by lazy {
         SellerInStoreAdapter {
-            Log.e(StringConstants.DEBUG, it.toString())
+            val bundle = bundleOf(
+                StringConstants.ID_SELLER to it
+            )
+            controller.navigate(R.id.action_storeFragment_to_sellerFragment2, bundle)
         }
     }
     private lateinit var controller: NavController
@@ -183,7 +192,7 @@ class StoreFragment : Fragment() {
 
         productAdapter.addLoadStateListener { state ->
             val done = state.refresh is LoadState.NotLoading
-            if (done && shouldScroll) {
+            if (done && shouldScroll) { //case click tu home sang
                 shouldScroll = false
                 val position = pairPositionAndName[name]
                 setHighlightCategory(position)

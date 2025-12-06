@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.shoppingapp.domain.model.Cart
+import com.example.shoppingapp.domain.model.CartItem
 import com.example.shoppingapp.domain.usecase.cartusecase.GetCartItemInCartUseCase
 import com.example.shoppingapp.domain.usecase.cartusecase.GetCartUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,5 +20,8 @@ class CartViewModel @Inject constructor(
 
     fun getCartUser(id: String): Flow<PagingData<Cart>> =
         getCartUserUseCase(id).cachedIn(viewModelScope)
+
+    fun getCartItemInCart(idCart: Int): Flow<PagingData<CartItem>> =
+        getCartItemInCartUseCase(idCart).cachedIn(viewModelScope)
 
 }

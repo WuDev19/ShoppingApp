@@ -24,11 +24,11 @@ class CartFragment : Fragment() {
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
     private val cartAdapter by lazy {
-        CartAdapter()
+        CartAdapter(viewModel, lifecycleScope)
     }
     private val currentUserId by lazy {
         arguments?.getString(StringConstants.CURRENT_USER_ID) ?: ""
-    }
+    } // TODO: ve sau chay id nay 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_storeFragment_to_cartFragment22"
             app:destination="@id/cartFragment2" />
+        <action
+            android:id="@+id/action_storeFragment_to_sellerFragment2"
+            app:destination="@id/sellerFragment2" />
     </fragment>
     <fragment
         android:id="@+id/detailProductFragment2"
@@ -27,5 +30,14 @@
         android:name="com.example.shoppingapp.ui.view.fragment.product.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/sellerFragment2"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.SellerFragment"
+        android:label="fragment_seller"
+        tools:layout="@layout/fragment_seller" >
+        <action
+            android:id="@+id/action_sellerFragment2_to_detailProductFragment2"
+            app:destination="@id/detailProductFragment2" />
+    </fragment>
 
 </navigation>
