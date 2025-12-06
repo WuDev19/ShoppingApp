@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.shoppingapp.R
+import com.example.shoppingapp.constants.CheckNavigation
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.FragmentProductShopBinding
@@ -38,19 +39,12 @@ class ProductShopFragment : Fragment() {
                 StringConstants.ID_PRODUCT to productId,
                 StringConstants.ID_SELLER to sellerId
             )
-            if(controller.graph.id == R.id.nav_home){
-                controller.navigate(
-                    R.id.action_sellerFragment_to_detailProductFragment,
-                    bundle
-                )
-            }
-            else {
-                controller.navigate(
-                    R.id.action_sellerFragment2_to_detailProductFragment2,
-                    bundle
-                )
-            }
-            Log.e("testcontroller", "controller: ${controller.graph.id == R.id.nav_home}")
+            CheckNavigation.navigateTo(
+                controller,
+                R.id.action_sellerFragment_to_detailProductFragment,
+                R.id.action_sellerFragment2_to_detailProductFragment2,
+                bundle
+            )
         }
     }
 
@@ -85,8 +79,6 @@ class ProductShopFragment : Fragment() {
         }
 
     }
-
-    fun getAdapter() = productAdapter
 
     override fun onDestroyView() {
         super.onDestroyView()

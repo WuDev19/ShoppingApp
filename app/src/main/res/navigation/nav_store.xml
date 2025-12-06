@@ -24,7 +24,17 @@
         android:id="@+id/detailProductFragment2"
         android:name="com.example.shoppingapp.ui.view.fragment.product.DetailProductFragment"
         android:label="fragment_detail_product"
-        tools:layout="@layout/fragment_detail_product" />
+        tools:layout="@layout/fragment_detail_product" >
+        <action
+            android:id="@+id/action_detailProductFragment2_self"
+            app:destination="@id/detailProductFragment2" />
+        <action
+            android:id="@+id/action_detailProductFragment2_to_imageDescriptionProductFragment2"
+            app:destination="@id/imageDescriptionProductFragment2" />
+        <action
+            android:id="@+id/action_detailProductFragment2_to_sellerFragment2"
+            app:destination="@id/sellerFragment2" />
+    </fragment>
     <fragment
         android:id="@+id/cartFragment2"
         android:name="com.example.shoppingapp.ui.view.fragment.product.CartFragment"
@@ -38,6 +48,31 @@
         <action
             android:id="@+id/action_sellerFragment2_to_detailProductFragment2"
             app:destination="@id/detailProductFragment2" />
+        <action
+            android:id="@+id/action_sellerFragment2_to_searchProductFragment2"
+            app:destination="@id/searchProductFragment2" />
+        <action
+            android:id="@+id/action_sellerFragment2_to_categoryProductDetailShopFragment2"
+            app:destination="@id/categoryProductDetailShopFragment2" />
     </fragment>
+    <fragment
+        android:id="@+id/searchProductFragment2"
+        android:name="com.example.shoppingapp.ui.view.fragment.SearchProductFragment"
+        android:label="fragment_search_product"
+        tools:layout="@layout/fragment_search_product" />
+    <fragment
+        android:id="@+id/categoryProductDetailShopFragment2"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.CategoryProductDetailShopFragment"
+        android:label="fragment_category_product_detail_shop"
+        tools:layout="@layout/fragment_category_product_detail_shop" >
+        <action
+            android:id="@+id/action_categoryProductDetailShopFragment2_to_detailProductFragment2"
+            app:destination="@id/detailProductFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/imageDescriptionProductFragment2"
+        android:name="com.example.shoppingapp.ui.view.fragment.product.ImageDescriptionProductFragment"
+        android:label="fragment_image_description_product"
+        tools:layout="@layout/fragment_image_description_product" />
 
 </navigation>

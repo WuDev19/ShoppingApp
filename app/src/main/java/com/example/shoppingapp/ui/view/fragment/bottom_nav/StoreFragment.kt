@@ -108,6 +108,9 @@ class StoreFragment : Fragment() {
     }
     private val sellerInStoreAdapter: SellerInStoreAdapter by lazy {
         SellerInStoreAdapter {
+            BottomNavigationUtils.hideBottomNavigation(bottomView)
+            ViewPagerUtils.disableViewPager(viewPager2)
+            categoryStoreAdapter.setListSaveTrace()
             val bundle = bundleOf(
                 StringConstants.ID_SELLER to it
             )

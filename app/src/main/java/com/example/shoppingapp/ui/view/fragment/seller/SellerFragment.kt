@@ -12,13 +12,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
+import com.example.shoppingapp.constants.BottomNavigationUtils
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.constants.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentSellerBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.viewmodel.seller.SellerViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +42,11 @@ class SellerFragment : Fragment() {
     private val productShopFragment by lazy { ProductShopFragment() }
     private val categoryShopFragment by lazy { CategoryShopFragment() }
     private val bestSellerFragment by lazy { BestSellerFragment() }
+    private val controller by lazy { findNavController() }
+    private val viewPager2: ViewPager2 by lazy { requireActivity().findViewById(R.id.view_pager2) }
+    private val bottomNavigationView: BottomNavigationView by lazy {
+        requireActivity().findViewById(R.id.bottom_navigation_view)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +72,7 @@ class SellerFragment : Fragment() {
 
         binding.tabLayout.addOnTabSelectedListener(object : OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                Log.e("PROSITIONTAB", "onTabSelected: " )
+                Log.e("PROSITIONTAB", "onTabSelected: ")
                 var fragment: Fragment? = null
                 when (tab?.position) {
                     0 -> {
@@ -122,15 +131,28 @@ class SellerFragment : Fragment() {
         }
 
         binding.imgBack.setOnClickListener {
-            findNavController().popBackStack()
+            if (controller.graph.id == R.id.nav_home) {
+                controller.popBackStack()
+            } else {
+                controller.popBackStack()
+                BottomNavigationUtils.showBottomNavigation(bottomNavigationView, controller)
+                ViewPagerUtils.enableViewPager(viewPager2, controller)
+            }
         }
 
         binding.edtSearch.setOnFocusChangeListener { _, focus ->
-            if(focus){
+            if (focus) {
                 val bundle = bundleOf(
                     StringConstants.ID_SELLER to idSeller
                 )
-                findNavController().navigate(R.id.action_sellerFragment_to_searchProductFragment, bundle)
+                if (controller.graph.id == R.id.nav_home) {
+                    controller.navigate(R.id.action_sellerFragment_to_searchProductFragment, bundle)
+                } else {
+                    controller.navigate(
+                        R.id.action_sellerFragment2_to_searchProductFragment2,
+                        bundle
+                    )
+                }
             }
         }
 
@@ -153,6 +175,7 @@ class SellerFragment : Fragment() {
             text = "Best Seller"
         }, 2, false)
 
+        //case nay khi seller frag trong backstack duoc show lai
         binding.tabLayout.getTabAt(viewModel.positionTabState)?.select()
         viewModel.fragment?.let {
             hideAndShow(it)

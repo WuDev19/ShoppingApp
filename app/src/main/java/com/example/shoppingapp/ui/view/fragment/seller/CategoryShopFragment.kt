@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shoppingapp.R
+import com.example.shoppingapp.constants.CheckNavigation
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.FragmentCategoryShopBinding
@@ -34,14 +35,20 @@ class CategoryShopFragment : Fragment() {
     private val idSeller by lazy {
         arguments?.getInt(StringConstants.ID_SELLER) ?: -1
     }
+    private val controller by lazy { findNavController() }
     private val categoryQuantityAdapter by lazy {
-        CategoryQuantityAdapter {categoryName, sl ->
+        CategoryQuantityAdapter { categoryName, sl ->
             val bundle = bundleOf(
                 StringConstants.ID_SELLER to idSeller,
                 StringConstants.CATEGORY_NAME to categoryName,
                 StringConstants.NUMBER_PRODUCT to sl
             )
-            findNavController().navigate(R.id.action_sellerFragment_to_categoryProductDetailShopFragment, bundle)
+            CheckNavigation.navigateTo(
+                controller,
+                R.id.action_sellerFragment_to_categoryProductDetailShopFragment,
+                R.id.action_sellerFragment2_to_categoryProductDetailShopFragment2,
+                bundle
+            )
         }
     }
 
@@ -66,16 +73,25 @@ class CategoryShopFragment : Fragment() {
         binding.recyclerViewCategoryShop.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = categoryQuantityAdapter
-            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+            addItemDecoration(
+                DividerItemDecoration(
+                    requireContext(),
+                    DividerItemDecoration.VERTICAL
+                )
+            )
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.stateCateAndQuantity.collectLatest {
                     when (it) {
                         is StateListener.Idle -> Unit
                         is StateListener.Loading -> Unit
-                        is StateListener.Error -> ToastUtils.showToast(requireContext(), it.e.toString())
+                        is StateListener.Error -> ToastUtils.showToast(
+                            requireContext(),
+                            it.e.toString()
+                        )
+
                         is StateListener.Success -> {
                             categoryQuantityAdapter.submitList(it.result)
                         }

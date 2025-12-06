@@ -7,12 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.viewpager2.widget.ViewPager2
+import com.example.shoppingapp.R
+import com.example.shoppingapp.constants.BottomNavigationUtils
 import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.constants.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentCartBinding
 import com.example.shoppingapp.ui.view.adapter.CartAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.product.CartViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -23,6 +29,9 @@ class CartFragment : Fragment() {
     private val viewModel: CartViewModel by viewModels()
     private var _binding: FragmentCartBinding? = null
     private val binding get() = _binding!!
+    private val controller by lazy { findNavController() }
+    private val viewPager2: ViewPager2 by lazy { requireActivity().findViewById(R.id.view_pager2) }
+    private val bottomNavigationView: BottomNavigationView by lazy { requireActivity().findViewById(R.id.bottom_navigation_view) }
     private val cartAdapter by lazy {
         CartAdapter(viewModel, lifecycleScope)
     }
@@ -34,7 +43,7 @@ class CartFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         lifecycleScope.launch {
-            viewModel.getCartUser("u01").collectLatest {
+            viewModel.getCartUser("u16").collectLatest {
                 cartAdapter.submitData(it)
             }
         }
@@ -56,6 +65,12 @@ class CartFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = cartAdapter
             addItemDecoration(MarginItemDecoration(10))
+        }
+
+        binding.imgBack.setOnClickListener {
+            controller.popBackStack()
+            BottomNavigationUtils.showBottomNavigation(bottomNavigationView, controller)
+            ViewPagerUtils.enableViewPager(viewPager2, controller)
         }
 
     }

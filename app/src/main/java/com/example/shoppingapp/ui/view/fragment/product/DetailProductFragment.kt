@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.BottomNavigationUtils
+import com.example.shoppingapp.constants.CheckNavigation
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.constants.ViewPagerUtils
@@ -47,6 +48,7 @@ class DetailProductFragment : Fragment() {
     private val viewModel: DetailProductViewModel by viewModels()
     private var _binding: FragmentDetailProductBinding? = null
     private val binding get() = _binding!!
+    private val controller by lazy { findNavController() }
     private val bottomNavigationView: BottomNavigationView by lazy {
         requireActivity().findViewById(R.id.bottom_navigation_view)
     }
@@ -59,7 +61,12 @@ class DetailProductFragment : Fragment() {
                 StringConstants.ID_PRODUCT to productId,
                 StringConstants.ID_SELLER to sellerId
             )
-            findNavController().navigate(R.id.action_detailProductFragment_self, bundle)
+            CheckNavigation.navigateTo(
+                controller,
+                R.id.action_detailProductFragment_self,
+                R.id.action_detailProductFragment2_self,
+                bundle
+            )
         }
     }
     private val productAdapter: ProductAdapter by lazy {
@@ -68,7 +75,12 @@ class DetailProductFragment : Fragment() {
                 StringConstants.ID_PRODUCT to productId,
                 StringConstants.ID_SELLER to sellerId
             )
-            findNavController().navigate(R.id.action_detailProductFragment_self, bundle)
+            CheckNavigation.navigateTo(
+                controller,
+                R.id.action_detailProductFragment_self,
+                R.id.action_detailProductFragment2_self,
+                bundle
+            )
         }
     }
     private lateinit var productDetail: ProductDetail
@@ -107,17 +119,27 @@ class DetailProductFragment : Fragment() {
 
         val headerDetailAdapter =
             HeaderDetailAdapter(
-                onImageClick = {it1 ->
+                onImageClick = { it1 ->
                     val bundle = bundleOf(
                         StringConstants.IMAGE_DESCRIPTION_SLIDER to it1
                     )
-                    findNavController().navigate(R.id.action_detailProductFragment_to_imageDescriptionProductFragment, bundle)
+                    CheckNavigation.navigateTo(
+                        controller,
+                        R.id.action_detailProductFragment_to_imageDescriptionProductFragment,
+                        R.id.action_detailProductFragment2_to_imageDescriptionProductFragment2,
+                        bundle
+                    )
                 },
-                onShowShopClick = {it1 ->
+                onShowShopClick = { it1 ->
                     val bundle = bundleOf(
                         StringConstants.ID_SELLER to it1
                     )
-                    findNavController().navigate(R.id.action_detailProductFragment_to_sellerFragment, bundle)
+                    CheckNavigation.navigateTo(
+                        controller,
+                        R.id.action_detailProductFragment_to_sellerFragment,
+                        R.id.action_detailProductFragment2_to_sellerFragment2,
+                        bundle
+                    )
                 }
             )
         val concatAdapter = ConcatAdapter(
@@ -155,7 +177,7 @@ class DetailProductFragment : Fragment() {
 
         // TODO: toi uu lai concat adapter thoi
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED){
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.productDetailStateFLow.collectLatest {
                     when (it) {
                         is StateListener.Idle -> Unit
@@ -175,12 +197,12 @@ class DetailProductFragment : Fragment() {
         }
 
         binding.imgBack.setOnClickListener {
-            findNavController().popBackStack()
+            controller.popBackStack()
             BottomNavigationUtils.showBottomNavigation(
                 bottomNavigationView,
-                findNavController()
+                controller
             ) // goi o day tai vi fragment nay chi dung sau moi home hoac store
-            ViewPagerUtils.enableViewPager(viewPager2, findNavController())
+            ViewPagerUtils.enableViewPager(viewPager2, controller)
         }
 
         binding.imgAddToCart.setOnClickListener {

@@ -26,16 +26,24 @@ class BestSellerFragment : Fragment() {
     private val viewModel: BestSellerViewModel by viewModels()
     private var _binding: FragmentBestSellerBinding? = null
     private val binding get() = _binding!!
+    private val controller by lazy { findNavController() }
     private val productAdapter by lazy {
         ProductAdapter { productId, sellerId ->
             val bundle = bundleOf(
                 StringConstants.ID_PRODUCT to productId,
                 StringConstants.ID_SELLER to sellerId
             )
-            findNavController().navigate(
-                R.id.action_sellerFragment_to_detailProductFragment,
-                bundle
-            )
+            if (controller.graph.id == R.id.nav_home) {
+                controller.navigate(
+                    R.id.action_sellerFragment_to_detailProductFragment,
+                    bundle
+                )
+            } else {
+                controller.navigate(
+                    R.id.action_sellerFragment2_to_detailProductFragment2,
+                    bundle
+                )
+            }
         }
     }
     private val idSeller by lazy {

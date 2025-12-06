@@ -26,6 +26,7 @@ class CategoryProductDetailShopFragment : Fragment() {
     private val viewModel: CategoryProductDetailShopViewModel by viewModels()
     private var _binding: FragmentCategoryProductDetailShopBinding? = null
     private val binding get() = _binding!!
+    private val controller by lazy { findNavController() }
     private val idSeller by lazy {
         arguments?.getInt(StringConstants.ID_SELLER) ?: -1
     }
@@ -36,15 +37,22 @@ class CategoryProductDetailShopFragment : Fragment() {
         arguments?.getInt(StringConstants.NUMBER_PRODUCT) ?: 0
     }
     private val productAdapter by lazy {
-        ProductAdapter{ productId, sellerId ->
+        ProductAdapter { productId, sellerId ->
             val bundle = bundleOf(
                 StringConstants.ID_PRODUCT to productId,
                 StringConstants.ID_SELLER to sellerId
             )
-            findNavController().navigate(
-                R.id.action_categoryProductDetailShopFragment_to_detailProductFragment,
-                bundle
-            )
+            if (controller.graph.id == R.id.nav_home) {
+                controller.navigate(
+                    R.id.action_categoryProductDetailShopFragment_to_detailProductFragment,
+                    bundle
+                )
+            } else {
+                controller.navigate(
+                    R.id.action_categoryProductDetailShopFragment2_to_detailProductFragment2,
+                    bundle
+                )
+            }
         }
     }
 
