@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class GetUserCurrentUseCase @Inject constructor(private val repo: UserRepository) {
 
-    suspend operator fun invoke(): Flow<StateListener<String>>{
+    operator fun invoke(): Flow<StateListener<String>>{
         return repo.getUserName()
     }
 

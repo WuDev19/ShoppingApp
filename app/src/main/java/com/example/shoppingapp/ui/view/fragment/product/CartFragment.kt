@@ -31,7 +31,11 @@ class CartFragment : Fragment() {
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
     private val viewPager2: ViewPager2 by lazy { requireActivity().findViewById(R.id.view_pager2) }
-    private val bottomNavigationView: BottomNavigationView by lazy { requireActivity().findViewById(R.id.bottom_navigation_view) }
+    private val bottomNavigationView: BottomNavigationView by lazy {
+        requireActivity().findViewById(
+            R.id.bottom_navigation_view
+        )
+    }
     private val cartAdapter by lazy {
         CartAdapter(viewModel, lifecycleScope)
     }

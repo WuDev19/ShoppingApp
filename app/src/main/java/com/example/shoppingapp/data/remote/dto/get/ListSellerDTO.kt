@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.remote.dto
+package com.example.shoppingapp.data.remote.dto.get
 
 data class ListSellerDTO(
     var pageNumber: Int? = null,

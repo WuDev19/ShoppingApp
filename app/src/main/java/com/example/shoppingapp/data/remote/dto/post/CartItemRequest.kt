@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.remote.dto
+package com.example.shoppingapp.data.remote.dto.post
 
 data class CartItemRequest(
     var maSanPhamDetail: Int,

@@ -1,8 +1,8 @@
 package com.example.shoppingapp.data.remote.api
 
-import com.example.shoppingapp.data.remote.dto.CartAndCartItemRequest
-import com.example.shoppingapp.data.remote.dto.ListCartDTO
-import com.example.shoppingapp.data.remote.dto.ListCartItemDTO
+import com.example.shoppingapp.data.remote.dto.post.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.get.ListCartDTO
+import com.example.shoppingapp.data.remote.dto.get.ListCartItemDTO
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

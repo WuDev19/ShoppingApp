@@ -1,4 +1,4 @@
-package com.example.shoppingapp.domain.model
+package com.example.shoppingapp.domain.model.product
 
 data class ProductChiTiet (
     var maSanPhamDeTail: Int? = null,

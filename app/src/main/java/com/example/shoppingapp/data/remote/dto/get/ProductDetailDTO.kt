@@ -1,6 +1,6 @@
-package com.example.shoppingapp.domain.model
+package com.example.shoppingapp.data.remote.dto.get
 
-data class ProductDetail(
+data class ProductDetailDTO(
     var maSp: Int? = null,
     var tenNguoiBan: String? = "",
     var maNguoiBan: Int? = null,

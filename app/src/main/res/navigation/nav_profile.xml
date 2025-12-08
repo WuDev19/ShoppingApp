@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_profileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_cartFragment3"
+            app:destination="@id/cartFragment3" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -28,4 +31,9 @@
         android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.ChangeNameFragment"
         android:label="fragment_change_name"
         tools:layout="@layout/fragment_change_name" />
+    <fragment
+        android:id="@+id/cartFragment3"
+        android:name="com.example.shoppingapp.ui.view.fragment.product.CartFragment"
+        android:label="fragment_cart"
+        tools:layout="@layout/fragment_cart" />
 </navigation>

@@ -22,7 +22,7 @@ import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.constants.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentDetailProductBinding
-import com.example.shoppingapp.domain.model.ProductDetail
+import com.example.shoppingapp.domain.model.product.ProductDetail
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.GridAdapterInsideConcatAdapter
 import com.example.shoppingapp.ui.view.adapter.HeaderDetailAdapter

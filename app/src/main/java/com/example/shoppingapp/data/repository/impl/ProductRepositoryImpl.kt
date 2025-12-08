@@ -19,9 +19,9 @@ import com.example.shoppingapp.data.repository.mediator.AllProductOfShopRemoteMe
 import com.example.shoppingapp.data.repository.mediator.BestSellerProductShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.CategoryAndProductShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.SearchProductInShopRemoteMediator
-import com.example.shoppingapp.domain.model.Product
-import com.example.shoppingapp.domain.model.ProductChiTiet
-import com.example.shoppingapp.domain.model.ProductDetail
+import com.example.shoppingapp.domain.model.product.ProductDisplay
+import com.example.shoppingapp.domain.model.product.ProductChiTiet
+import com.example.shoppingapp.domain.model.product.ProductDetail
 import com.example.shoppingapp.domain.repository.product.ProductRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +37,7 @@ class ProductRepositoryImpl @Inject constructor(
 ) :
     ProductRepository {
 
-    override fun getProducts(): Flow<PagingData<Product>> {
+    override fun getProducts(): Flow<PagingData<ProductDisplay>> {
         return Pager(
             config = PagingConfig(
                 pageSize = StringConstants.PAGE_SIZE,
@@ -47,7 +47,7 @@ class ProductRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getProductByCategory(theLoai: String): Flow<PagingData<Product>> {
+    override fun getProductByCategory(theLoai: String): Flow<PagingData<ProductDisplay>> {
         return Pager(
             config = PagingConfig(
                 pageSize = StringConstants.PAGE_SIZE,
@@ -59,7 +59,7 @@ class ProductRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun searchProduct(text: String): Flow<PagingData<Product>> {
+    override fun searchProduct(text: String): Flow<PagingData<ProductDisplay>> {
         return Pager(
             config = PagingConfig(
                 pageSize = StringConstants.PAGE_SIZE,
@@ -84,7 +84,7 @@ class ProductRepositoryImpl @Inject constructor(
         }
     }.flowOn(Dispatchers.IO)
 
-    override fun getOtherProductsOfShop(id: Int): Flow<PagingData<Product>> {
+    override fun getOtherProductsOfShop(id: Int): Flow<PagingData<ProductDisplay>> {
         return Pager(
             config = PagingConfig(
                 pageSize = StringConstants.PAGE_SIZE,
@@ -96,7 +96,7 @@ class ProductRepositoryImpl @Inject constructor(
         ).flow
     }
 
-    override fun getSanPhamRelated(id: Int): Flow<PagingData<Product>> {
+    override fun getSanPhamRelated(id: Int): Flow<PagingData<ProductDisplay>> {
         return Pager(
             config = PagingConfig(
                 pageSize = StringConstants.PAGE_SIZE,
@@ -122,7 +122,7 @@ class ProductRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun timKiemSanPhamCuaShop(id: Int, text: String): Flow<PagingData<Product>> {
+    override fun timKiemSanPhamCuaShop(id: Int, text: String): Flow<PagingData<ProductDisplay>> {
         return Pager(
             config = PagingConfig(
                 pageSize = StringConstants.PAGE_SIZE,
@@ -140,7 +140,7 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getAllProductOfShop(id: Int): Flow<PagingData<Product>> {
+    override fun getAllProductOfShop(id: Int): Flow<PagingData<ProductDisplay>> {
         val queryKey = "Shop_$id"
         return Pager(
             config = PagingConfig(
@@ -159,7 +159,7 @@ class ProductRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getBestSellerProductByShop(id: Int): Flow<PagingData<Product>> {
+    override fun getBestSellerProductByShop(id: Int): Flow<PagingData<ProductDisplay>> {
         val queryKey = "Best_Seller_Shop_$id"
         return Pager(
             config = PagingConfig(
@@ -186,7 +186,7 @@ class ProductRepositoryImpl @Inject constructor(
     override fun getCategoryAndProductByShop(
         id: Int,
         tenDanhMuc: String
-    ): Flow<PagingData<Product>> {
+    ): Flow<PagingData<ProductDisplay>> {
         val queryKey = "Category_Product_Shop_${id}_$tenDanhMuc"
         return Pager(
             config = PagingConfig(

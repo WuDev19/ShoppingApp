@@ -5,19 +5,19 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
-import com.example.shoppingapp.domain.model.Product
+import com.example.shoppingapp.domain.model.product.ProductDisplay
 
 class PagingSourceRelatedProduct(private val productAPI: ProductAPI, private val id: Int) :
-    PagingSource<Int, Product>() {
+    PagingSource<Int, ProductDisplay>() {
 
-    override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, ProductDisplay>): Int? {
         return state.anchorPosition?.let {
             state.closestPageToPosition(it)?.prevKey
                 ?: state.closestPageToPosition(it)?.nextKey
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductDisplay> {
         return try {
             val pageNumber = params.key ?: 0
             val response = productAPI.getSanPhamRelated(id, pageNumber)

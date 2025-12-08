@@ -4,7 +4,7 @@ import com.example.shoppingapp.data.local.entity.CartEntity
 import com.example.shoppingapp.data.local.entity.CartItemEntity
 import com.example.shoppingapp.domain.model.Cart
 import com.example.shoppingapp.domain.model.CartItem
-import com.example.shoppingapp.domain.model.ProductChiTiet
+import com.example.shoppingapp.domain.model.product.ProductChiTiet
 
 object CartEntityMapper {
 

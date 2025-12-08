@@ -1,5 +1,7 @@
 package com.example.shoppingapp.domain.model
 
+import com.example.shoppingapp.domain.model.product.ProductChiTiet
+
 data class CartItem (
     val cartItemId: Int? = 0,
     val maGioHang: Int? = 0,

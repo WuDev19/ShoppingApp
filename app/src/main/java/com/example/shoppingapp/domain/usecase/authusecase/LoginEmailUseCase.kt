@@ -1,6 +1,5 @@
 package com.example.shoppingapp.domain.usecase.authusecase
 
-import com.example.shoppingapp.domain.model.User
 import com.example.shoppingapp.domain.repository.authrepo.AuthRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.AuthResult

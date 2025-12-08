@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.remote.dto
+package com.example.shoppingapp.data.remote.dto.get
 
 data class DiaChiDTO(
     var maDiaChi: Int? = 0,

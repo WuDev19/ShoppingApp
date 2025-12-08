@@ -1,7 +1,7 @@
 package com.example.shoppingapp.data.remote.api
 
-import com.example.shoppingapp.data.remote.dto.ListSellerDTO
-import com.example.shoppingapp.data.remote.dto.SellerDTO
+import com.example.shoppingapp.data.remote.dto.get.ListSellerDTO
+import com.example.shoppingapp.data.remote.dto.get.SellerDTO
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

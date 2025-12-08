@@ -1,7 +1,7 @@
 package com.example.shoppingapp.domain.repository.cart
 
 import androidx.paging.PagingData
-import com.example.shoppingapp.data.remote.dto.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.post.CartAndCartItemRequest
 import com.example.shoppingapp.domain.model.Cart
 import com.example.shoppingapp.domain.model.CartItem
 import com.example.shoppingapp.ui.state.StateListener

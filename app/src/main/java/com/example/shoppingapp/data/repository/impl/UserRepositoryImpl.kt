@@ -1,6 +1,7 @@
 package com.example.shoppingapp.data.repository.impl
 
 import com.example.shoppingapp.data.remote.api.UserAPI
+import com.example.shoppingapp.domain.model.user.User
 import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
@@ -13,7 +14,7 @@ class UserRepositoryImpl @Inject constructor(
     private val userAPI: UserAPI
 ) : UserRepository {
 
-    override suspend fun getUserName(): Flow<StateListener<String>> = flow {
+    override fun getUserName(): Flow<StateListener<String>> = flow {
         try {
             val id = auth.currentUser!!.uid
             val responseGetUserName = userAPI.getUserName(id)
@@ -28,6 +29,10 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(StateListener.Error(e))
         }
+    }
+
+    override fun getCurrentUser(id: String): Flow<StateListener<User>> {
+        TODO("Not yet implemented")
     }
 
 }

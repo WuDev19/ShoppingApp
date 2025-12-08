@@ -20,12 +20,12 @@ import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.data.remote.dto.CartAndCartItemRequest
-import com.example.shoppingapp.data.remote.dto.CartItemRequest
-import com.example.shoppingapp.data.remote.dto.CartRequest
+import com.example.shoppingapp.data.remote.dto.post.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.post.CartItemRequest
+import com.example.shoppingapp.data.remote.dto.post.CartRequest
 import com.example.shoppingapp.databinding.CustomDialogImageDetailBinding
 import com.example.shoppingapp.databinding.FragmentAddToCartBinding
-import com.example.shoppingapp.domain.model.ProductChiTiet
+import com.example.shoppingapp.domain.model.product.ProductChiTiet
 import com.example.shoppingapp.domain.model.SizeColorModel
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.SizeAndColorAdapter
@@ -74,6 +74,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
+    // TODO: case neu chi co color hoac size cung phai xu ly
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

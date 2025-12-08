@@ -1,6 +1,6 @@
 package com.example.shoppingapp.data.remote.mapper
 
-import com.example.shoppingapp.data.remote.dto.SellerDTO
+import com.example.shoppingapp.data.remote.dto.get.SellerDTO
 import com.example.shoppingapp.domain.model.SellerInStore
 
 object SellerMapper {

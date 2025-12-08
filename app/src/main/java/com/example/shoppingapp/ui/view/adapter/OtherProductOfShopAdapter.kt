@@ -11,19 +11,19 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.databinding.OtherProductOfShopItemBinding
-import com.example.shoppingapp.domain.model.Product
+import com.example.shoppingapp.domain.model.product.ProductDisplay
 
 class OtherProductOfShopAdapter(private val onItemClick: (productId: Int, sellerId: Int) -> Unit) :
-    PagingDataAdapter<Product, OtherProductOfShopAdapter.OtherProductOfShopViewHolder>(diffCallback) {
+    PagingDataAdapter<ProductDisplay, OtherProductOfShopAdapter.OtherProductOfShopViewHolder>(diffCallback) {
 
     companion object {
 
-        val diffCallback = object : DiffUtil.ItemCallback<Product>() {
-            override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
+        val diffCallback = object : DiffUtil.ItemCallback<ProductDisplay>() {
+            override fun areItemsTheSame(oldItem: ProductDisplay, newItem: ProductDisplay): Boolean {
                 return oldItem.maSp == newItem.maSp
             }
 
-            override fun areContentsTheSame(oldItem: Product, newItem: Product): Boolean {
+            override fun areContentsTheSame(oldItem: ProductDisplay, newItem: ProductDisplay): Boolean {
                 return oldItem == newItem
             }
         }

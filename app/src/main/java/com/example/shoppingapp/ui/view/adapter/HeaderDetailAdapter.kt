@@ -14,7 +14,7 @@ import com.denzcoskun.imageslider.models.SlideModel
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.databinding.HeaderDetailItemLayoutBinding
-import com.example.shoppingapp.domain.model.ProductDetail
+import com.example.shoppingapp.domain.model.product.ProductDetail
 import java.util.stream.Collectors
 
 class HeaderDetailAdapter(

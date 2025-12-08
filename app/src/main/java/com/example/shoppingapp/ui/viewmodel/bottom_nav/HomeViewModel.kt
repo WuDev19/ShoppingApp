@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.shoppingapp.domain.model.Product
+import com.example.shoppingapp.domain.model.product.ProductDisplay
 import com.example.shoppingapp.domain.usecase.authusecase.GetUserCurrentUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.GetProductUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.SearchProductUseCase
@@ -46,7 +46,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getProduct(): Flow<PagingData<Product>> = getProductsUseCase().cachedIn(viewModelScope)
+    fun getProduct(): Flow<PagingData<ProductDisplay>> = getProductsUseCase().cachedIn(viewModelScope)
 
     fun setSearchProductStateFlow(text: String){
         _searchProduct.value = text

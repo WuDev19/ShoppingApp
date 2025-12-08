@@ -1,17 +1,16 @@
 package com.example.shoppingapp.data.remote.mapper
 
-import com.example.shoppingapp.data.remote.dto.CategoryAndProductDTO
-import com.example.shoppingapp.data.remote.dto.ProductChiTietDTO
-import com.example.shoppingapp.data.remote.dto.ProductDTO
-import com.example.shoppingapp.data.remote.dto.ProductDetailDTO
-import com.example.shoppingapp.domain.model.Product
-import com.example.shoppingapp.domain.model.ProductChiTiet
-import com.example.shoppingapp.domain.model.ProductDetail
+import com.example.shoppingapp.data.remote.dto.get.ProductChiTietDTO
+import com.example.shoppingapp.data.remote.dto.get.ProductDTO
+import com.example.shoppingapp.data.remote.dto.get.ProductDetailDTO
+import com.example.shoppingapp.domain.model.product.ProductDisplay
+import com.example.shoppingapp.domain.model.product.ProductChiTiet
+import com.example.shoppingapp.domain.model.product.ProductDetail
 
 object ProductDTOMapper {
 
-    fun mapToProduct(productDTO: ProductDTO): Product {
-        return Product(
+    fun mapToProduct(productDTO: ProductDTO): ProductDisplay {
+        return ProductDisplay(
             productDTO.maSp,
             productDTO.tenNguoiBan,
             productDTO.giaSp,
@@ -23,7 +22,7 @@ object ProductDTOMapper {
         )
     }
 
-    fun mapToProductDetail(productDetailDTO: ProductDetailDTO): ProductDetail{
+    fun mapToProductDetail(productDetailDTO: ProductDetailDTO): ProductDetail {
         return ProductDetail(
             productDetailDTO.maSp,
             productDetailDTO.tenNguoiBan,

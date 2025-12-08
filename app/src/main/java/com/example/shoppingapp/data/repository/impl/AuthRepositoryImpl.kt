@@ -1,8 +1,9 @@
 package com.example.shoppingapp.data.repository.impl
 
 import com.example.shoppingapp.data.remote.api.UserAPI
+import com.example.shoppingapp.data.remote.dto.post.UserDTORequest
 import com.example.shoppingapp.domain.model.AuthUser
-import com.example.shoppingapp.domain.model.User
+import com.example.shoppingapp.domain.model.user.User
 import com.example.shoppingapp.domain.repository.authrepo.AuthRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.AuthResult
@@ -50,10 +51,10 @@ class AuthRepositoryImpl @Inject constructor(
             try {
                 val createResult = auth.createUserWithEmailAndPassword(email, password).await()
                 createResult.user?.let {
-                    val user: User = if(phone.isEmpty()){
-                        User(it.uid, username, email, null, null, null)
+                    val user: UserDTORequest = if(phone.isEmpty()){
+                        UserDTORequest(it.uid, username, email, null, null)
                     } else{
-                        User(it.uid, username, email, phone, null, null)
+                        UserDTORequest(it.uid, username, email, phone, null)
                     }
                     firestore
                         .collection("user")
@@ -99,14 +100,28 @@ class AuthRepositoryImpl @Inject constructor(
                 val credential = GoogleAuthProvider.getCredential(idToken, null)
                 val result = auth.signInWithCredential(credential).await()
                 result.user?.let {
-                    val user = User(it.uid, it.displayName ?: "", it.email ?: "",
-                        it.phoneNumber, null, null)
+                    val user = UserDTORequest(it.uid, it.displayName, it.email,
+                        it.phoneNumber, null)
                     firestore
                         .collection("user")
                         .document(user.maND!!)
                         .set(user)
                         .await()
-                    emit(StateListener.Success(result))
+                    val responsePostUser = userAPI.createUser(user)
+                    if(responsePostUser.isSuccessful){
+                        val useTmp = responsePostUser.body()
+                        if(useTmp == null){
+                            emit(StateListener.Error(Exception("Can't not create user")))
+                            it.delete()
+                        }
+                        else{
+                            emit(StateListener.Success(result))
+                        }
+                    }
+                    else{
+                        emit(StateListener.Error(Exception(responsePostUser.message())))
+                        it.delete()
+                    }
                 } ?: emit(StateListener.Error(Exception("User not exist")))
             } catch (e: Exception) {
                 emit(StateListener.Error(e))

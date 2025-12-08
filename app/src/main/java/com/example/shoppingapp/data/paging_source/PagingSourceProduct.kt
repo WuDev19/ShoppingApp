@@ -6,18 +6,18 @@ import androidx.paging.PagingState
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
-import com.example.shoppingapp.domain.model.Product
+import com.example.shoppingapp.domain.model.product.ProductDisplay
 
-class PagingSourceProduct(private val productAPI: ProductAPI) : PagingSource<Int, Product>() {
+class PagingSourceProduct(private val productAPI: ProductAPI) : PagingSource<Int, ProductDisplay>() {
 
-    override fun getRefreshKey(state: PagingState<Int, Product>): Int? {
+    override fun getRefreshKey(state: PagingState<Int, ProductDisplay>): Int? {
         return state.anchorPosition?.let { position ->
             state.closestPageToPosition(position)?.prevKey
                 ?: state.closestPageToPosition(position)?.nextKey
         }
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Product> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductDisplay> {
         return try {
             val pageNumber = params.key ?: 0
             Log.e(StringConstants.DEBUG, "load: ${params.key} va ${params.loadSize}")

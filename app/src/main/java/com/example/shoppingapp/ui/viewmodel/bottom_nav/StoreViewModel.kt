@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.shoppingapp.domain.model.Product
+import com.example.shoppingapp.domain.model.product.ProductDisplay
 import com.example.shoppingapp.domain.model.SellerInStore
 import com.example.shoppingapp.domain.usecase.productusecase.GetProductByCategoryUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.GetProductUseCase
@@ -33,9 +33,9 @@ class StoreViewModel @Inject constructor(
         searchProductUseCase(it)
     }.cachedIn(viewModelScope)
 
-    fun getProduct(): Flow<PagingData<Product>> = productUseCase().cachedIn(viewModelScope)
+    fun getProduct(): Flow<PagingData<ProductDisplay>> = productUseCase().cachedIn(viewModelScope)
 
-    fun getProductByCategory(theLoai: String): Flow<PagingData<Product>> =
+    fun getProductByCategory(theLoai: String): Flow<PagingData<ProductDisplay>> =
         productByCategoryUseCase(theLoai).cachedIn(viewModelScope)
 
     fun getAllSeller(): Flow<PagingData<SellerInStore>> = getAllSellerUseCase().cachedIn(viewModelScope)

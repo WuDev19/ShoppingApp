@@ -4,10 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.shoppingapp.domain.model.Product
-import com.example.shoppingapp.domain.model.ProductDetail
+import com.example.shoppingapp.domain.model.product.ProductDisplay
+import com.example.shoppingapp.domain.model.product.ProductDetail
 import com.example.shoppingapp.domain.usecase.productusecase.GetOtherProductsOfShopUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.GetProductByCategoryUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.GetProductDetailUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.GetSanPhamRelatedUseCase
 import com.example.shoppingapp.ui.state.StateListener
@@ -39,10 +38,10 @@ class DetailProductViewModel @Inject constructor(
         }
     }
 
-    fun getOtherProductsOfShop(id: Int): Flow<PagingData<Product>> =
+    fun getOtherProductsOfShop(id: Int): Flow<PagingData<ProductDisplay>> =
         getOtherProductsOfShopUseCase(id).cachedIn(viewModelScope)
 
-    fun getSanPhamRelated(id: Int): Flow<PagingData<Product>> =
+    fun getSanPhamRelated(id: Int): Flow<PagingData<ProductDisplay>> =
         getSanPhamRelatedUseCase(id).cachedIn(viewModelScope)
 
 }

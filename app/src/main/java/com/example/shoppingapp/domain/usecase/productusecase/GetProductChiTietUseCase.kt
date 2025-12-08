@@ -1,6 +1,6 @@
 package com.example.shoppingapp.domain.usecase.productusecase
 
-import com.example.shoppingapp.domain.model.ProductChiTiet
+import com.example.shoppingapp.domain.model.product.ProductChiTiet
 import com.example.shoppingapp.domain.repository.product.ProductRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
