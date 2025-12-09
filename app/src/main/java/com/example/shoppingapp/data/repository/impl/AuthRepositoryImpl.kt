@@ -3,7 +3,6 @@ package com.example.shoppingapp.data.repository.impl
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.post.UserDTORequest
 import com.example.shoppingapp.domain.model.AuthUser
-import com.example.shoppingapp.domain.model.user.User
 import com.example.shoppingapp.domain.repository.authrepo.AuthRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.AuthResult

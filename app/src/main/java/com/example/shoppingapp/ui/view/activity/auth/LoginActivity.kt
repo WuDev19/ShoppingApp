@@ -27,13 +27,19 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential.Co
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var viewBinding : ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
-    private lateinit var credentialManager: CredentialManager
+
+    @Inject
+    lateinit var credentialManager: CredentialManager
+
+    @Inject
+    lateinit var request: GetCredentialRequest
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,16 +52,6 @@ class LoginActivity : AppCompatActivity() {
         email?.let {
             viewBinding.edtEmail.setText(it)
         } ?: viewBinding.edtEmail.setText("")
-
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setServerClientId(getString(R.string.web_client_id))
-            .setFilterByAuthorizedAccounts(false)
-            .setAutoSelectEnabled(false)
-            .build()
-
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
 
         lifecycleScope.launch {
             viewModel.state.collectLatest {
