@@ -46,7 +46,6 @@ class LoginActivity : AppCompatActivity() {
         enableEdgeToEdge()
         viewBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
-        credentialManager = CredentialManager.create(this)
 
         val email = intent.getStringExtra(StringConstants.EMAIL_KEY_INTENT)
         email?.let {

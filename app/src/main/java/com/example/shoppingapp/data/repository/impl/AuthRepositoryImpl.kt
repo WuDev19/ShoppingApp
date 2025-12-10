@@ -1,7 +1,7 @@
 package com.example.shoppingapp.data.repository.impl
 
 import com.example.shoppingapp.data.remote.api.UserAPI
-import com.example.shoppingapp.data.remote.dto.post.UserDTORequest
+import com.example.shoppingapp.data.remote.dto.post.UserDTOCreate
 import com.example.shoppingapp.domain.model.AuthUser
 import com.example.shoppingapp.domain.repository.authrepo.AuthRepository
 import com.example.shoppingapp.ui.state.StateListener
@@ -50,10 +50,10 @@ class AuthRepositoryImpl @Inject constructor(
             try {
                 val createResult = auth.createUserWithEmailAndPassword(email, password).await()
                 createResult.user?.let {
-                    val user: UserDTORequest = if(phone.isEmpty()){
-                        UserDTORequest(it.uid, username, email, null, null)
+                    val user: UserDTOCreate = if(phone.isEmpty()){
+                        UserDTOCreate(it.uid, username, email, null, null)
                     } else{
-                        UserDTORequest(it.uid, username, email, phone, null)
+                        UserDTOCreate(it.uid, username, email, phone, null)
                     }
                     firestore
                         .collection("user")
@@ -99,7 +99,7 @@ class AuthRepositoryImpl @Inject constructor(
                 val credential = GoogleAuthProvider.getCredential(idToken, null)
                 val result = auth.signInWithCredential(credential).await()
                 result.user?.let {
-                    val user = UserDTORequest(it.uid, it.displayName, it.email,
+                    val user = UserDTOCreate(it.uid, it.displayName, it.email,
                         it.phoneNumber, null)
                     firestore
                         .collection("user")

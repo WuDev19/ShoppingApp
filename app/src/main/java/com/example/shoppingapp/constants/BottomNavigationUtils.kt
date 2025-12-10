@@ -23,7 +23,8 @@ object BottomNavigationUtils {
     ) {
         if (!bottomNavigationView.isVisible && (
                     navController.currentDestination?.id == R.id.homeFragment ||
-                            navController.currentDestination?.id == R.id.storeFragment)
+                            navController.currentDestination?.id == R.id.storeFragment ||
+                            navController.currentDestination?.id == R.id.profileFragment)
         ) {
             bottomNavigationView.isVisible = true
             bottomNavigationView

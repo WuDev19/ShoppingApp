@@ -15,12 +15,15 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
+import com.example.shoppingapp.constants.BottomNavigationUtils
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.constants.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentProfileBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.activity.auth.LoginActivity
 import com.example.shoppingapp.ui.viewmodel.bottom_nav.ProfileViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -32,6 +35,11 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
+    private val bottomNavigationView: BottomNavigationView by lazy {
+        requireActivity().findViewById(
+            R.id.bottom_navigation_view
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -113,6 +121,7 @@ class ProfileFragment : Fragment() {
                 StringConstants.CURRENT_USER_ID to viewModel.getCurrentUserId()
             )
             controller.navigate(R.id.action_profileFragment_to_cartFragment3, bundle)
+            BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
         }
 
         binding.btnLogOut.setOnClickListener {

@@ -17,7 +17,7 @@ object StringConstants {
     const val MORNING = "Good morning"
     const val AFTERNOON = "Good afternoon"
     const val EVENING = "Good evening"
-    const val BASE_URL = "http://192.168.1.3:8080/api/"
+    const val BASE_URL = "http://192.168.22.61:8080/api/"
     const val SOLD = "Sold "
     const val DEBUG = "Debug"
     const val ID_PRODUCT = "id_product"
@@ -34,4 +34,9 @@ object StringConstants {
     const val CATEGORY_NAME = "category_name"
     const val NUMBER_PRODUCT = "number_product"
     const val CURRENT_USER_ID = "current_id"
+    const val UNKNOWN_NAME = "Unknown Name"
+    const val GENDER_NOT_DEFINE = "Not Define"
+    const val EMAIL_EXAMPLE = "example@gmail.com"
+    const val USERNAME = "username"
+
 }

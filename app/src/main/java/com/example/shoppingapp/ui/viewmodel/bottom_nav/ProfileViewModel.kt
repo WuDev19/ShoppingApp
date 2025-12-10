@@ -33,7 +33,7 @@ class ProfileViewModel @Inject constructor(
 
     fun getUserProfile(){
         viewModelScope.launch {
-            getUserInfoUseCase(getCurrentUserId()).collectLatest {
+            getUserInfoUseCase().collectLatest {
                 _userProfile.value = it
             }
         }

@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
                     val controller = navProfileHost.navController
                     if (controller.currentDestination?.id != R.id.profileFragment) {
                         controller.popBackStack()
+                        BottomNavigationUtils.showBottomNavigation(viewbinding.bottomNavigationView, controller)
                     } else {
                         setState()
                     }

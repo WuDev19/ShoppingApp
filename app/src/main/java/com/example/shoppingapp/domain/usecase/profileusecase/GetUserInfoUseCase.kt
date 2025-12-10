@@ -8,6 +8,6 @@ import javax.inject.Inject
 
 class GetUserInfoUseCase @Inject constructor(private val repo: UserRepository) {
 
-    operator fun invoke(id: String): Flow<StateListener<BaseUser>> = repo.getCurrentUser(id)
+    operator fun invoke(): Flow<StateListener<BaseUser>> = repo.getCurrentUser()
 
 }

@@ -1,7 +1,6 @@
 package com.example.shoppingapp.di
 
 import android.content.Context
-import androidx.credentials.Credential
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.example.shoppingapp.R

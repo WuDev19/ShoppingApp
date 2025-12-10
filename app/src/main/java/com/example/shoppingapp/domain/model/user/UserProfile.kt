@@ -1,6 +1,6 @@
 package com.example.shoppingapp.domain.model.user
 
-data class User(
+data class UserProfile(
     override var maND: String? = null,
     override var ten: String? = null,
     override var email: String? = null,
