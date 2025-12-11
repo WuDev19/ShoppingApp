@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.BottomNavigationUtils
@@ -39,6 +40,9 @@ class ProfileFragment : Fragment() {
         requireActivity().findViewById(
             R.id.bottom_navigation_view
         )
+    }
+    private val viewPager2: ViewPager2 by lazy {
+        requireActivity().findViewById(R.id.view_pager2)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -122,6 +126,7 @@ class ProfileFragment : Fragment() {
             )
             controller.navigate(R.id.action_profileFragment_to_cartFragment3, bundle)
             BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
+            ViewPagerUtils.disableViewPager(viewPager2)
         }
 
         binding.btnLogOut.setOnClickListener {

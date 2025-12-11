@@ -34,7 +34,6 @@ class EditProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getProfileUser()
     }
 
     override fun onCreateView(
@@ -47,6 +46,8 @@ class EditProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.getProfileUser()
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -68,7 +69,8 @@ class EditProfileFragment : Fragment() {
                                     .into(imgAvt)
                                 tvName.text = userProfile.ten ?: StringConstants.UNKNOWN_NAME
                                 tvGender.text =
-                                    userProfile.gioitinh ?: StringConstants.GENDER_NOT_DEFINE
+                                    if (userProfile.gioitinh == "ND") StringConstants.GENDER_NOT_DEFINE
+                                    else userProfile.gioitinh ?: StringConstants.GENDER_NOT_DEFINE
                                 tvEmailSetting.text =
                                     userProfile.email ?: StringConstants.EMAIL_EXAMPLE
                                 tvUserId.text = userProfile.maND
@@ -84,9 +86,10 @@ class EditProfileFragment : Fragment() {
             controller.popBackStack()
         }
 
-        binding.tvName.setOnClickListener {
+        binding.linearUsernameGender.setOnClickListener {
             val bundle = bundleOf(
-                StringConstants.USERNAME to userProfile.ten
+                StringConstants.USERNAME to userProfile.ten,
+                StringConstants.GENDER to userProfile.gioitinh
             )
             controller.navigate(R.id.action_editProfileFragment_to_changeNameFragment, bundle)
         }

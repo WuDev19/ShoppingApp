@@ -82,77 +82,83 @@
         android:textStyle="bold"
         android:textSize="18sp"/>
 
-    <RelativeLayout
-        android:id="@+id/relative_name"
+    <LinearLayout
+        android:id="@+id/linear_username_gender"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="20dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv1"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text="@string/username"
-            android:textColor="@color/black"
-            android:textStyle="normal" />
+        <RelativeLayout
+            android:id="@+id/relative_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_name"
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv1"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/username"
+                android:textColor="@color/black"
+                android:textStyle="normal" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="normal"
+                android:layout_toEndOf="@+id/tv1"
+                android:layout_toStartOf="@+id/img1" />
+
+            <ImageView
+                android:id="@+id/img1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:importantForAccessibility="no"
+                android:src="@drawable/icon_next_shop" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textStyle="normal"
-            android:layout_toEndOf="@+id/tv1"
-            android:layout_toStartOf="@+id/img1" />
+            android:layout_marginTop="10dp">
 
-        <ImageView
-            android:id="@+id/img1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:importantForAccessibility="no"
-            android:src="@drawable/icon_next_shop" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv2"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/gender"
+                android:textColor="@color/black"
+                android:textStyle="normal" />
 
-    </RelativeLayout>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="normal"
+                android:layout_toEndOf="@id/tv2"
+                android:layout_toStartOf="@id/img2" />
 
-    <RelativeLayout
-        android:id="@+id/relative_gender"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp">
+            <ImageView
+                android:id="@+id/img2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:importantForAccessibility="no"
+                android:src="@drawable/icon_next_shop" />
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv2"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text="@string/gender"
-            android:textColor="@color/black"
-            android:textStyle="normal" />
+        </RelativeLayout>
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_gender"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textStyle="normal"
-            android:layout_toEndOf="@id/tv2"
-            android:layout_toStartOf="@id/img2" />
-
-        <ImageView
-            android:id="@+id/img2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:importantForAccessibility="no"
-            android:src="@drawable/icon_next_shop" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"

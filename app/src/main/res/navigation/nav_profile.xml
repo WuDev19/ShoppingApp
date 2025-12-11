@@ -28,9 +28,9 @@
     </fragment>
     <fragment
         android:id="@+id/changeNameFragment"
-        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.ChangeNameFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.ChangeNameAndGenderFragment"
         android:label="fragment_change_name"
-        tools:layout="@layout/fragment_change_name" />
+        tools:layout="@layout/fragment_change_name_gender" />
     <fragment
         android:id="@+id/cartFragment3"
         android:name="com.example.shoppingapp.ui.view.fragment.product.CartFragment"

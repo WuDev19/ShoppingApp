@@ -15,7 +15,8 @@ object ViewPagerUtils {
     fun enableViewPager(viewPager2: ViewPager2, navController: NavController) {
         if (!viewPager2.isUserInputEnabled && (
                     navController.currentDestination?.id == R.id.homeFragment ||
-                            navController.currentDestination?.id == R.id.storeFragment)
+                            navController.currentDestination?.id == R.id.storeFragment ||
+                            navController.currentDestination?.id == R.id.profileFragment)
         ) {
             viewPager2.isUserInputEnabled = true
         }

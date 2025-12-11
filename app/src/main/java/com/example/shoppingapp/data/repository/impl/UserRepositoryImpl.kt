@@ -5,6 +5,7 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.exceptions.ClearCredentialException
 import com.example.shoppingapp.data.local.mapper.UserMapper
 import com.example.shoppingapp.data.remote.api.UserAPI
+import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.domain.repository.user.UserRepository
@@ -77,6 +78,20 @@ class UserRepositoryImpl @Inject constructor(
                 } ?: emit(StateListener.Error(Exception("Map Error")))
             } else {
                 emit(StateListener.Error(Exception("Bad Request")))
+            }
+        } catch (e: Exception) {
+            emit(StateListener.Error(e))
+        }
+    }
+
+    override fun changeNameGenderUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> = flow {
+        emit(StateListener.Loading)
+        try {
+            val response = userAPI.updateNameGender(userDTOUpdate)
+            if (response.isSuccessful) {
+                emit(StateListener.Success(Unit))
+            } else {
+                emit(StateListener.Error(Exception("Cant update")))
             }
         } catch (e: Exception) {
             emit(StateListener.Error(e))
