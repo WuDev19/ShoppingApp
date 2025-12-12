@@ -49,7 +49,7 @@
     <string name="tmp_user_id">HHAIJSH98HAB(</string>
     <string name="_0988178899">0988178899</string>
     <string name="close_account"><u>Close Account</u></string>
-    <string name="change_name">Change Name</string>
+    <string name="change_name">Change Name And Gender</string>
     <string name="update_your_name_to_keep_your_profile_accurate_and_personalized">Update your name to keep your profile accurate and personalized</string>
     <string name="save">Save</string>
     <string name="register_seller">Register Seller</string>
@@ -93,4 +93,6 @@
     <string name="plus">+</string>
     <string name="buy">Buy</string>
     <string name="female">Female</string>
+    <string name="change_email_and_phone">Change Email And Phone</string>
+    <string name="update_your_email_and_phone_number_to_keep_your_profile_accurate_and_personalized">Update your email and phone number to keep your profile accurate and personalized</string>
 </resources>

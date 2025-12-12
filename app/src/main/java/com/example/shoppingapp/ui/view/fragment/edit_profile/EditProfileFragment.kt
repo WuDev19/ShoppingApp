@@ -1,5 +1,8 @@
 package com.example.shoppingapp.ui.view.fragment.edit_profile
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.FragmentEditProfileBinding
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.ui.state.StateListener
@@ -92,6 +96,25 @@ class EditProfileFragment : Fragment() {
                 StringConstants.GENDER to userProfile.gioitinh
             )
             controller.navigate(R.id.action_editProfileFragment_to_changeNameFragment, bundle)
+        }
+
+        binding.linearEmailPhone.setOnClickListener {
+            val bundle = bundleOf(
+                StringConstants.EMAIL_BUNDLE to userProfile.email,
+                StringConstants.PHONE_BUNDLE to userProfile.sdt
+            )
+            controller.navigate(R.id.action_editProfileFragment_to_changeEmailAndPhoneFragment, bundle)
+        }
+
+        binding.imgCopy.setOnClickListener {
+            //clip manager cho phep sao chep hinh anh, text, du lieu giua cac app
+            val clipBoard =
+                requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager //lay clipboard manager
+            //clip data la doi tuong de chua du lieu muon copy vao clip board
+            val clipData = ClipData.newPlainText(StringConstants.LABEL_CLIP_DATA, binding.tvUserId.text.toString())
+            //thuc hien sao chep vao clip board
+            clipBoard.setPrimaryClip(clipData)
+            ToastUtils.showToast(requireContext(), StringConstants.COPY_ID)
         }
 
     }

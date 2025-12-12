@@ -203,10 +203,10 @@
             android:textColor="@color/black"
             android:textStyle="normal"
             android:layout_toEndOf="@id/tv3"
-            android:layout_toStartOf="@id/img3"/>
+            android:layout_toStartOf="@id/img_copy"/>
 
         <ImageView
-            android:id="@+id/img3"
+            android:id="@+id/img_copy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -215,76 +215,82 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/relative_email"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/linear_email_phone"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv4"
-            android:layout_width="130dp"
+        <RelativeLayout
+            android:id="@+id/relative_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv4"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/email"
+                android:textColor="@color/black"
+                android:textStyle="normal" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_email_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="normal"
+                android:layout_toStartOf="@+id/img4"
+                android:layout_toEndOf="@id/tv4"/>
+
+            <ImageView
+                android:id="@+id/img4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:importantForAccessibility="no"
+                android:src="@drawable/icon_next_shop" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_phone"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text="@string/email"
-            android:textColor="@color/black"
-            android:textStyle="normal" />
+            android:layout_marginTop="10dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_email_setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textStyle="normal"
-            android:layout_toStartOf="@+id/img4"
-            android:layout_toEndOf="@id/tv4"/>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv5"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:text="@string/phone_number"
+                android:textColor="@color/black"/>
 
-        <ImageView
-            android:id="@+id/img4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:importantForAccessibility="no"
-            android:src="@drawable/icon_next_shop" />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="normal"
+                android:layout_toStartOf="@+id/img5"
+                android:layout_toEndOf="@id/tv5"/>
 
-    </RelativeLayout>
+            <ImageView
+                android:id="@+id/img5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:importantForAccessibility="no"
+                android:src="@drawable/icon_next_shop" />
 
-    <RelativeLayout
-        android:id="@+id/relative_phone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginTop="10dp">
+        </RelativeLayout>
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv5"
-            android:layout_width="130dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:text="@string/phone_number"
-            android:textColor="@color/black"/>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_phone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black"
-            android:textStyle="normal"
-            android:layout_toStartOf="@+id/img5"
-            android:layout_toEndOf="@id/tv5"/>
-
-        <ImageView
-            android:id="@+id/img5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:importantForAccessibility="no"
-            android:src="@drawable/icon_next_shop" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"

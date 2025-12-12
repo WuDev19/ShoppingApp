@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_editProfileFragment_to_changeNameFragment"
             app:destination="@id/changeNameFragment" />
+        <action
+            android:id="@+id/action_editProfileFragment_to_changeEmailAndPhoneFragment"
+            app:destination="@id/changeEmailAndPhoneFragment" />
     </fragment>
     <fragment
         android:id="@+id/changeNameFragment"
@@ -36,4 +39,9 @@
         android:name="com.example.shoppingapp.ui.view.fragment.product.CartFragment"
         android:label="fragment_cart"
         tools:layout="@layout/fragment_cart" />
+    <fragment
+        android:id="@+id/changeEmailAndPhoneFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.ChangeEmailAndPhoneFragment"
+        android:label="fragment_change_email_and_phone"
+        tools:layout="@layout/fragment_change_email_and_phone" />
 </navigation>

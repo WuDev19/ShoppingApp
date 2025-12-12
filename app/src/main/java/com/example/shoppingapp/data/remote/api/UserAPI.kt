@@ -18,7 +18,7 @@ interface UserAPI {
     @GET("user/get/{id}")
     suspend fun getUser(@Path("id") id: String) : Response<UserDTOGet>
 
-    @PATCH("user/update/name")
-    suspend fun updateNameGender(@Body user: UserDTOUpdate) : Response<UserDTOGet>
+    @PATCH("user/update/field")
+    suspend fun updateField(@Body user: UserDTOUpdate) : Response<UserDTOGet>
 
 }

@@ -11,14 +11,18 @@ import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val userAPI: UserAPI,
-    private val credentialManager: CredentialManager
+    private val credentialManager: CredentialManager,
+    private val firestore: FirebaseFirestore
 ) : UserRepository {
 
     override fun getUserName(): Flow<StateListener<String>> = flow {
@@ -84,18 +88,36 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun changeNameGenderUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> = flow {
-        emit(StateListener.Loading)
-        try {
-            val response = userAPI.updateNameGender(userDTOUpdate)
+    override fun changeNameGenderUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> =
+        flow {
+            emit(StateListener.Loading)
+            try {
+                val response = userAPI.updateField(userDTOUpdate)
+                if (response.isSuccessful) {
+                    emit(StateListener.Success(Unit))
+                } else {
+                    emit(StateListener.Error(Exception("Cant update")))
+                }
+            } catch (e: Exception) {
+                emit(StateListener.Error(e))
+            }
+        }
+
+    //them cap nhat cho auth nua
+    // TODO: them man hinh de xac nhan cap nhat da roi moi goi api
+    override fun changeEmailPhoneUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> =
+        flow {
+            emit(StateListener.Loading)
+            userDTOUpdate.email?.let {
+                auth.currentUser?.verifyBeforeUpdateEmail(it)?.await()
+            }
+            val response = userAPI.updateField(userDTOUpdate)
             if (response.isSuccessful) {
                 emit(StateListener.Success(Unit))
             } else {
-                emit(StateListener.Error(Exception("Cant update")))
+                emit(StateListener.Error(Exception(response.message())))
             }
-        } catch (e: Exception) {
-            emit(StateListener.Error(e))
+        }.catch {
+            emit(StateListener.Error(Exception(it.message)))
         }
-    }
-
 }
