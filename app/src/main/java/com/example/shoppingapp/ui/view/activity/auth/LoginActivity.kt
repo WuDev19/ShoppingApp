@@ -71,8 +71,8 @@ class LoginActivity : AppCompatActivity() {
         }
 
         viewBinding.btnSignIn.setOnClickListener{
-            val mEmail = viewBinding.edtEmail.text.toString()
-            val password = viewBinding.edtPassword.text.toString()
+            val mEmail = viewBinding.edtEmail.text.toString().trim()
+            val password = viewBinding.edtPassword.text.toString().trim()
             viewModel.loginWithEmail(mEmail, password)
         }
 

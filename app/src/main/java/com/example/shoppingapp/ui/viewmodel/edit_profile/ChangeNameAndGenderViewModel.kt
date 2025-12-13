@@ -26,8 +26,13 @@ class ChangeNameAndGenderViewModel @Inject constructor(
 
     fun updateName(userDTOUpdate: UserDTOUpdate) {
         viewModelScope.launch {
-            changeNameGenderUseCase(userDTOUpdate).collectLatest {
-                _changeNameState.value = it
+            try {
+                changeNameGenderUseCase(userDTOUpdate).collectLatest {
+                    _changeNameState.value = it
+                }
+            }
+            catch (e: IllegalArgumentException){
+                _changeNameState.value = StateListener.Error(e)
             }
         }
     }

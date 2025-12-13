@@ -44,4 +44,6 @@ object StringConstants {
     const val EMAIL_BUNDLE = "email_bundle"
     const val PHONE_BUNDLE = "phone_bundle"
     const val GOOGLE_AUTH_ID = "google.com"
+    const val USER_ID_NULL_OR_EMPTY = "Check your Internet, maybe something has occurred"
+    const val SHARE_VERIFY_EMAIL = "verified"
 }

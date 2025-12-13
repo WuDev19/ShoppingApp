@@ -12,9 +12,11 @@ import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -40,7 +42,7 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(StateListener.Error(e))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun getCurrentUser(): Flow<StateListener<BaseUser>> = flow {
         emit(StateListener.Loading)
@@ -57,7 +59,7 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(StateListener.Error(e))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun logout(): Flow<StateListener<Boolean>> = flow {
         emit(StateListener.Loading)
@@ -69,7 +71,7 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: ClearCredentialException) {
             emit(StateListener.Error(e))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun getProfileUser(): Flow<StateListener<UserProfile>> = flow {
         emit(StateListener.Loading)
@@ -86,13 +88,25 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             emit(StateListener.Error(e))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun changeNameGenderUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> =
         flow {
             emit(StateListener.Loading)
             try {
-                val response = userAPI.updateField(userDTOUpdate)
+                if (userDTOUpdate.ten != null) {
+                    firestore.collection("user")
+                        .document(userDTOUpdate.maND!!)
+                        .update("ten", userDTOUpdate.ten)
+                        .await()
+                }
+                if (userDTOUpdate.gioitinh != null) {
+                    firestore.collection("user")
+                        .document(userDTOUpdate.maND!!)
+                        .update("gioitinh", userDTOUpdate.gioitinh)
+                        .await()
+                }
+                val response = userAPI.updateNameGender(userDTOUpdate)
                 if (response.isSuccessful) {
                     emit(StateListener.Success(Unit))
                 } else {
@@ -101,17 +115,16 @@ class UserRepositoryImpl @Inject constructor(
             } catch (e: Exception) {
                 emit(StateListener.Error(e))
             }
-        }
+        }.flowOn(Dispatchers.IO)
 
-    //them cap nhat cho auth nua
-    // TODO: them man hinh de xac nhan cap nhat da roi moi goi api
-    override fun changeEmailPhoneUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> =
+    override fun changePhone(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> =
         flow {
             emit(StateListener.Loading)
-            userDTOUpdate.email?.let {
-                auth.currentUser?.verifyBeforeUpdateEmail(it)?.await()
-            }
-            val response = userAPI.updateField(userDTOUpdate)
+            firestore.collection("user")
+                .document(userDTOUpdate.maND!!)
+                .update("sdt", userDTOUpdate.sdt)
+                .await()
+            val response = userAPI.updatePhone(userDTOUpdate.maND!!, userDTOUpdate.sdt!!)
             if (response.isSuccessful) {
                 emit(StateListener.Success(Unit))
             } else {
@@ -119,5 +132,41 @@ class UserRepositoryImpl @Inject constructor(
             }
         }.catch {
             emit(StateListener.Error(Exception(it.message)))
-        }
+        }.flowOn(Dispatchers.IO)
+
+    //xac nhan email xong roi moi cap nhat tren db
+    override fun confirmChangeEmail(id: String, email: String): Flow<StateListener<Unit>> =
+        flow {
+            emit(StateListener.Loading)
+            firestore.collection("user")
+                .document(id)
+                .update("email", email)
+                .await()
+            val response = userAPI.updateEmail(id, email)
+            if (response.isSuccessful) {
+                emit(StateListener.Success(Unit))
+            } else {
+                emit(StateListener.Error(Exception(response.message())))
+            }
+        }.catch {
+            emit(StateListener.Error(Exception(it.message)))
+        }.flowOn(Dispatchers.IO)
+
+    override fun changeEmail(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> =
+        flow {
+            emit(StateListener.Loading)
+            //cap nhat phone luon
+            userDTOUpdate.sdt?.let {
+                firestore.collection("user")
+                    .document(userDTOUpdate.maND!!)
+                    .update("sdt", it)
+                    .await()
+                userAPI.updatePhone(userDTOUpdate.maND!!, it)
+            }
+            auth.currentUser?.verifyBeforeUpdateEmail(userDTOUpdate.email!!)?.await()
+            emit(StateListener.Success(Unit))
+        }.catch {
+            emit(StateListener.Error(Exception(it.message)))
+        }.flowOn(Dispatchers.IO)
+
 }

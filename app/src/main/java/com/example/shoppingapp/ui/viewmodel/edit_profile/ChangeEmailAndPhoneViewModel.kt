@@ -1,10 +1,12 @@
 package com.example.shoppingapp.ui.viewmodel.edit_profile
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
-import com.example.shoppingapp.domain.usecase.profileusecase.ChangeEmailPhoneUseCase
+import com.example.shoppingapp.domain.usecase.profileusecase.ChangeEmailUseCase
+import com.example.shoppingapp.domain.usecase.profileusecase.ChangePhoneUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,17 +18,40 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ChangeEmailAndPhoneViewModel @Inject constructor(
-    private val changeEmailPhoneUseCase: ChangeEmailPhoneUseCase,
+    private val changePhoneUseCase: ChangePhoneUseCase,
+    private val changeEmailUseCase: ChangeEmailUseCase,
+    private val sharedPreferences: SharedPreferences,
     val auth: FirebaseAuth
 ) : ViewModel() {
 
-    private val _changeEmailPhoneState: MutableStateFlow<StateListener<Unit>> = MutableStateFlow(StateListener.Idle)
-    val changeEmailPhoneState = _changeEmailPhoneState.asStateFlow()
+    private val _changePhoneState: MutableStateFlow<StateListener<Unit>> = MutableStateFlow(StateListener.Idle)
+    val changePhoneState = _changePhoneState.asStateFlow()
 
-    fun changeEmailPhone(userDTOUpdate: UserDTOUpdate){
+    private val _changeEmailState: MutableStateFlow<StateListener<Unit>> = MutableStateFlow(StateListener.Idle)
+    val changeEmailState = _changeEmailState.asStateFlow()
+
+    fun changePhone(userDTOUpdate: UserDTOUpdate){
         viewModelScope.launch {
-            changeEmailPhoneUseCase(userDTOUpdate).collectLatest {
-                _changeEmailPhoneState.value = it
+            try {
+                changePhoneUseCase(userDTOUpdate).collectLatest {
+                    _changePhoneState.value = it
+                }
+            }
+            catch (e: IllegalArgumentException) {
+                _changePhoneState.value = StateListener.Error(e)
+            }
+        }
+    }
+
+    fun changeEmail(userDTOUpdate: UserDTOUpdate) {
+        viewModelScope.launch {
+            try {
+                changeEmailUseCase(userDTOUpdate).collectLatest {
+                    _changeEmailState.value = it
+                }
+            }
+            catch (e: IllegalArgumentException){
+                _changeEmailState.value = StateListener.Error(e)
             }
         }
     }
@@ -40,6 +65,13 @@ class ChangeEmailAndPhoneViewModel @Inject constructor(
         return auth.currentUser?.providerData?.any {
             it.providerId == StringConstants.GOOGLE_AUTH_ID
         } ?: false
+    }
+
+    fun writeStateEmailVerify(){
+        sharedPreferences.edit().apply {
+            putBoolean(StringConstants.SHARE_VERIFY_EMAIL, false)
+            apply()
+        }
     }
 
 }

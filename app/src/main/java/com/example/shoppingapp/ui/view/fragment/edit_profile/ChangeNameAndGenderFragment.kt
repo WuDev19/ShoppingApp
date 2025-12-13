@@ -7,7 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -53,6 +52,7 @@ class ChangeNameAndGenderFragment : Fragment() {
                         is StateListener.Error -> {
                             binding.progressBar.visibility = View.GONE
                             Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e.toString()}")
+                            ToastUtils.showToast(requireContext(), it.e?.message.toString())
                         }
 
                         is StateListener.Success -> {
@@ -71,8 +71,8 @@ class ChangeNameAndGenderFragment : Fragment() {
 
         binding.apply {
             btnSave.setOnClickListener {
-                val firstName = edtFirstName.text.toString()
-                val lastName = edtLastName.text.toString()
+                val firstName = edtFirstName.text.toString().trim()
+                val lastName = edtLastName.text.toString().trim()
                 val fullName = buildString {
                     append(firstName)
                     append(" ")

@@ -13,6 +13,10 @@ interface UserRepository {
     fun logout(): Flow<StateListener<Boolean>>
     fun getProfileUser(): Flow<StateListener<UserProfile>>
     fun changeNameGenderUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
-    fun changeEmailPhoneUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
+    fun changePhone(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
+
+    fun confirmChangeEmail(id: String, email: String): Flow<StateListener<Unit>>
+
+    fun changeEmail(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
 
 }
