@@ -3,6 +3,7 @@ package com.example.shoppingapp.ui.view.fragment.edit_profile
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +11,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.registerForActivityResult
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -36,8 +40,16 @@ class EditProfileFragment : Fragment() {
     private val controller by lazy { findNavController() }
     private lateinit var userProfile: UserProfile
 
+    private lateinit var resultLauncher: ActivityResultLauncher<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        resultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){
+            uri ->
+            uri?.let {
+                Log.e(StringConstants.DEBUG, "onCreate: $it")
+            }
+        }
     }
 
     override fun onCreateView(
@@ -86,35 +98,43 @@ class EditProfileFragment : Fragment() {
             }
         }
 
-        binding.imgBack.setOnClickListener {
-            controller.popBackStack()
-        }
+        binding.apply {
 
-        binding.linearUsernameGender.setOnClickListener {
-            val bundle = bundleOf(
-                StringConstants.USERNAME to userProfile.ten,
-                StringConstants.GENDER to userProfile.gioitinh
-            )
-            controller.navigate(R.id.action_editProfileFragment_to_changeNameFragment, bundle)
-        }
+            imgBack.setOnClickListener {
+                controller.popBackStack()
+            }
 
-        binding.linearEmailPhone.setOnClickListener {
-            val bundle = bundleOf(
-                StringConstants.EMAIL_BUNDLE to userProfile.email,
-                StringConstants.PHONE_BUNDLE to userProfile.sdt
-            )
-            controller.navigate(R.id.action_editProfileFragment_to_changeEmailAndPhoneFragment, bundle)
-        }
+            linearUsernameGender.setOnClickListener {
+                val bundle = bundleOf(
+                    StringConstants.USERNAME to userProfile.ten,
+                    StringConstants.GENDER to userProfile.gioitinh
+                )
+                controller.navigate(R.id.action_editProfileFragment_to_changeNameFragment, bundle)
+            }
 
-        binding.imgCopy.setOnClickListener {
-            //clip manager cho phep sao chep hinh anh, text, du lieu giua cac app
-            val clipBoard =
-                requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager //lay clipboard manager
-            //clip data la doi tuong de chua du lieu muon copy vao clip board
-            val clipData = ClipData.newPlainText(StringConstants.LABEL_CLIP_DATA, binding.tvUserId.text.toString())
-            //thuc hien sao chep vao clip board
-            clipBoard.setPrimaryClip(clipData)
-            ToastUtils.showToast(requireContext(), StringConstants.COPY_ID)
+            linearEmailPhone.setOnClickListener {
+                val bundle = bundleOf(
+                    StringConstants.EMAIL_BUNDLE to userProfile.email,
+                    StringConstants.PHONE_BUNDLE to userProfile.sdt
+                )
+                controller.navigate(R.id.action_editProfileFragment_to_changeEmailAndPhoneFragment, bundle)
+            }
+
+            imgCopy.setOnClickListener {
+                //clip manager cho phep sao chep hinh anh, text, du lieu giua cac app
+                val clipBoard =
+                    requireActivity().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager //lay clipboard manager
+                //clip data la doi tuong de chua du lieu muon copy vao clip board
+                val clipData = ClipData.newPlainText(StringConstants.LABEL_CLIP_DATA, binding.tvUserId.text.toString())
+                //thuc hien sao chep vao clip board
+                clipBoard.setPrimaryClip(clipData)
+                ToastUtils.showToast(requireContext(), StringConstants.COPY_ID)
+            }
+
+            imgChangeAvt.setOnClickListener {
+                resultLauncher.launch("image/*")
+            }
+
         }
 
     }

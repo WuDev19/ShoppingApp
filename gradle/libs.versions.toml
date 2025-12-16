@@ -1,6 +1,7 @@
 [versions]
 agp = "8.6.0"
 circleimageview = "3.1.0"
+cloudinaryAndroid = "3.1.2"
 converterMoshi = "2.11.0"
 credentials = "1.5.0"
 firebaseBom = "34.4.0"
@@ -44,6 +45,9 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRunt
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+cloudinary-android = { module = "com.cloudinary:cloudinary-android", version.ref = "cloudinaryAndroid" }
+cloudinary-android-download = { module = "com.cloudinary:cloudinary-android-download", version.ref = "cloudinaryAndroid" }
+cloudinary-android-preprocess = { module = "com.cloudinary:cloudinary-android-preprocess", version.ref = "cloudinaryAndroid" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }

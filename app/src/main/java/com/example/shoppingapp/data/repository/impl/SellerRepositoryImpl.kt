@@ -6,7 +6,7 @@ import androidx.paging.PagingData
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.SellerMapper
 import com.example.shoppingapp.data.remote.api.SellerAPI
-import com.example.shoppingapp.data.paging_source.PagingSourceSeller
+import com.example.shoppingapp.data.source.paging_source.PagingSourceSeller
 import com.example.shoppingapp.domain.model.SellerInStore
 import com.example.shoppingapp.domain.repository.seller.SellerRepository
 import com.example.shoppingapp.ui.state.StateListener

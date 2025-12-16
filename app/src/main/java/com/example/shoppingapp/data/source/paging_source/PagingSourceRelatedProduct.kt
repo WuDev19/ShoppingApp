@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.paging_source
+package com.example.shoppingapp.data.source.paging_source
 
 import android.util.Log
 import androidx.paging.PagingSource

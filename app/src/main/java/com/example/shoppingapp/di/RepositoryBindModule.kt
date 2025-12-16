@@ -27,7 +27,7 @@ abstract class RepositoryBindModule {
         impl: AuthRepositoryImpl
     ): AuthRepository
 
-    @Binds
+    @Binds //ko tạo object thừa, phù hợp với interface
     @Singleton
     abstract fun bindUserRepository(
         impl: UserRepositoryImpl

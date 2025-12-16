@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.paging_source
+package com.example.shoppingapp.data.source.paging_source
 
 import android.util.Log
 import androidx.paging.PagingSource
@@ -8,10 +8,7 @@ import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 
-class PagingSourceProductByCategory(
-    private val productAPI: ProductAPI,
-    private val theLoai: String
-) : PagingSource<Int, ProductDisplay>() {
+class PagingSourceProduct(private val productAPI: ProductAPI) : PagingSource<Int, ProductDisplay>() {
 
     override fun getRefreshKey(state: PagingState<Int, ProductDisplay>): Int? {
         return state.anchorPosition?.let { position ->
@@ -23,8 +20,8 @@ class PagingSourceProductByCategory(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductDisplay> {
         return try {
             val pageNumber = params.key ?: 0
-            val response = productAPI.getProductByCategory(theLoai, pageNumber)
-            Log.e(StringConstants.DEBUG, "load: ${params.loadSize}")
+            Log.e(StringConstants.DEBUG, "load: ${params.key} va ${params.loadSize}")
+            val response = productAPI.getProducts(pageNumber)
             if (response.isSuccessful) {
                 val data = response.body()
                 val listProduct = data?.contents?.map {

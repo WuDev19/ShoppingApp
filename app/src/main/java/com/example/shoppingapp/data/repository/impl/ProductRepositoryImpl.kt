@@ -10,11 +10,11 @@ import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.mapper.ProductEntityMapper
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
-import com.example.shoppingapp.data.paging_source.PagingSourceOtherProductOfShop
-import com.example.shoppingapp.data.paging_source.PagingSourceProduct
-import com.example.shoppingapp.data.paging_source.PagingSourceProductByCategory
-import com.example.shoppingapp.data.paging_source.PagingSourceRelatedProduct
-import com.example.shoppingapp.data.paging_source.PagingSourceSearchProduct
+import com.example.shoppingapp.data.source.paging_source.PagingSourceOtherProductOfShop
+import com.example.shoppingapp.data.source.paging_source.PagingSourceProduct
+import com.example.shoppingapp.data.source.paging_source.PagingSourceProductByCategory
+import com.example.shoppingapp.data.source.paging_source.PagingSourceRelatedProduct
+import com.example.shoppingapp.data.source.paging_source.PagingSourceSearchProduct
 import com.example.shoppingapp.data.repository.mediator.AllProductOfShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.BestSellerProductShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.CategoryAndProductShopRemoteMediator

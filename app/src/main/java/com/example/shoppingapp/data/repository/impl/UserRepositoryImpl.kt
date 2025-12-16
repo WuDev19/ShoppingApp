@@ -1,11 +1,14 @@
 package com.example.shoppingapp.data.repository.impl
 
+import android.net.Uri
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.exceptions.ClearCredentialException
 import com.example.shoppingapp.data.local.mapper.UserMapper
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
+import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
+import com.example.shoppingapp.di.qualifier.AvatarUploader
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.domain.repository.user.UserRepository
@@ -24,7 +27,8 @@ class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val userAPI: UserAPI,
     private val credentialManager: CredentialManager,
-    private val firestore: FirebaseFirestore
+    private val firestore: FirebaseFirestore,
+    @param:AvatarUploader private val avatarUploader: CloudinaryUploader
 ) : UserRepository {
 
     override fun getUserName(): Flow<StateListener<String>> = flow {
@@ -168,5 +172,14 @@ class UserRepositoryImpl @Inject constructor(
         }.catch {
             emit(StateListener.Error(Exception(it.message)))
         }.flowOn(Dispatchers.IO)
+
+
+    override fun updateAvatar(url: String): Flow<StateListener<String>> = flow {
+
+    }.flowOn(Dispatchers.IO)
+
+    override fun uploadAvatarToCloudinary(uri: Uri): Flow<StateListener<String>> = flow {
+
+    }.flowOn(Dispatchers.IO)
 
 }

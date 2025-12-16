@@ -29,7 +29,6 @@ class ChangeNameAndGenderFragment : Fragment() {
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
     private var lastCheck = -1
-
     private var gender: String? = null
 
     override fun onCreateView(
@@ -77,6 +76,10 @@ class ChangeNameAndGenderFragment : Fragment() {
                     append(firstName)
                     append(" ")
                     append(lastName)
+                }
+                if(fullName.isEmpty() && gender == null){
+                    ToastUtils.showToast(requireContext(), "Please fill at least one information")
+                    return@setOnClickListener
                 }
                 viewModel.updateName(
                     UserDTOUpdate(

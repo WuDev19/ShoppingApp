@@ -1,5 +1,6 @@
 package com.example.shoppingapp.domain.repository.user
 
+import android.net.Uri
 import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
@@ -18,5 +19,9 @@ interface UserRepository {
     fun confirmChangeEmail(id: String, email: String): Flow<StateListener<Unit>>
 
     fun changeEmail(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
+
+    fun updateAvatar(url: String): Flow<StateListener<String>>
+
+    fun uploadAvatarToCloudinary(uri: Uri): Flow<StateListener<String>>
 
 }
