@@ -57,4 +57,5 @@ object StringConstants {
     const val FOLDER_PRODUCT_VIDEO = "products/videos"
     const val RESOURCE_TYPE = "resource_type"
     const val TYPE_VIDEO = "video"
+    const val URL_SECURE_MISSING = "secure_url_missing"
 }

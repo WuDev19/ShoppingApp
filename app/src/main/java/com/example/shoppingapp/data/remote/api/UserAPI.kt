@@ -28,4 +28,7 @@ interface UserAPI {
     @PATCH("user/update/email/{id}")
     suspend fun updateEmail(@Path("id") id: String, @Query("email") email: String) : Response<UserDTOGet>
 
+    @PATCH("user/update/avt/{id}")
+    suspend fun updateAvatar(@Path("id") id: String, @Query("url") url: String) : Response<UserDTOGet>
+
 }

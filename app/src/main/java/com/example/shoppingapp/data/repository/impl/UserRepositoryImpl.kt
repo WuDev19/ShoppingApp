@@ -6,6 +6,7 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.exceptions.ClearCredentialException
 import com.example.shoppingapp.data.local.mapper.UserMapper
 import com.example.shoppingapp.data.remote.api.UserAPI
+import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
 import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.AvatarUploader
@@ -15,6 +16,7 @@ import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -28,7 +30,8 @@ class UserRepositoryImpl @Inject constructor(
     private val userAPI: UserAPI,
     private val credentialManager: CredentialManager,
     private val firestore: FirebaseFirestore,
-    @param:AvatarUploader private val avatarUploader: CloudinaryUploader
+    @param:AvatarUploader private val avatarUploader: CloudinaryUploader,
+    private val moshi: Moshi
 ) : UserRepository {
 
     override fun getUserName(): Flow<StateListener<String>> = flow {
@@ -173,13 +176,29 @@ class UserRepositoryImpl @Inject constructor(
             emit(StateListener.Error(Exception(it.message)))
         }.flowOn(Dispatchers.IO)
 
-
-    override fun updateAvatar(url: String): Flow<StateListener<String>> = flow {
-
+    @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    override fun updateAvatar(id: String, url: String): Flow<StateListener<String>> = flow {
+        emit(StateListener.Loading)
+        val response = userAPI.updateAvatar(id, url)
+        if(response.isSuccessful){
+            val data = response.body()
+            emit(StateListener.Success(data?.anhdaidien ?: ""))
+        }
+        else{
+            val errorBody = response.errorBody()
+            val errorDTO = moshi.adapter(ErrorResponseDTO::class.java)
+            emit(StateListener.Error(Exception(errorDTO.fromJson(errorBody?.string())?.message)))
+        }
+    }.catch {
+        emit(StateListener.Error(Exception(it.message)))
     }.flowOn(Dispatchers.IO)
 
     override fun uploadAvatarToCloudinary(uri: Uri): Flow<StateListener<String>> = flow {
-
+        emit(StateListener.Loading)
+        val url = avatarUploader.upload(uri)
+        emit(StateListener.Success(url))
+    }.catch {
+        emit(StateListener.Error(Exception(it.message)))
     }.flowOn(Dispatchers.IO)
 
 }

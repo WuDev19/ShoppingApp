@@ -6,18 +6,23 @@ import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.collections.get
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 //khai báo cách khởi tạo class như này, bới vì đây là class mình tự tạo
 //dùng @Module + @Provides cũng được nhưng nên dùng cho các thư viện ngoài ko sửa được source
 class CloudinaryImageProductUploader @Inject constructor() : CloudinaryUploader {
-    override fun upload(
-        uri: Uri,
-        onProgress: (Int) -> Unit,
-        onSuccess: (String) -> Unit,
-        onFailure: (String) -> Unit
-    ) {
+    override suspend fun upload(
+        uri: Uri
+    ): String = suspendCancellableCoroutine { continuation ->
+
+        continuation.invokeOnCancellation {
+            MediaManager.get().cancelAllRequests()
+        }
+
         MediaManager.get().upload(uri)
             .unsigned(StringConstants.UPLOAD_PRESET)
             .option(StringConstants.FOLDER_CLOUDINARY, StringConstants.FOLDER_PRODUCT_IMAGE)
@@ -29,32 +34,37 @@ class CloudinaryImageProductUploader @Inject constructor() : CloudinaryUploader 
                     bytes: Long,
                     totalBytes: Long
                 ) {
-                    onProgress(((bytes * 100) / totalBytes).toInt())
                 }
 
                 override fun onSuccess(
                     requestId: String?,
                     resultData: Map<*, *>?
                 ) {
-                    resultData?.let {
-                        onSuccess(it[StringConstants.SECURE_URL_RESPONSE] as String)
-                    }
+                    val url = resultData?.get(StringConstants.SECURE_URL_RESPONSE) as? String
+                        ?: return continuation.resumeWithException(
+                            IllegalStateException(StringConstants.URL_SECURE_MISSING)
+                        )
+                    if (!continuation.isActive) return
+                    continuation.resume(url)
                 }
 
                 override fun onError(
                     requestId: String?,
                     error: ErrorInfo?
                 ) {
-                    error?.let {
-                        onFailure(it.description)
-                    }
+                    if (!continuation.isActive) return
+                    continuation.resumeWithException(RuntimeException(error?.description))
                 }
 
                 override fun onReschedule(
                     requestId: String?,
                     error: ErrorInfo?
                 ) {
+                    if (!continuation.isActive) return
+                    continuation.resumeWithException(RuntimeException(error?.description))
                 }
             }).dispatch()
+
     }
+
 }

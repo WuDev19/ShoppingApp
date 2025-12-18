@@ -18,14 +18,19 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object APIModule{
+object APIModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit{
-        val moshi = Moshi.Builder()
+    fun provideMoshi(): Moshi {
+        return Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(moshi: Moshi): Retrofit {
         return Retrofit.Builder()
             .baseUrl(StringConstants.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -34,22 +39,23 @@ object APIModule{
 
     @Provides
     @Singleton
-    fun provideUserAPI(retrofit: Retrofit) : UserAPI = retrofit.create(UserAPI::class.java)
+    fun provideUserAPI(retrofit: Retrofit): UserAPI = retrofit.create(UserAPI::class.java)
 
     @Provides
     @Singleton
-    fun provideProductAPI(retrofit: Retrofit) : ProductAPI = retrofit.create(ProductAPI::class.java)
+    fun provideProductAPI(retrofit: Retrofit): ProductAPI = retrofit.create(ProductAPI::class.java)
 
     @Provides
     @Singleton
-    fun provideSellerAPI(retrofit: Retrofit) : SellerAPI = retrofit.create(SellerAPI::class.java)
+    fun provideSellerAPI(retrofit: Retrofit): SellerAPI = retrofit.create(SellerAPI::class.java)
 
     @Provides
     @Singleton
-    fun provideCartAPI(retrofit: Retrofit) : CartAPI = retrofit.create(CartAPI::class.java)
+    fun provideCartAPI(retrofit: Retrofit): CartAPI = retrofit.create(CartAPI::class.java)
 
     @Provides
     @Singleton
-    fun provideCategoryAPI(retrofit: Retrofit) : CategoryAPI = retrofit.create(CategoryAPI::class.java)
+    fun provideCategoryAPI(retrofit: Retrofit): CategoryAPI =
+        retrofit.create(CategoryAPI::class.java)
 
 }

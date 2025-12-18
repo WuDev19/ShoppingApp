@@ -4,17 +4,24 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.ImageDecoder
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
+import androidx.core.graphics.BitmapCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -30,6 +37,7 @@ import com.example.shoppingapp.ui.viewmodel.edit_profile.EditProfileViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.serialization.BinaryFormat
 
 @AndroidEntryPoint
 class EditProfileFragment : Fragment() {
@@ -47,7 +55,7 @@ class EditProfileFragment : Fragment() {
         resultLauncher = registerForActivityResult(ActivityResultContracts.GetContent()){
             uri ->
             uri?.let {
-                Log.e(StringConstants.DEBUG, "onCreate: $it")
+                viewModel.uploadAvatarToCloudinary(uri)
             }
         }
     }
@@ -98,6 +106,30 @@ class EditProfileFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                viewModel.avatarState.collectLatest {
+                    when (it) {
+                        is StateListener.Idle -> Unit
+                        is StateListener.Loading -> binding.progressBar.isVisible = true
+                        is StateListener.Error -> {
+                            binding.progressBar.isVisible = false
+                            Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e.toString()}")
+                        }
+                        is StateListener.Success -> {
+                            binding.progressBar.isVisible = false
+                            Glide.with(this@EditProfileFragment)
+                                .load(it.result)
+                                .placeholder(R.drawable.place_holder)
+                                .error(R.drawable.icon_avatar)
+                                .into(binding.imgAvt)
+                        }
+                    }
+                }
+            }
+        }
+
+        // TODO: thêm click để hiện ảnh avt
         binding.apply {
 
             imgBack.setOnClickListener {

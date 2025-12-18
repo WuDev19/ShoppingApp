@@ -20,7 +20,7 @@ interface UserRepository {
 
     fun changeEmail(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
 
-    fun updateAvatar(url: String): Flow<StateListener<String>>
+    fun updateAvatar(id: String, url: String): Flow<StateListener<String>>
 
     fun uploadAvatarToCloudinary(uri: Uri): Flow<StateListener<String>>
 
