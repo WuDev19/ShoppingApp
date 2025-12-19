@@ -1,5 +1,6 @@
 package com.example.shoppingapp.data.repository.impl
 
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
@@ -19,6 +20,7 @@ import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -26,7 +28,8 @@ import javax.inject.Inject
 
 class CartRepositoryImpl @Inject constructor(
     private val cartAPI: CartAPI,
-    private val appDatabase: AppDatabase
+    private val appDatabase: AppDatabase,
+    private val sharedPreferences: SharedPreferences
 ) : CartRepository {
 
     override fun createCart(cartAndCartItemRequest: CartAndCartItemRequest): Flow<StateListener<Any>> {
@@ -75,7 +78,7 @@ class CartRepositoryImpl @Inject constructor(
     override fun getCartItemInCart(idCart: Int): Flow<PagingData<CartItem>> {
         val queryKey = "cart_item_$idCart"
         return Pager(
-            config =  PagingConfig(
+            config = PagingConfig(
                 pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false,
                 initialLoadSize = StringConstants.PAGE_SIZE
@@ -90,5 +93,23 @@ class CartRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override fun getNumberOfCartItem(id: String): Flow<StateListener<Int>> = flow {
+        val numberLocal = sharedPreferences.getInt(StringConstants.NUMBER_CART_ITEM, 0)
+        val response = cartAPI.getNumberOfCartItem(id)
+        if (response.isSuccessful) {
+            val numberRemote = response.body() ?: 0
+            emit(StateListener.Success(numberRemote))
+            if (numberLocal != numberRemote) {
+                sharedPreferences.edit().putInt(StringConstants.NUMBER_CART_ITEM, numberRemote)
+                    .apply()
+            }
+        } else {
+            emit(StateListener.Success(numberLocal))
+        }
+    }.catch {
+        val numberLocal = sharedPreferences.getInt(StringConstants.NUMBER_CART_ITEM, 0)
+        emit(StateListener.Success(numberLocal))
+    }.flowOn(Dispatchers.IO)
 
 }

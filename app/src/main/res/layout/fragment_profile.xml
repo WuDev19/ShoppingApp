@@ -39,8 +39,7 @@
                     android:layout_width="115dp"
                     android:layout_height="115dp"
                     android:layout_gravity="center"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/icon_avatar" />
+                    android:importantForAccessibility="no" />
 
             </FrameLayout>
 

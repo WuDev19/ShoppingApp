@@ -51,8 +51,7 @@
             android:layout_height="115dp"
             android:layout_gravity="center"
             android:importantForAccessibility="no"
-            android:scaleType="centerCrop"
-            android:src="@drawable/icon_avatar" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/img_change_avt"

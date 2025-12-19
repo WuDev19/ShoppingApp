@@ -21,4 +21,7 @@ interface CartAPI {
     @GET("cartItem/get/ofCart/{id}")
     suspend fun getCartItemInCart(@Path("id") id: Int, @Query("pageNumber") pageNumber: Int): Response<ListCartItemDTO>
 
+    @GET("cartItem/get/numberOfCart/{id}")
+    suspend fun getNumberOfCartItem(@Path("id") id: String): Response<Int>
+
 }

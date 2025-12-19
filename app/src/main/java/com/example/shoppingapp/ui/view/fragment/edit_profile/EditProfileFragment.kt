@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.fragment.edit_profile
 
+import android.app.AlertDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -11,6 +12,7 @@ import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -30,6 +32,8 @@ import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.databinding.CustomDialogImageAvatarCircleBinding
+import com.example.shoppingapp.databinding.CustomDialogImageDetailBinding
 import com.example.shoppingapp.databinding.FragmentEditProfileBinding
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.ui.state.StateListener
@@ -49,6 +53,7 @@ class EditProfileFragment : Fragment() {
     private lateinit var userProfile: UserProfile
 
     private lateinit var resultLauncher: ActivityResultLauncher<String>
+    private lateinit var urlAvt: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +90,7 @@ class EditProfileFragment : Fragment() {
 
                         is StateListener.Success -> {
                             userProfile = it.result
+                            urlAvt = userProfile.avatar.toString()
                             binding.apply {
                                 Glide.with(this@EditProfileFragment)
                                     .load(userProfile.avatar)
@@ -117,6 +123,7 @@ class EditProfileFragment : Fragment() {
                             Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e.toString()}")
                         }
                         is StateListener.Success -> {
+                            urlAvt = it.result
                             binding.progressBar.isVisible = false
                             Glide.with(this@EditProfileFragment)
                                 .load(it.result)
@@ -165,6 +172,28 @@ class EditProfileFragment : Fragment() {
 
             imgChangeAvt.setOnClickListener {
                 resultLauncher.launch("image/*")
+            }
+
+            imgAvt.setOnClickListener {
+                val dialogView = CustomDialogImageAvatarCircleBinding.inflate(layoutInflater)
+                Glide.with(requireContext())
+                    .load(urlAvt)
+                    .placeholder(R.drawable.place_holder)
+                    .fitCenter()
+                    .error(R.drawable.icon_avatar)
+                    .into(dialogView.imgAnh)
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setView(dialogView.root)
+                    .create()
+                dialog.show()
+                dialog.window?.apply {
+                    setGravity(Gravity.CENTER)
+                    setLayout(
+                        resources.displayMetrics.widthPixels * 80 / 100,
+                        resources.displayMetrics.heightPixels * 50 / 100
+                    )
+                    setBackgroundDrawableResource(R.drawable.custom_dialog)
+                }
             }
 
         }

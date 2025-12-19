@@ -93,7 +93,6 @@
                         android:background="@drawable/border_view"
                         android:backgroundTint="@color/white"
                         android:padding="2dp"
-                        android:text="@string/number_cart"
                         android:textColor="@color/black"
                         android:textSize="10sp"
                         tools:ignore="SmallSp" />

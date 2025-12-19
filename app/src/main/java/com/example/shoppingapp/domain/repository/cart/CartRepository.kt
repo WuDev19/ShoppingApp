@@ -15,4 +15,6 @@ interface CartRepository {
 
     fun getCartItemInCart(idCart: Int): Flow<PagingData<CartItem>>
 
+    fun getNumberOfCartItem(id: String): Flow<StateListener<Int>>
+
 }

@@ -203,8 +203,9 @@ class StoreFragment : Fragment() {
         }
 
         binding.recyclerViewCategories.addOnItemTouchListener(object : OnItemTouchListener {
+            //recycler_view con lồng trong thì dùng như này để fix tranh chấp cuộn với cha (như viewpager, recycler view cha)
             override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                rv.parent.requestDisallowInterceptTouchEvent(true)
+                rv.parent.requestDisallowInterceptTouchEvent(true) //true thì chặn thằng cha
                 return false
             }
 

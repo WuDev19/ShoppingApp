@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 import com.example.shoppingapp.domain.usecase.authusecase.GetUserCurrentUseCase
+import com.example.shoppingapp.domain.usecase.cartusecase.GetNumberCartItemUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.GetProductUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.SearchProductUseCase
 import com.example.shoppingapp.ui.state.StateListener
@@ -16,6 +17,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
@@ -26,11 +28,15 @@ class HomeViewModel @Inject constructor(
     private val getUserUseCase: GetUserCurrentUseCase,
     private val getProductsUseCase: GetProductUseCase,
     private val searchProductUseCase: SearchProductUseCase,
+    private val getNumberCartItemUseCase: GetNumberCartItemUseCase,
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
     private val _stateUserName = MutableStateFlow<StateListener<String>>(StateListener.Idle)
     val stateUserName = _stateUserName.asStateFlow()
+
+    private val _numberCartState = MutableStateFlow<StateListener<Int>>(StateListener.Idle)
+    val numberCartState = _numberCartState.asStateFlow()
 
     private val _searchProduct = MutableStateFlow("")
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -54,6 +60,14 @@ class HomeViewModel @Inject constructor(
 
     fun getCurrentUserId(): String {
         return auth.currentUser?.uid ?: ""
+    }
+
+    fun getNumberCartItem(){
+        viewModelScope.launch {
+            getNumberCartItemUseCase(auth.currentUser?.uid ?: "").collectLatest {
+                _numberCartState.value = it
+            }
+        }
     }
 
 }

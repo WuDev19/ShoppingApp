@@ -77,20 +77,34 @@ class ChangeNameAndGenderFragment : Fragment() {
                     append(" ")
                     append(lastName)
                 }
-                if(fullName.isEmpty() && gender == null){
+                if(fullName == " " && gender == null){
                     ToastUtils.showToast(requireContext(), "Please fill at least one information")
                     return@setOnClickListener
                 }
-                viewModel.updateName(
-                    UserDTOUpdate(
-                        viewModel.getCurrentUserId(),
-                        fullName,
-                        null,
-                        null,
-                        null,
-                        gender
+                else if(fullName == " "){
+                    viewModel.updateName(
+                        UserDTOUpdate(
+                            viewModel.getCurrentUserId(),
+                            null,
+                            null,
+                            null,
+                            null,
+                            gender
+                        )
                     )
-                )
+                }
+                else {
+                    viewModel.updateName(
+                        UserDTOUpdate(
+                            viewModel.getCurrentUserId(),
+                            fullName.trim(),
+                            null,
+                            null,
+                            null,
+                            gender
+                        )
+                    )
+                }
             }
 
             radioButtonMale.setOnClickListener { view ->

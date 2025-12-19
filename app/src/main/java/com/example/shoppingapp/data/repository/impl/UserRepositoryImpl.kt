@@ -179,12 +179,15 @@ class UserRepositoryImpl @Inject constructor(
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     override fun updateAvatar(id: String, url: String): Flow<StateListener<String>> = flow {
         emit(StateListener.Loading)
+        firestore.collection("user")
+            .document(id)
+            .update("anhdaidien", url)
+            .await()
         val response = userAPI.updateAvatar(id, url)
-        if(response.isSuccessful){
+        if (response.isSuccessful) {
             val data = response.body()
             emit(StateListener.Success(data?.anhdaidien ?: ""))
-        }
-        else{
+        } else {
             val errorBody = response.errorBody()
             val errorDTO = moshi.adapter(ErrorResponseDTO::class.java)
             emit(StateListener.Error(Exception(errorDTO.fromJson(errorBody?.string())?.message)))

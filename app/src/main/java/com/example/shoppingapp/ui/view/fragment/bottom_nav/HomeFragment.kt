@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -11,9 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -125,29 +129,55 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.getNumberCartItem()
+
         controller = NavHostFragment.findNavController(this@HomeFragment)
 
-        binding.recyclerViewProducts.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.recyclerViewProducts.adapter = productAdapter
-        binding.recyclerViewProducts.addItemDecoration(MarginItemDecoration(5))
+        binding.apply {
 
-        binding.recyclerViewCategories.apply {
-            layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
-            adapter = categoriesAdapter
-        }
-
-        binding.recyclerViewCategories.addOnItemTouchListener(object : OnItemTouchListener {
-
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                rv.parent.requestDisallowInterceptTouchEvent(true)
-                return false
+            recyclerViewProducts.apply {
+                layoutManager = GridLayoutManager(requireContext(), 2)
+                adapter = productAdapter
+                addItemDecoration(MarginItemDecoration(5))
             }
 
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+            recyclerViewCategories.apply {
+                layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
+                adapter = categoriesAdapter
+            }
+            //cách fix xung đột cuộn khi dùng recycler view lồng trong
+            recyclerViewCategories.addOnItemTouchListener(object : OnItemTouchListener {
 
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    rv.parent.requestDisallowInterceptTouchEvent(true) //chặn sroll cửa thằng view cha
+                    return false
+                }
 
-        })
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+
+            })
+
+            tvViewAll.setOnClickListener {
+                bottomNavigationView.selectedItemId = R.id.store
+            }
+
+            imgCart.setOnClickListener {
+                ViewPagerUtils.disableViewPager(viewPager2)
+                BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
+                val bundle = bundleOf(
+                    StringConstants.CURRENT_USER_ID to viewModel.getCurrentUserId()
+                )
+                controller.navigate(R.id.action_homeFragment_to_cartFragment, bundle)
+            }
+
+            edtSearch.addTextChangedListener {
+                viewModel.setSearchProductStateFlow(it.toString())
+                isSearch = it.toString().isNotEmpty()
+            }
+
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             val listSlideModel = mutableListOf<SlideModel>()
@@ -203,24 +233,30 @@ class HomeFragment : Fragment() {
             }
         }
 
-        binding.tvViewAll.setOnClickListener {
-            bottomNavigationView.selectedItemId = R.id.store
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.numberCartState.collectLatest {
+                    when (it) {
+                        is StateListener.Idle -> Unit
+                        is StateListener.Loading -> Unit
+                        is StateListener.Error -> Log.e(
+                            StringConstants.DEBUG,
+                            "onViewCreated: ${it.e.toString()}"
+                        )
 
-        binding.imgCart.setOnClickListener {
-            ViewPagerUtils.disableViewPager(viewPager2)
-            BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
-            val bundle = bundleOf(
-                StringConstants.CURRENT_USER_ID to viewModel.getCurrentUserId()
-            )
-            controller.navigate(R.id.action_homeFragment_to_cartFragment, bundle)
+                        is StateListener.Success -> {
+                            val number = it.result
+                            if (number != 0) {
+                                binding.tvNumberCart.isVisible = true
+                                binding.tvNumberCart.text = number.toString()
+                            } else {
+                                binding.tvNumberCart.isVisible = false
+                            }
+                        }
+                    }
+                }
+            }
         }
-
-        binding.edtSearch.addTextChangedListener {
-            viewModel.setSearchProductStateFlow(it.toString())
-            isSearch = it.toString().isNotEmpty()
-        }
-
     }
 
     override fun onDestroyView() {

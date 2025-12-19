@@ -58,4 +58,6 @@ object StringConstants {
     const val RESOURCE_TYPE = "resource_type"
     const val TYPE_VIDEO = "video"
     const val URL_SECURE_MISSING = "secure_url_missing"
+    const val NUMBER_CART_ITEM = "numberCartItem"
+
 }
