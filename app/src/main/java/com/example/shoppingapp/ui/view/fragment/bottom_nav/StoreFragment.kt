@@ -12,9 +12,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -30,6 +33,7 @@ import com.example.shoppingapp.constants.BottomNavigationUtils
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentStoreBinding
+import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
 import com.example.shoppingapp.ui.view.adapter.CategoryStoreAdapter
 import com.example.shoppingapp.ui.view.adapter.SellerInStoreAdapter
@@ -173,25 +177,92 @@ class StoreFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.getNumberCartItem()
+
         controller = NavHostFragment.findNavController(this@StoreFragment)
 
-        binding.recyclerViewProductStore.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = productAdapter
-            addItemDecoration(MarginItemDecoration(5))
+        binding.apply {
+
+            recyclerViewProductStore.apply {
+                layoutManager = GridLayoutManager(requireContext(), 2)
+                adapter = productAdapter
+                addItemDecoration(MarginItemDecoration(5))
+            }
+
+            recyclerViewCategories.apply {
+                layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
+                adapter = categoryStoreAdapter
+            }
+
+            recyclerViewShop.apply {
+                layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
+                adapter = sellerInStoreAdapter
+                addItemDecoration(MarginItemDecoration(10))
+            }
+
+            recyclerViewCategories.addOnItemTouchListener(object : OnItemTouchListener {
+                //recycler_view con lồng trong thì dùng như này để fix tranh chấp cuộn với cha (như viewpager, recycler view cha)
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    rv.parent.requestDisallowInterceptTouchEvent(true) //true thì chặn thằng cha
+                    return false
+                }
+
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+
+            })
+
+            recyclerViewShop.addOnItemTouchListener(object : OnItemTouchListener {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    rv.parent.requestDisallowInterceptTouchEvent(true)
+                    return false
+                }
+
+                override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
+
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+
+            })
+
+            imgCart.setOnClickListener {
+                ViewPagerUtils.disableViewPager(viewPager2)
+                BottomNavigationUtils.hideBottomNavigation(bottomView)
+                controller.navigate(R.id.action_storeFragment_to_cartFragment22)
+                categoryStoreAdapter.setListSaveTrace()
+            }
+
+            edtSearch.addTextChangedListener {
+                viewModel.setSearchStateFlow(it.toString())
+                isSearch = it.toString().isNotEmpty()
+            }
+
         }
 
-        binding.recyclerViewCategories.apply {
-            layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
-            adapter = categoryStoreAdapter
-        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.numberCartState.collectLatest {
+                    when (it) {
+                        is StateListener.Idle -> Unit
+                        is StateListener.Loading -> Unit
+                        is StateListener.Error -> Log.e(
+                            StringConstants.DEBUG,
+                            "onViewCreated: ${it.e.toString()}"
+                        )
 
-        binding.recyclerViewShop.apply {
-            layoutManager = LinearLayoutManager(requireContext(), HORIZONTAL, false)
-            adapter = sellerInStoreAdapter
+                        is StateListener.Success -> {
+                            val number = it.result
+                            if (number != 0) {
+                                binding.tvNumberCart.isVisible = true
+                                binding.tvNumberCart.text = number.toString()
+                            } else {
+                                binding.tvNumberCart.isVisible = false
+                            }
+                        }
+                    }
+                }
+            }
         }
-        val decoration = MarginItemDecoration(10)
-        binding.recyclerViewShop.addItemDecoration(decoration)
 
         productAdapter.addLoadStateListener { state ->
             val done = state.refresh is LoadState.NotLoading
@@ -200,43 +271,6 @@ class StoreFragment : Fragment() {
                 val position = pairPositionAndName[name]
                 setHighlightCategory(position)
             }
-        }
-
-        binding.recyclerViewCategories.addOnItemTouchListener(object : OnItemTouchListener {
-            //recycler_view con lồng trong thì dùng như này để fix tranh chấp cuộn với cha (như viewpager, recycler view cha)
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                rv.parent.requestDisallowInterceptTouchEvent(true) //true thì chặn thằng cha
-                return false
-            }
-
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
-
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
-
-        })
-
-        binding.recyclerViewShop.addOnItemTouchListener(object : OnItemTouchListener {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                rv.parent.requestDisallowInterceptTouchEvent(true)
-                return false
-            }
-
-            override fun onTouchEvent(rv: RecyclerView, e: MotionEvent) {}
-
-            override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
-
-        })
-
-        binding.imgCart.setOnClickListener {
-            ViewPagerUtils.disableViewPager(viewPager2)
-            BottomNavigationUtils.hideBottomNavigation(bottomView)
-            controller.navigate(R.id.action_storeFragment_to_cartFragment22)
-            categoryStoreAdapter.setListSaveTrace()
-        }
-
-        binding.edtSearch.addTextChangedListener {
-            viewModel.setSearchStateFlow(it.toString())
-            isSearch = it.toString().isNotEmpty()
         }
 
     }

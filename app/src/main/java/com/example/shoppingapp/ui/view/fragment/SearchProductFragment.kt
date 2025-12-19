@@ -13,7 +13,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.shoppingapp.R
@@ -60,28 +62,34 @@ class SearchProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.edtSearch.requestFocus()
+        binding.apply {
 
-        val keyboard = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        keyboard.showSoftInput(binding.edtSearch, InputMethodManager.SHOW_IMPLICIT)
+            edtSearch.requestFocus()
+            val keyboard =
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            keyboard.showSoftInput(edtSearch, InputMethodManager.SHOW_IMPLICIT)
 
-        binding.recyclerViewSearchProduct.apply {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = productAdapter
-            addItemDecoration(MarginItemDecoration(10))
+            recyclerViewSearchProduct.apply {
+                layoutManager = GridLayoutManager(requireContext(), 2)
+                adapter = productAdapter
+                addItemDecoration(MarginItemDecoration(10))
+            }
+
+            edtSearch.addTextChangedListener {
+                val text = it.toString()
+                val productSearchShop = SearchProductShop(idSeller, text)
+                viewModel.setSearchProductShop(productSearchShop)
+            }
+
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.searchProductShop.collectLatest {
-                Log.e("Searchhh", "onViewCreated: $it", )
-                productAdapter.submitData(it)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.searchProductShop.collectLatest {
+                    Log.e("Searchhh", "onViewCreated: $it")
+                    productAdapter.submitData(it)
+                }
             }
-        }
-
-        binding.edtSearch.addTextChangedListener {
-            val text = it.toString()
-            val productSearchShop = SearchProductShop(idSeller, text)
-            viewModel.setSearchProductShop(productSearchShop)
         }
 
     }
