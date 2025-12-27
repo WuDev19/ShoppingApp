@@ -20,9 +20,9 @@ import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.data.remote.dto.post.CartAndCartItemRequest
-import com.example.shoppingapp.data.remote.dto.post.CartItemRequest
-import com.example.shoppingapp.data.remote.dto.post.CartRequest
+import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.request.CartItemRequest
+import com.example.shoppingapp.data.remote.dto.request.CartRequest
 import com.example.shoppingapp.databinding.CustomDialogImageDetailBinding
 import com.example.shoppingapp.databinding.FragmentAddToCartBinding
 import com.example.shoppingapp.domain.model.product.ProductChiTiet

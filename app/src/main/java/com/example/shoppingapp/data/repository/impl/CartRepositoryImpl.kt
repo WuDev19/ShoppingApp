@@ -10,7 +10,7 @@ import androidx.paging.map
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.mapper.CartEntityMapper
-import com.example.shoppingapp.data.remote.dto.post.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
 import com.example.shoppingapp.data.remote.api.CartAPI
 import com.example.shoppingapp.data.repository.mediator.CartItemInCartRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.CartUserRemoteMediator

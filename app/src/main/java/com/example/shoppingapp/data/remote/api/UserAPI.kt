@@ -1,8 +1,9 @@
 package com.example.shoppingapp.data.remote.api
 
+import com.example.shoppingapp.data.remote.dto.get.UserAddressDTO
 import com.example.shoppingapp.data.remote.dto.get.UserDTOGet
-import com.example.shoppingapp.data.remote.dto.post.UserDTOCreate
-import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
+import com.example.shoppingapp.data.remote.dto.request.UserDTOCreate
+import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -30,5 +31,8 @@ interface UserAPI {
 
     @PATCH("user/update/avt/{id}")
     suspend fun updateAvatar(@Path("id") id: String, @Query("url") url: String) : Response<UserDTOGet>
+
+    @GET("user/get/address/{id}")
+    suspend fun getUserAddress(@Path("id") id: String): Response<List<UserAddressDTO>>
 
 }

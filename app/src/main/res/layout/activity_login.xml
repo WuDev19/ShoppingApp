@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:gravity="start"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:ignore="UselessParent">
 
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
@@ -59,10 +60,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            app:boxCornerRadiusBottomEnd="16dp"
-            app:boxCornerRadiusBottomStart="16dp"
-            app:boxCornerRadiusTopEnd="16dp"
-            app:boxCornerRadiusTopStart="16dp"
+            app:boxCornerRadiusBottomEnd="20dp"
+            app:boxCornerRadiusBottomStart="20dp"
+            app:boxCornerRadiusTopEnd="20dp"
+            app:boxCornerRadiusTopStart="20dp"
             app:boxStrokeColor="@color/black"
             app:boxStrokeWidth="2dp"
             app:endIconMode="password_toggle"
@@ -143,10 +144,10 @@
             android:id="@+id/img_google"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
             android:src="@drawable/icon_google"
-            app:civ_border_width="1dp"
-            android:layout_gravity="center_horizontal"/>
+            app:civ_border_width="1dp" />
 
         <ProgressBar
             android:id="@+id/progress_bar"

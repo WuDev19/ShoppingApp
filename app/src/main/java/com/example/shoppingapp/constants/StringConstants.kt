@@ -17,7 +17,7 @@ object StringConstants {
     const val MORNING = "Good morning"
     const val AFTERNOON = "Good afternoon"
     const val EVENING = "Good evening"
-    const val BASE_URL = "http://192.168.1.3:8080/api/"
+    const val BASE_URL = "http://192.168.1.7:8080/api/"
     const val SOLD = "Sold "
     const val DEBUG = "Debug"
     const val ID_PRODUCT = "id_product"
@@ -59,5 +59,6 @@ object StringConstants {
     const val TYPE_VIDEO = "video"
     const val URL_SECURE_MISSING = "secure_url_missing"
     const val NUMBER_CART_ITEM = "numberCartItem"
+    const val YOUR_ADDRESS = "Your Address"
 
 }

@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
+import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.domain.usecase.profileusecase.ChangeEmailUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.ChangePhoneUseCase
 import com.example.shoppingapp.ui.state.StateListener

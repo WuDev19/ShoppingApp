@@ -1,6 +1,6 @@
 package com.example.shoppingapp.domain.usecase.cartusecase
 
-import com.example.shoppingapp.data.remote.dto.post.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow

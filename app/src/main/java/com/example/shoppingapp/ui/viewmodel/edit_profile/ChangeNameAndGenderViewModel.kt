@@ -2,7 +2,7 @@ package com.example.shoppingapp.ui.viewmodel.edit_profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
+import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.domain.usecase.profileusecase.ChangeNameGenderUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth

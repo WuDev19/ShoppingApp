@@ -8,12 +8,14 @@ import com.example.shoppingapp.data.local.dao.CategoryAndProductDAO
 import com.example.shoppingapp.data.local.dao.ProductDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyProductDAO
+import com.example.shoppingapp.data.local.dao.UserAddressDAO
 import com.example.shoppingapp.data.local.entity.CartEntity
 import com.example.shoppingapp.data.local.entity.CartItemEntity
 import com.example.shoppingapp.data.local.entity.CategoryAndProductEntity
 import com.example.shoppingapp.data.local.entity.ProductEntity
 import com.example.shoppingapp.data.local.entity.RemoteKeyEntity
 import com.example.shoppingapp.data.local.entity.RemoteKeyProduct
+import com.example.shoppingapp.data.local.entity.UserAddressEntity
 
 @Database(
     entities = [
@@ -22,7 +24,8 @@ import com.example.shoppingapp.data.local.entity.RemoteKeyProduct
         RemoteKeyEntity::class,
         CategoryAndProductEntity::class,
         CartEntity::class,
-        CartItemEntity::class
+        CartItemEntity::class,
+        UserAddressEntity::class
     ],
     version = 1
 )
@@ -34,5 +37,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryAndProductDao(): CategoryAndProductDAO
     abstract fun cartDao(): CartDAO
     abstract fun cartItemDao(): CartItemDAO
+    abstract fun userAddressDao(): UserAddressDAO
 
 }

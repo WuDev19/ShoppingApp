@@ -160,6 +160,12 @@ class ProfileFragment : Fragment() {
                     setBackgroundDrawableResource(R.drawable.custom_dialog)
                 }
             }
+
+            linearAddress.setOnClickListener {
+                controller.navigate(R.id.action_profileFragment_to_addressFragment)
+                BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
+                ViewPagerUtils.disableViewPager(viewPager2)
+            }
         }
 
     }

@@ -2,7 +2,7 @@ package com.example.shoppingapp.ui.viewmodel.product
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.data.remote.dto.post.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
 import com.example.shoppingapp.domain.model.product.ProductChiTiet
 import com.example.shoppingapp.domain.usecase.cartusecase.CreateCartUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.GetProductChiTietUseCase

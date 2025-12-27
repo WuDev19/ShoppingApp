@@ -13,7 +13,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
+import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.databinding.FragmentChangeNameGenderBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.viewmodel.edit_profile.ChangeNameAndGenderViewModel

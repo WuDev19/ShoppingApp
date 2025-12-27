@@ -8,6 +8,7 @@ import com.example.shoppingapp.data.local.dao.CategoryAndProductDAO
 import com.example.shoppingapp.data.local.dao.ProductDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyProductDAO
+import com.example.shoppingapp.data.local.dao.UserAddressDAO
 import com.example.shoppingapp.data.local.db.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -53,5 +54,9 @@ object DatabaseModule {
     @Singleton
     @Provides
     fun provideCartItemDao(appDatabase: AppDatabase): CartItemDAO = appDatabase.cartItemDao()
+
+    @Singleton
+    @Provides
+    fun provideUserAddressDao(appDatabase: AppDatabase): UserAddressDAO = appDatabase.userAddressDao()
 
 }

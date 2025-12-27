@@ -1,7 +1,7 @@
 package com.example.shoppingapp.domain.usecase.profileusecase
 
 import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
+import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow

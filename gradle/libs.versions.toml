@@ -1,5 +1,7 @@
 [versions]
 agp = "8.6.0"
+androidPluginAnnotationV9 = "3.0.2"
+androidSdk = "12.3.1"
 circleimageview = "3.1.0"
 cloudinaryAndroid = "3.1.2"
 converterMoshi = "2.11.0"
@@ -29,10 +31,13 @@ legacySupportV4 = "1.0.0"
 lifecycleLivedataKtx = "2.9.4"
 fragmentKtx = "1.8.6"
 pagingRuntimeKtx = "3.3.6"
+playServicesLocation = "21.3.0"
 retrofit = "3.1.0-SNAPSHOT"
 roomRuntime = "2.8.4"
 
 [libraries]
+android-plugin-annotation-v9 = { module = "org.maplibre.gl:android-plugin-annotation-v9", version.ref = "androidPluginAnnotationV9" }
+android-sdk = { module = "org.maplibre.gl:android-sdk", version.ref = "androidSdk" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
@@ -72,6 +77,7 @@ androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", ve
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 moshi-kotlin-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshiKotlinCodegen" }
+play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]

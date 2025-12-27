@@ -1,15 +1,20 @@
 package com.example.shoppingapp.data.repository.impl
 
 import android.net.Uri
+import android.util.Log
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.exceptions.ClearCredentialException
+import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.data.local.dao.UserAddressDAO
+import com.example.shoppingapp.data.local.mapper.UserAddressMapper
 import com.example.shoppingapp.data.local.mapper.UserMapper
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
-import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
+import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.AvatarUploader
+import com.example.shoppingapp.domain.model.AddressItem
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.domain.repository.user.UserRepository
@@ -20,8 +25,12 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -31,7 +40,8 @@ class UserRepositoryImpl @Inject constructor(
     private val credentialManager: CredentialManager,
     private val firestore: FirebaseFirestore,
     @param:AvatarUploader private val avatarUploader: CloudinaryUploader,
-    private val moshi: Moshi
+    private val moshi: Moshi,
+    private val userAddressDAO: UserAddressDAO
 ) : UserRepository {
 
     override fun getUserName(): Flow<StateListener<String>> = flow {
@@ -202,6 +212,35 @@ class UserRepositoryImpl @Inject constructor(
         emit(StateListener.Success(url))
     }.catch {
         emit(StateListener.Error(Exception(it.message)))
+    }.flowOn(Dispatchers.IO)
+
+    //implement ssot, pattern về quản lý dữ liệu tại một nơi duy nhất là room, room sẽ trả về Flow<List<Data>>
+    override fun getUserAddress(id: String): Flow<List<AddressItem>> = flow {
+        //room là nơi phát nguồn dữ liệu chính
+        emitAll(
+            userAddressDAO.getUserAddress(id).onEach {
+                Log.e(
+                    StringConstants.DEBUG,
+                    "getUserAddress: emit lai sau khi call api"
+                )
+            }.map { list ->
+                list.map { UserAddressMapper.mapToAddressItem(it) }
+            }
+        )
+    }.onStart {
+        try {
+            val response = userAPI.getUserAddress(id) //api chỉ để làm mới room
+            if (response.isSuccessful) {
+                val data = response.body().orEmpty()
+                val listUserAddressEntity = data.map {
+                    UserAddressMapper.mapToUserAddressEntity(it)
+                }
+                userAddressDAO.clearAll(id)
+                userAddressDAO.insertAll(listUserAddressEntity)
+            }
+        } catch (e: Exception) {
+            Log.e(StringConstants.DEBUG, "getUserAddress: ${e.message}")
+        }
     }.flowOn(Dispatchers.IO)
 
 }

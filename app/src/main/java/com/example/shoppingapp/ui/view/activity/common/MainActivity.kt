@@ -159,6 +159,7 @@ class MainActivity : AppCompatActivity() {
                     val controller = navProfileHost.navController
                     if (controller.currentDestination?.id != R.id.profileFragment) {
                         controller.popBackStack()
+                        ViewPagerUtils.enableViewPager(viewbinding.viewPager2, controller)
                         BottomNavigationUtils.showBottomNavigation(
                             viewbinding.bottomNavigationView,
                             controller

@@ -1,9 +1,7 @@
 package com.example.shoppingapp.ui.view.fragment.edit_profile
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -20,7 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.data.remote.dto.post.UserDTOUpdate
+import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.databinding.FragmentChangeEmailAndPhoneBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.activity.auth.LoginActivity
@@ -164,6 +162,11 @@ class ChangeEmailAndPhoneFragment : Fragment() {
                         requireContext(),
                         "Phone number must be equal to 10 digits"
                     )
+                    return@setOnClickListener
+                }
+                if ((phoneChange.isEmpty() && emailChange.isEmpty()) ||
+                    (phoneChange.isEmpty() && emailChange == email)
+                ) {
                     return@setOnClickListener
                 }
                 if (emailChange == email && phoneChange == phone) {
