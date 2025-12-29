@@ -13,7 +13,7 @@
     <string name="let_s_get_you_registered">Let\'s Get You Registered</string>
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
-    <string name="phone_number">Phone Number</string>
+    <string name="phone_number">Phone number</string>
     <string name="forget_password">Forget Password</string>
     <string name="no_worries_enter_your_registered_email_address_and_we_ll_help_you_reset_your_password">No worries! Enter your registered email address, and we’ll help you reset your password</string>
     <string name="submit">Submit</string>
@@ -97,4 +97,11 @@
     <string name="update_your_email_and_phone_number_to_keep_your_profile_accurate_and_personalized">Update your email and phone number to keep your profile accurate and personalized</string>
     <string name="edit_address">Edit Address</string>
     <string name="df">Default</string>
+    <string name="address">Address</string>
+    <string name="add_new_address">Add new address</string>
+    <string name="open_map">Open map</string>
+    <string name="set_as_default_address">Set as default address</string>
+    <string name="delete_address">Delete address</string>
+    <string name="save_address">Save address</string>
+    <string name="detail_address">Detail address</string>
 </resources>

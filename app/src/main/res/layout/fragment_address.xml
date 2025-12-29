@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.view.fragment.edit_profile.AddressFragment"
     android:fitsSystemWindows="true"
     android:orientation="vertical">
@@ -26,24 +27,31 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:text="@string/edit_address"
+            android:text="@string/my_address"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="20dp"
             android:textStyle="bold"/>
 
     </LinearLayout>
 
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/my_address"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_view_user_address"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_margin="10dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_add_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/add_new_address"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:cornerRadius="10dp"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/button_color"/>
 
 </LinearLayout>

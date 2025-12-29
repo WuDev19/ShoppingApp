@@ -60,5 +60,6 @@ object StringConstants {
     const val URL_SECURE_MISSING = "secure_url_missing"
     const val NUMBER_CART_ITEM = "numberCartItem"
     const val YOUR_ADDRESS = "Your Address"
-
+    const val ADDRESS_ITEM = "address_item"
+    const val USER_ADDRESS_ERROR_MESSAGE = "All field must be filled"
 }

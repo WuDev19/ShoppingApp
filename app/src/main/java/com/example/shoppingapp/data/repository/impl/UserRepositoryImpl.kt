@@ -11,6 +11,7 @@ import com.example.shoppingapp.data.local.mapper.UserAddressMapper
 import com.example.shoppingapp.data.local.mapper.UserMapper
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
+import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.AvatarUploader
@@ -241,6 +242,36 @@ class UserRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Log.e(StringConstants.DEBUG, "getUserAddress: ${e.message}")
         }
+    }.flowOn(Dispatchers.IO)
+
+    override fun editUserAddress(
+        idAddress: Int,
+        userAddressRequest: UserAddressRequest
+    ): Flow<StateListener<Unit>> = flow {
+        emit(StateListener.Loading)
+        val response = userAPI.updateAddress(idAddress, userAddressRequest)
+        if (response.isSuccessful) {
+            emit(StateListener.Success(Unit))
+        } else {
+            emit(StateListener.Error(Exception("Api Error")))
+        }
+    }.catch {
+        emit(StateListener.Error(Exception(it.message)))
+    }.flowOn(Dispatchers.IO)
+
+    override fun addUserAddress(
+        idUser: String,
+        userAddressRequest: UserAddressRequest
+    ): Flow<StateListener<Unit>> = flow {
+        emit(StateListener.Loading)
+        val response = userAPI.addAddress(idUser, userAddressRequest)
+        if (response.isSuccessful) {
+            emit(StateListener.Success(Unit))
+        } else {
+            emit(StateListener.Error(Exception("Api Error")))
+        }
+    }.catch {
+        emit(StateListener.Error(Exception(it.message)))
     }.flowOn(Dispatchers.IO)
 
 }

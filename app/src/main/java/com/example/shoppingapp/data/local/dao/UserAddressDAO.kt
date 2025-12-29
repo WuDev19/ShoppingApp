@@ -9,12 +9,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserAddressDAO {
+    @Query(value = "SELECT * FROM user_address WHERE maND = :maND ORDER BY defaultAddress DESC")
+    fun getUserAddress(maND: String): Flow<List<UserAddressEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(userAddresses: List<UserAddressEntity>)
-
-    @Query(value = "SELECT * FROM user_address WHERE maND = :maND")
-    fun getUserAddress(maND: String): Flow<List<UserAddressEntity>>
 
     @Query(value = "DELETE FROM user_address WHERE maND = :maND")
     suspend fun clearAll(maND: String)

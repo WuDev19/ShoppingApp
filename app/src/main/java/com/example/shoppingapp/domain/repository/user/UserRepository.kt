@@ -1,6 +1,7 @@
 package com.example.shoppingapp.domain.repository.user
 
 import android.net.Uri
+import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.domain.model.AddressItem
 import com.example.shoppingapp.domain.model.user.BaseUser
@@ -26,5 +27,9 @@ interface UserRepository {
     fun uploadAvatarToCloudinary(uri: Uri): Flow<StateListener<String>>
 
     fun getUserAddress(id: String): Flow<List<AddressItem>>
+
+    fun editUserAddress(idAddress: Int, userAddressRequest: UserAddressRequest): Flow<StateListener<Unit>>
+
+    fun addUserAddress(idUser: String, userAddressRequest: UserAddressRequest): Flow<StateListener<Unit>>
 
 }

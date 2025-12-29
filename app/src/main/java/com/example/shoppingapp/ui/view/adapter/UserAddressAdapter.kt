@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppingapp.databinding.UserAddressItemBinding
 import com.example.shoppingapp.domain.model.AddressItem
 
-class UserAddressAdapter :
+class UserAddressAdapter (private val onItemClick: (AddressItem) -> Unit):
     ListAdapter<AddressItem, UserAddressAdapter.UserAddressViewHolder>(diffCallBack) {
     companion object {
         val diffCallBack = object : DiffUtil.ItemCallback<AddressItem>() {
@@ -53,6 +53,9 @@ class UserAddressAdapter :
                tvPhone.text = it.sdt
                tvAddress.text = it.addressName
                tvDefault.isVisible = it.defaultAddress
+               linearUserAddress.setOnClickListener {_->
+                   onItemClick(it)
+               }
            }
        }
     }
