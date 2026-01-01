@@ -33,7 +33,7 @@ class PagingSourceProduct(private val productAPI: ProductAPI) : PagingSource<Int
                     nextKey = if (listProduct.isEmpty()) null else pageNumber + 1
                 )
             } else {
-                LoadResult.Error(Exception("Api Error"))
+                LoadResult.Error(Exception(StringConstants.API_ERROR))
             }
         } catch (e: Exception) {
             LoadResult.Error(e)

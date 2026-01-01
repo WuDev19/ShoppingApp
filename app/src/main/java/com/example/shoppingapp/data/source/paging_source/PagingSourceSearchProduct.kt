@@ -2,6 +2,7 @@ package com.example.shoppingapp.data.source.paging_source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
 import com.example.shoppingapp.domain.model.product.ProductDisplay
@@ -31,7 +32,7 @@ class PagingSourceSearchProduct(private val productAPI: ProductAPI, private val 
                     nextKey = if (productList.isEmpty()) null else pageNumber + 1
                 )
             } else {
-                LoadResult.Error(Exception("API ERROR"))
+                LoadResult.Error(Exception(StringConstants.API_ERROR))
             }
         } catch (e: Exception) {
             LoadResult.Error(e)

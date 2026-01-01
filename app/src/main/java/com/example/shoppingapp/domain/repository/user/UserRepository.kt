@@ -28,8 +28,16 @@ interface UserRepository {
 
     fun getUserAddress(id: String): Flow<List<AddressItem>>
 
-    fun editUserAddress(idAddress: Int, userAddressRequest: UserAddressRequest): Flow<StateListener<Unit>>
+    fun editUserAddress(
+        idAddress: Int,
+        userAddressRequest: UserAddressRequest
+    ): Flow<StateListener<Unit>>
 
-    fun addUserAddress(idUser: String, userAddressRequest: UserAddressRequest): Flow<StateListener<Unit>>
+    fun addUserAddress(
+        idUser: String,
+        userAddressRequest: UserAddressRequest
+    ): Flow<StateListener<Unit>>
+
+    fun deleteUserAddress(idUser: String, idAddress: Int): Flow<StateListener<Int>>
 
 }

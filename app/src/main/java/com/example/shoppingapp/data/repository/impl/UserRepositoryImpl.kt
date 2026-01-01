@@ -253,7 +253,7 @@ class UserRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             emit(StateListener.Success(Unit))
         } else {
-            emit(StateListener.Error(Exception("Api Error")))
+            emit(StateListener.Error(Exception(StringConstants.API_ERROR)))
         }
     }.catch {
         emit(StateListener.Error(Exception(it.message)))
@@ -268,7 +268,23 @@ class UserRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             emit(StateListener.Success(Unit))
         } else {
-            emit(StateListener.Error(Exception("Api Error")))
+            emit(StateListener.Error(Exception(StringConstants.API_ERROR)))
+        }
+    }.catch {
+        emit(StateListener.Error(Exception(it.message)))
+    }.flowOn(Dispatchers.IO)
+
+    override fun deleteUserAddress(
+        idUser: String,
+        idAddress: Int
+    ): Flow<StateListener<Int>> = flow {
+        emit(StateListener.Loading)
+        val response = userAPI.deleteUserAddress(idUser, idAddress)
+        if (response.isSuccessful) {
+            emit(StateListener.Success(response.code()))
+            Log.e(StringConstants.DEBUG, "deleteUserAddress: ${response.code()}")
+        } else {
+            emit(StateListener.Error(Exception(StringConstants.API_ERROR)))
         }
     }.catch {
         emit(StateListener.Error(Exception(it.message)))

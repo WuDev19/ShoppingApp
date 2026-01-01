@@ -2,6 +2,7 @@ package com.example.shoppingapp.ui.view.fragment.edit_profile
 
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import androidx.fragment.app.viewModels
@@ -68,6 +69,10 @@ class MapFragment : Fragment(), OnMapReadyCallback {
     private var marker: Marker? = null
     private val geocoder by lazy { Geocoder(requireContext(), Locale.getDefault()) }
     private val controller by lazy { findNavController() }
+    private val addressDetail by lazy {
+        arguments?.getString(StringConstants.ADDRESS_DETAIL)
+    }
+    private var address: String = ""
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val requestPermission: ActivityResultLauncher<String> = registerForActivityResult(
@@ -112,6 +117,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
 
         binding.apply {
 
+            edtSearch.setText(addressDetail)
+
             imgBack.setOnClickListener {
                 controller.popBackStack()
                 ViewPagerUtils.enableViewPager(viewPager2, controller)
@@ -123,15 +130,8 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                             KeyEvent.KEYCODE_ENTER)
                 ) {
                     geocoder.getFromLocationName(edtSearch.text.toString(), 1) { addresses ->
-                        viewLifecycleOwner.lifecycleScope.launch {
-                            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                withContext(Dispatchers.Main) {
-                                    val lat = addresses[0].latitude
-                                    val log = addresses[0].longitude
-                                    showMarker(LatLng(lat, log), addresses[0].getAddressLine(0))
-                                    moveCamera(LatLng(lat, log))
-                                }
-                            }
+                        if (addresses.isNotEmpty()) {
+                            showAddressFromLocationName(addresses)
                         }
                     }
                 }
@@ -139,7 +139,11 @@ class MapFragment : Fragment(), OnMapReadyCallback {
             }
 
             btnSave.setOnClickListener {
-
+                controller.previousBackStackEntry?.savedStateHandle?.set(
+                    StringConstants.ADDRESS_DETAIL,
+                    address
+                )
+                controller.popBackStack()
             }
 
         }
@@ -182,49 +186,59 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                 locationComponent.cameraMode = CameraMode.TRACKING //bám theo user
                 locationComponent.renderMode = RenderMode.COMPASS //xoay theo user
 
-                //lấy vị trí cuối cùng, ko cần đăng kí cái bên trên cũng được
-                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-                    location?.let { loc ->
-                        geocoder.getFromLocation(
-                            loc.latitude,
-                            loc.longitude,
-                            1
-                        ) { addresses -> //callback này chạy trong thread khác, phải withContext sang main (nhớ check thread trước khi code)
-                            Log.e(
-                                StringConstants.DEBUG,
-                                "showCurrentUserAddress: $addresses và \n ${Thread.currentThread().name}"
-                            )
-                            viewLifecycleOwner.lifecycleScope.launch {
-                                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                                    withContext(Dispatchers.Main) {
-                                        Log.e(
-                                            StringConstants.DEBUG,
-                                            "showCurrentUserAddress: ${Thread.currentThread().name}"
-                                        )
-                                        showMarker(
-                                            LatLng(loc.latitude, loc.longitude),
-                                            addresses[0].getAddressLine(0)
-                                        )
-                                        moveCamera(LatLng(loc.latitude, loc.longitude))
+                if (addressDetail.isNullOrEmpty()) {
+                    //lấy vị trí cuối cùng, ko cần đăng kí cái bên trên cũng được
+                    fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                        location?.let { loc ->
+                            geocoder.getFromLocation(
+                                loc.latitude,
+                                loc.longitude,
+                                1
+                            ) { addresses -> //callback này chạy trong thread khác, phải withContext sang main (nhớ check thread trước khi code)
+                                Log.e(
+                                    StringConstants.DEBUG,
+                                    "showCurrentUserAddress: $addresses và \n ${Thread.currentThread().name}"
+                                )
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                        withContext(Dispatchers.Main) {
+                                            Log.e(
+                                                StringConstants.DEBUG,
+                                                "showCurrentUserAddress: ${Thread.currentThread().name}"
+                                            )
+                                            showMarker(
+                                                LatLng(loc.latitude, loc.longitude),
+                                                addresses[0].getAddressLine(0)
+                                            )
+                                            moveCamera(LatLng(loc.latitude, loc.longitude))
+                                        }
                                     }
                                 }
                             }
                         }
+                    }.addOnFailureListener {
+                        ToastUtils.showToast(
+                            requireContext(),
+                            StringConstants.CURRENT_ADDRESS_ERROR
+                        )
                     }
-                }.addOnFailureListener {
-                    ToastUtils.showToast(requireContext(), "Can not display your current address")
+                } else {
+                    geocoder.getFromLocationName(addressDetail!!, 1) { addresses ->
+                        showAddressFromLocationName(addresses)
+                    }
                 }
+
 
                 addOnMapClickListener { latLng ->
                     marker?.let { mapLibreMap.removeMarker(it) }
                     showMarker(latLng, "")
                     geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1) { addresses ->
                         if (addresses.isNotEmpty()) {
-                            val adr = addresses[0].getAddressLine(0)
+                            address = addresses[0].getAddressLine(0)
                             viewLifecycleOwner.lifecycleScope.launch {
                                 repeatOnLifecycle(Lifecycle.State.STARTED) {
                                     withContext(Dispatchers.Main) {
-                                        binding.edtSearch.setText(adr)
+                                        binding.edtSearch.setText(address)
                                     }
                                 }
                             }
@@ -261,6 +275,20 @@ class MapFragment : Fragment(), OnMapReadyCallback {
                     .build()
             ), 1000
         )
+    }
+
+    fun showAddressFromLocationName(addresses: MutableList<Address>) {
+        address = addresses[0].getAddressLine(0)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                withContext(Dispatchers.Main) {
+                    val lat = addresses[0].latitude
+                    val log = addresses[0].longitude
+                    showMarker(LatLng(lat, log), addresses[0].getAddressLine(0))
+                    moveCamera(LatLng(lat, log))
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

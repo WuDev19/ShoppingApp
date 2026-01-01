@@ -60,7 +60,11 @@
         android:id="@+id/mapFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_mapFragment_to_editAddressFragment3"
+            app:destination="@id/editAddressFragment" />
+    </fragment>
     <fragment
         android:id="@+id/editAddressFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.EditAddressFragment"

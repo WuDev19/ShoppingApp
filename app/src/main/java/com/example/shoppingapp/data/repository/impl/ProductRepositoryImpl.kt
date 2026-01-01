@@ -117,7 +117,7 @@ class ProductRepositoryImpl @Inject constructor(
             } ?: emptyList()
             emit(StateListener.Success(listProductChiTiet))
         } else {
-            emit(StateListener.Error(Exception("Api Error")))
+            emit(StateListener.Error(Exception(StringConstants.API_ERROR)))
         }
     }.flowOn(Dispatchers.IO)
 

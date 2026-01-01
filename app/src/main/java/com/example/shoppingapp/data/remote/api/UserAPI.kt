@@ -7,6 +7,7 @@ import com.example.shoppingapp.data.remote.dto.request.UserDTOCreate
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -55,6 +56,12 @@ interface UserAPI {
     suspend fun addAddress(
         @Path("id") id: String,
         @Body userAddressRequest: UserAddressRequest
+    ): Response<Unit>
+
+    @DELETE("user/{idUser}/address/{idAddress}")
+    suspend fun deleteUserAddress(
+        @Path("idUser") idUser: String,
+        @Path("idAddress") idAddress: Int
     ): Response<Unit>
 
 }

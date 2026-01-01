@@ -62,4 +62,9 @@ object StringConstants {
     const val YOUR_ADDRESS = "Your Address"
     const val ADDRESS_ITEM = "address_item"
     const val USER_ADDRESS_ERROR_MESSAGE = "All field must be filled"
+    const val API_ERROR = "Api error"
+    const val SAVE_SUCCESSFULLY = "Save successfully"
+    const val CHANGE_ADDRESS = "Update your new address"
+    const val ADDRESS_DETAIL = "address_detail"
+    const val CURRENT_ADDRESS_ERROR = "Can not display your current address"
 }

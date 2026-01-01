@@ -2,6 +2,7 @@ package com.example.shoppingapp.data.source.paging_source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.ProductAPI
 import com.example.shoppingapp.domain.model.product.ProductDisplay
@@ -32,7 +33,7 @@ class PagingSourceOtherProductOfShop(private val productAPI: ProductAPI, private
                 )
             }
             else{
-                LoadResult.Error(Exception("API Error"))
+                LoadResult.Error(Exception(StringConstants.API_ERROR))
             }
         }
         catch (e: Exception){
