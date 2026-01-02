@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -30,7 +29,6 @@ import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.constants.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentMapBinding
-import com.example.shoppingapp.ui.viewmodel.edit_profile.MapViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -53,8 +51,6 @@ import org.maplibre.android.maps.Style
 import java.util.Locale
 
 class MapFragment : Fragment(), OnMapReadyCallback {
-
-    private val viewModel: MapViewModel by viewModels()
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
     private val viewPager2 by lazy { requireActivity().findViewById<ViewPager2>(R.id.view_pager2) }

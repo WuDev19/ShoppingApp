@@ -43,8 +43,6 @@ class EditAddressFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e(StringConstants.DEBUG, "onCreate: $addressItem")
-        Log.e(StringConstants.DEBUG, "onCreate: ${controller.currentBackStack.value}")
     }
 
     override fun onCreateView(
@@ -130,6 +128,10 @@ class EditAddressFragment : Fragment() {
                 }
             }
 
+            imgBack.setOnClickListener {
+                controller.popBackStack()
+            }
+
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -137,12 +139,17 @@ class EditAddressFragment : Fragment() {
                 viewModel.addressState.collectLatest {
                     when (it) {
                         is StateListener.Idle -> Unit
-                        is StateListener.Loading -> binding.progressBar.isVisible = true
+                        is StateListener.Loading -> {
+                            Log.e(StringConstants.DEBUG, "onViewCreated: loading")
+                            binding.progressBar.isVisible = true
+                        }
+
                         is StateListener.Error -> {
-                            delay(2000)
+                            if (it.e !is IllegalArgumentException) {
+                                delay(2000)
+                                binding.progressBar.isVisible = false
+                            }
                             ToastUtils.showToast(requireContext(), it.e?.message.toString())
-                            Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
-                            binding.progressBar.isVisible = false
                         }
 
                         is StateListener.Success<Unit> -> {

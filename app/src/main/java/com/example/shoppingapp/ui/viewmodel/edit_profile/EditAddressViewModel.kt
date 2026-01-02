@@ -1,7 +1,9 @@
 package com.example.shoppingapp.ui.viewmodel.edit_profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.domain.usecase.profileusecase.AddUserAddressUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.DeleteUserAddressUseCase
@@ -37,30 +39,35 @@ class EditAddressViewModel @Inject constructor(
         }
     }
 
-    fun addAddress(userAddressRequest: UserAddressRequest){
-        try {
-            viewModelScope.launch {
-                addUserAddressUseCase(auth.currentUser?.uid ?: "", userAddressRequest).collectLatest {
+    fun addAddress(userAddressRequest: UserAddressRequest) {
+
+        viewModelScope.launch {
+            try {
+                addUserAddressUseCase(
+                    auth.currentUser?.uid ?: "",
+                    userAddressRequest
+                ).collectLatest {
                     _addressState.value = it
                 }
+            } catch (e: IllegalArgumentException) {
+                _addressState.value = StateListener.Error(IllegalArgumentException(e.message))
             }
         }
-        catch (e: IllegalArgumentException){
-            _addressState.value = StateListener.Error(IllegalArgumentException(e.message))
-        }
+
     }
 
-    fun deleteUserAddress(idUser: String, idAddress: Int){
-        try {
-            viewModelScope.launch {
+    fun deleteUserAddress(idUser: String, idAddress: Int) {
+
+        viewModelScope.launch {
+            try {
                 deleteUserAddressUseCase(idUser, idAddress).collectLatest {
                     _deleteState.value = it
                 }
+            } catch (e: IllegalArgumentException) {
+                _deleteState.value = StateListener.Error(IllegalArgumentException(e.message))
             }
         }
-        catch (e: IllegalArgumentException){
-            _deleteState.value = StateListener.Error(IllegalArgumentException(e.message))
-        }
+
     }
 
 }
