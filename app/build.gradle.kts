@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.android.sdk)
     implementation(libs.play.services.location)
     implementation(libs.android.plugin.annotation.v9)
+    implementation(libs.ccp)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)

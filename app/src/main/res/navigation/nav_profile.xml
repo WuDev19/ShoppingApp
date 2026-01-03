@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_profileFragment_to_addressFragment"
             app:destination="@id/addressFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_registerSellerFragment"
+            app:destination="@id/registerSellerFragment" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -74,4 +77,18 @@
             android:id="@+id/action_editAddressFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/registerSellerFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.RegisterSellerFragment"
+        android:label="fragment_register_seller"
+        tools:layout="@layout/fragment_register_seller" >
+        <action
+            android:id="@+id/action_registerSellerFragment_to_verifyOtpFragment"
+            app:destination="@id/verifyOtpFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verifyOtpFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.SendOtpFragment"
+        android:label="fragment_verify_otp"
+        tools:layout="@layout/fragment_send_otp" />
 </navigation>

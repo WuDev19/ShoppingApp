@@ -166,6 +166,13 @@ class ProfileFragment : Fragment() {
                 BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
                 ViewPagerUtils.disableViewPager(viewPager2)
             }
+
+            linearRegisterSeller.setOnClickListener {
+                controller.navigate(R.id.action_profileFragment_to_registerSellerFragment)
+                BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
+                ViewPagerUtils.disableViewPager(viewPager2)
+            }
+
         }
 
     }
