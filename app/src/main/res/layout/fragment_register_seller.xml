@@ -110,7 +110,7 @@
             android:layout_marginTop="20dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/img_act"
+                android:id="@+id/img_avt"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/icon_avatar" />

@@ -38,6 +38,7 @@ class EditAddressFragment : Fragment() {
     private val controller by lazy { findNavController() }
 
     private val addressItem by lazy {
+        //dữ liệu từ address fragment
         arguments?.getParcelable(StringConstants.ADDRESS_ITEM, AddressItem::class.java)
     }
 

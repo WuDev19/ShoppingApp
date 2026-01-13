@@ -1,22 +1,27 @@
 package com.example.shoppingapp.data.repository.impl
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.SellerMapper
 import com.example.shoppingapp.data.remote.api.SellerAPI
+import com.example.shoppingapp.data.remote.dto.get.OtpDto
 import com.example.shoppingapp.data.source.paging_source.PagingSourceSeller
+import com.example.shoppingapp.domain.model.OtpModel
 import com.example.shoppingapp.domain.model.SellerInStore
 import com.example.shoppingapp.domain.repository.seller.SellerRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
-class SellerRepositoryImpl @Inject constructor(private val sellerAPI: SellerAPI) : SellerRepository {
+class SellerRepositoryImpl @Inject constructor(private val sellerAPI: SellerAPI) :
+    SellerRepository {
 
     override fun getAllSeller(): Flow<PagingData<SellerInStore>> {
         return Pager(
@@ -33,7 +38,7 @@ class SellerRepositoryImpl @Inject constructor(private val sellerAPI: SellerAPI)
     override fun getSellerById(id: Int): Flow<StateListener<SellerInStore>> = flow {
         try {
             val response = sellerAPI.getSellerById(id)
-            if(response.isSuccessful){
+            if (response.isSuccessful) {
                 val sellerDTO = response.body()
                 val sellerInStore = sellerDTO?.let {
                     SellerMapper.mapToSellerInStore(it)
@@ -41,14 +46,37 @@ class SellerRepositoryImpl @Inject constructor(private val sellerAPI: SellerAPI)
                 sellerInStore?.let {
                     emit(StateListener.Success(it))
                 } ?: emit(StateListener.Error(Exception("Cast Error")))
-            }
-            else{
+            } else {
                 emit(StateListener.Error(Exception(response.message())))
             }
-        }
-        catch (e: Exception){
+        } catch (e: Exception) {
             emit(StateListener.Error(e))
         }
     }.flowOn(Dispatchers.IO)
+
+    override fun sendOtp(): Flow<StateListener<OtpModel>> = flow {
+        val response = sellerAPI.sendOtp()
+        if (response.isSuccessful) {
+            val data = response.body()
+            data?.let { emit(StateListener.Success(it.mapToOtpModel())) }
+                ?: emit(
+                StateListener.Error(
+                    Exception(StringConstants.API_ERROR)
+                )
+            )
+        } else {
+            emit(StateListener.Error(Exception(StringConstants.API_ERROR)))
+        }
+    }.catch {
+        emit(StateListener.Error(Exception(it.message)))
+    }.flowOn(Dispatchers.IO)
+
+    override fun verifyOtp(otp: String): Flow<StateListener<Unit>> {
+        TODO("Not yet implemented")
+    }
+
+    private fun OtpDto.mapToOtpModel(): OtpModel {
+        return OtpModel(this.expireTime, this.message)
+    }
 
 }

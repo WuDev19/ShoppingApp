@@ -106,8 +106,9 @@
     <string name="detail_address">Detail address</string>
     <string name="cont">Continue</string>
     <string name="add_your_store_s_profile_picture"><u>+ Add your store\'s profile picture</u></string>
-    <string name="verify_otp">Verify OTP</string>
     <string name="enter_your_otp">Enter your OTP</string>
     <string name="verify">Verify</string>
     <string name="send_otp">Send OTP</string>
+    <string name="resend_otp"><u>Resend OTP</u></string>
+    <string name="expire_in">Expire in</string>
 </resources>

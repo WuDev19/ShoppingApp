@@ -9,7 +9,7 @@
         android:id="@+id/profileFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.bottom_nav.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
+        tools:layout="@layout/fragment_profile">
         <action
             android:id="@+id/action_profileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
@@ -27,7 +27,7 @@
         android:id="@+id/editProfileFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.EditProfileFragment"
         android:label="fragment_edit_profile"
-        tools:layout="@layout/fragment_edit_profile" >
+        tools:layout="@layout/fragment_edit_profile">
         <action
             android:id="@+id/action_editProfileFragment_to_changeNameFragment"
             app:destination="@id/changeNameFragment" />
@@ -54,7 +54,7 @@
         android:id="@+id/addressFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.AddressFragment"
         android:label="fragment_address"
-        tools:layout="@layout/fragment_address" >
+        tools:layout="@layout/fragment_address">
         <action
             android:id="@+id/action_addressFragment_to_editAddressFragment"
             app:destination="@id/editAddressFragment" />
@@ -63,32 +63,55 @@
         android:id="@+id/mapFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.MapFragment"
         android:label="fragment_map"
-        tools:layout="@layout/fragment_map" >
+        tools:layout="@layout/fragment_map">
         <action
             android:id="@+id/action_mapFragment_to_editAddressFragment3"
             app:destination="@id/editAddressFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/editAddressFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.EditAddressFragment"
         android:label="fragment_edit_address"
-        tools:layout="@layout/fragment_edit_address" >
+        tools:layout="@layout/fragment_edit_address">
         <action
             android:id="@+id/action_editAddressFragment_to_mapFragment"
             app:destination="@id/mapFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/registerSellerFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.RegisterSellerFragment"
         android:label="fragment_register_seller"
-        tools:layout="@layout/fragment_register_seller" >
+        tools:layout="@layout/fragment_register_seller">
         <action
-            android:id="@+id/action_registerSellerFragment_to_verifyOtpFragment"
-            app:destination="@id/verifyOtpFragment" />
+            android:id="@+id/action_registerSellerFragment_to_mapFragment2"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_registerSellerFragment_to_sendOtpFragment"
+            app:destination="@id/sendOtpFragment" />
     </fragment>
     <fragment
-        android:id="@+id/verifyOtpFragment"
+        android:id="@+id/sendOtpFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.SendOtpFragment"
-        android:label="fragment_verify_otp"
-        tools:layout="@layout/fragment_send_otp" />
+        android:label="fragment_send_otp"
+        tools:layout="@layout/fragment_send_otp">
+
+        <argument
+            android:name="uri_anh"
+            app:argType="android.net.Uri"
+            app:nullable="true" />
+
+        <argument
+            android:name="shop_name"
+            app:argType="string"
+            app:nullable="false" />
+
+        <argument
+            android:name="shop_address"
+            app:argType="string"
+            app:nullable="false" />
+
+    </fragment>
+
 </navigation>
