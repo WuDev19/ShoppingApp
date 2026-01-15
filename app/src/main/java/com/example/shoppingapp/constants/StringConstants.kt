@@ -73,4 +73,6 @@ object StringConstants {
     const val SHOP_ADDRESS = "shop_address"
     const val SHOP_NAME = "shop_name"
     const val OTP_MODEL = "otp_model"
+    const val CODE_EXPIRE = "OTP expired"
+    const val SHOP_PHONE = "shop_phone"
 }

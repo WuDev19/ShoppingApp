@@ -9,20 +9,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.BundleCompat
-import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.bumptech.glide.Glide
-import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.data.remote.dto.get.SellerDTO
+import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.databinding.FragmentVerifyOtpBinding
 import com.example.shoppingapp.domain.model.OtpModel
 import com.example.shoppingapp.ui.state.StateListener
+import com.example.shoppingapp.ui.viewmodel.seller.SendOtpViewModel
 import com.example.shoppingapp.ui.viewmodel.seller.VerifyOtpViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,7 +32,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class VerifyOtpFragment(
@@ -41,6 +42,9 @@ class VerifyOtpFragment(
 ) : BottomSheetDialogFragment() {
 
     private val viewModel: VerifyOtpViewModel by viewModels()
+    private val parentViewModel: SendOtpViewModel by viewModels(ownerProducer = {
+        requireParentFragment()
+    })
     private var _binding: FragmentVerifyOtpBinding? = null
     private val binding get() = _binding!!
     private val uriAnh: Uri? by lazy {
@@ -54,12 +58,18 @@ class VerifyOtpFragment(
     private val shopAddress by lazy {
         arguments?.getString(StringConstants.SHOP_ADDRESS)
     }
+    private val shopPhone by lazy {
+        arguments?.getString(StringConstants.SHOP_PHONE)
+    }
     private val otpModel by lazy {
         arguments?.let {
             BundleCompat.getParcelable(it, StringConstants.OTP_MODEL, OtpModel::class.java)
         }
     }
     private var isExpire: Boolean = false
+
+    @Inject
+    lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +87,43 @@ class VerifyOtpFragment(
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+
+            handleEnterOTP()
+
+            btnVerify.setOnClickListener {
+                if (!isExpire) {
+                    if (uriAnh == null || shopName == null || shopPhone == null || shopAddress == null) {
+                        ToastUtils.showToast(requireContext(), StringConstants.HAS_ERROR)
+                        return@setOnClickListener
+                    }
+                    val otp = buildString {
+                        append(edt1.text.toString())
+                        append(edt2.text.toString())
+                        append(edt3.text.toString())
+                        append(edt4.text.toString())
+                        append(edt5.text.toString())
+                        append(edt6.text.toString())
+                    }
+                    viewModel.register(
+                        otp,
+                        uriAnh!!,
+                        SellerRequest(
+                            auth.currentUser?.uid!!,
+                            shopName!!,
+                            shopPhone!!,
+                            shopAddress!!,
+                            ""
+                        )
+                    )
+                } else {
+                    ToastUtils.showToast(requireContext(), StringConstants.CODE_EXPIRE)
+                }
+            }
+
+            tvResendOtp.setOnClickListener {
+                parentViewModel.sendOtp()
+                ToastUtils.showToast(requireContext(), "Click")
+            }
 
             viewLifecycleOwner.lifecycleScope.launch {
                 tvResendOtp.isEnabled = false
@@ -101,13 +148,28 @@ class VerifyOtpFragment(
                 }
             }
 
-            handleEnterOTP()
+            viewLifecycleOwner.lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    viewModel.registerState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> onLoading
+                            is StateListener.Error -> {
+                                onError(it.e?.message.toString())
+                                Log.e(
+                                    StringConstants.DEBUG,
+                                    "onViewCreated: ${it.e?.message.toString()}"
+                                )
+                            }
 
-            btnVerify.setOnClickListener {
-                if (!isExpire) {
-                    ToastUtils.showToast(requireContext(), "Van con han")
-                } else {
-                    ToastUtils.showToast(requireContext(), "Het han")
+                            is StateListener.Success<Any> -> {
+                                val data = it.result
+                                if (data is SellerDTO) {
+                                    ToastUtils.showToast(requireContext(), "Register Successfully")
+                                }
+                            }
+                        }
+                    }
                 }
             }
 
@@ -127,7 +189,7 @@ class VerifyOtpFragment(
         }
     }
 
-    private fun handleEnterOTP(){
+    private fun handleEnterOTP() {
         binding.apply {
             edt1.requestFocus()
             edt1.addTextChangedListener { editable ->

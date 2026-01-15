@@ -78,6 +78,10 @@ class SendOtpFragment : Fragment() {
         binding.apply {
 
             btnSendOtp.setOnClickListener {
+                if(edtPhone.text.toString().trim().isEmpty()){
+                    ToastUtils.showToast(requireContext(), "Please enter shop phone number")
+                    return@setOnClickListener
+                }
                 //phải xin quyền runtime thì mới gửi notification được (android 13+)
                 checkPermission()
             }
@@ -131,7 +135,7 @@ class SendOtpFragment : Fragment() {
     }
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    private fun createNotification(otpModel: OtpModel){
+    fun createNotification(otpModel: OtpModel){
         val notification = NotificationCompat.Builder(
             requireContext(),
             StringConstants.SEND_OTP_CHANEL_ID
@@ -162,6 +166,7 @@ class SendOtpFragment : Fragment() {
                     shimmer.isVisible = false
                     progressBar.isVisible = false
                     constraintMain.isEnabled = true
+                    Log.e(StringConstants.DEBUG, "showVerifyFragment: error")
                     ToastUtils.showToast(requireContext(), it)
                 },
                 onSuccess = {
@@ -175,12 +180,15 @@ class SendOtpFragment : Fragment() {
                 StringConstants.URI_ANH to uriAnh,
                 StringConstants.SHOP_NAME to shopName,
                 StringConstants.SHOP_ADDRESS to shopAddress,
-                StringConstants.OTP_MODEL to otpModel
+                StringConstants.OTP_MODEL to otpModel,
+                StringConstants.SHOP_PHONE to edtPhone.text.toString().trim()
             )
             verifyOtpFragment.arguments = bundle
+            val frag = childFragmentManager.findFragmentByTag("verifyFragment") as? VerifyOtpFragment
+            frag?.dismiss()
             verifyOtpFragment.show(
-                requireActivity().supportFragmentManager,
-                verifyOtpFragment.tag
+                childFragmentManager,
+                "verifyFragment"
             )
             verifyOtpFragment.isCancelable = false
         }
