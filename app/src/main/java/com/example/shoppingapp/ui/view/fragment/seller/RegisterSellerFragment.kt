@@ -64,6 +64,10 @@ class RegisterSellerFragment : Fragment() {
             btnContinue.setOnClickListener {
                 val shopName = edtShopName.text.toString().trim()
                 val shopAddress = edtAddressShop.text.toString().trim()
+                if(shopName.isEmpty() || shopAddress.isEmpty() || uriAnh == null){
+                    ToastUtils.showToast(requireContext(), "Please fill all information to register seller")
+                    return@setOnClickListener
+                }
                 val action =
                     RegisterSellerFragmentDirections.actionRegisterSellerFragmentToSendOtpFragment(
                         uriAnh,

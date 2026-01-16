@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.BundleCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -35,11 +36,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class VerifyOtpFragment(
-    private val onLoading: () -> Unit,
-    private val onError: (message: String) -> Unit,
-    private val onSuccess: () -> Unit
-) : BottomSheetDialogFragment() {
+class VerifyOtpFragment() : BottomSheetDialogFragment() {
 
     private val viewModel: VerifyOtpViewModel by viewModels()
     private val parentViewModel: SendOtpViewModel by viewModels(ownerProducer = {
@@ -96,6 +93,9 @@ class VerifyOtpFragment(
                         ToastUtils.showToast(requireContext(), StringConstants.HAS_ERROR)
                         return@setOnClickListener
                     }
+                    binding.shimmer.isVisible = true
+                    binding.progressBar.isVisible = true
+                    binding.constraintMain.isEnabled = false
                     val otp = buildString {
                         append(edt1.text.toString())
                         append(edt2.text.toString())
@@ -122,7 +122,6 @@ class VerifyOtpFragment(
 
             tvResendOtp.setOnClickListener {
                 parentViewModel.sendOtp()
-                ToastUtils.showToast(requireContext(), "Click")
             }
 
             viewLifecycleOwner.lifecycleScope.launch {
@@ -153,19 +152,32 @@ class VerifyOtpFragment(
                     viewModel.registerState.collectLatest {
                         when (it) {
                             is StateListener.Idle -> Unit
-                            is StateListener.Loading -> onLoading
+                            is StateListener.Loading -> Unit
                             is StateListener.Error -> {
-                                onError(it.e?.message.toString())
+                                binding.constraintMain.isEnabled = true
+                                binding.shimmer.isVisible = false
+                                binding.progressBar.isVisible = false
                                 Log.e(
                                     StringConstants.DEBUG,
                                     "onViewCreated: ${it.e?.message.toString()}"
                                 )
+                                ToastUtils.showToast(requireContext(), it.e?.message.toString())
                             }
 
                             is StateListener.Success<Any> -> {
                                 val data = it.result
-                                if (data is SellerDTO) {
+                                if(data is SellerDTO){
                                     ToastUtils.showToast(requireContext(), "Register Successfully")
+                                    binding.constraintMain.isEnabled = true
+                                    binding.shimmer.isVisible = false
+                                    binding.progressBar.isVisible = false
+                                    this@VerifyOtpFragment.dismiss()
+                                }
+                                else if (data is Unit){
+                                    ToastUtils.showToast(requireContext(), "Xác nhận mã OTP thành công")
+                                }
+                                else if (data is String){
+                                    ToastUtils.showToast(requireContext(), "Upload avatar thành công")
                                 }
                             }
                         }

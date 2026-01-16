@@ -12,6 +12,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
@@ -37,7 +38,7 @@ class VerifyOtpViewModel @Inject constructor(
                     is StateListener.Success<Unit> -> uploadAvatarUseCase(uri)
                     is StateListener.Idle -> flowOf(it)
                     is StateListener.Loading -> flowOf(it)
-                    is StateListener.Error -> flowOf(it)
+                    is StateListener.Error -> throw Exception(it.e?.message)
                 }
             }.flatMapConcat {
                 when(it){
@@ -48,8 +49,10 @@ class VerifyOtpViewModel @Inject constructor(
                     }
                     is StateListener.Idle -> flowOf(it)
                     is StateListener.Loading -> flowOf(it)
-                    is StateListener.Error -> flowOf(it)
+                    is StateListener.Error -> throw Exception(it.e?.message)
                 }
+            }.catch {
+                _registerState.value = StateListener.Error(Exception(it.message));
             }.collectLatest {
                 _registerState.value = it
             }

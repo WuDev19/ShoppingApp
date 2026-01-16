@@ -17,7 +17,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -156,25 +155,7 @@ class SendOtpFragment : Fragment() {
 
     private fun showVerifyFragment(otpModel: OtpModel) {
         binding.apply {
-            val verifyOtpFragment = VerifyOtpFragment(
-                onLoading = {
-                    shimmer.isVisible = true
-                    progressBar.isVisible = true
-                    constraintMain.isEnabled = false
-                },
-                onError = {
-                    shimmer.isVisible = false
-                    progressBar.isVisible = false
-                    constraintMain.isEnabled = true
-                    Log.e(StringConstants.DEBUG, "showVerifyFragment: error")
-                    ToastUtils.showToast(requireContext(), it)
-                },
-                onSuccess = {
-                    shimmer.isVisible = false
-                    progressBar.isVisible = false
-                    constraintMain.isEnabled = true
-                }
-            )
+            val verifyOtpFragment = VerifyOtpFragment()
             Log.e(StringConstants.DEBUG, "kajshda: $shopName va \n $shopAddress")
             val bundle = bundleOf(
                 StringConstants.URI_ANH to uriAnh,
