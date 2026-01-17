@@ -166,18 +166,20 @@ class VerifyOtpFragment() : BottomSheetDialogFragment() {
 
                             is StateListener.Success<Any> -> {
                                 val data = it.result
-                                if(data is SellerDTO){
-                                    ToastUtils.showToast(requireContext(), "Register Successfully")
-                                    binding.constraintMain.isEnabled = true
-                                    binding.shimmer.isVisible = false
-                                    binding.progressBar.isVisible = false
-                                    this@VerifyOtpFragment.dismiss()
-                                }
-                                else if (data is Unit){
-                                    ToastUtils.showToast(requireContext(), "Xác nhận mã OTP thành công")
-                                }
-                                else if (data is String){
-                                    ToastUtils.showToast(requireContext(), "Upload avatar thành công")
+                                when (data) {
+                                    is SellerDTO -> {
+                                        ToastUtils.showToast(requireContext(), "Register Successfully")
+                                        binding.constraintMain.isEnabled = true
+                                        binding.shimmer.isVisible = false
+                                        binding.progressBar.isVisible = false
+                                        this@VerifyOtpFragment.dismiss()
+                                    }
+                                    is Unit -> {
+                                        ToastUtils.showToast(requireContext(), "Xác nhận mã OTP thành công")
+                                    }
+                                    is String -> {
+                                        ToastUtils.showToast(requireContext(), "Upload avatar thành công")
+                                    }
                                 }
                             }
                         }
