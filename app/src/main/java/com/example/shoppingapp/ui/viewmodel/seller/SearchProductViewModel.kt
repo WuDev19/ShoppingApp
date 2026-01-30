@@ -1,4 +1,4 @@
-package com.example.shoppingapp.ui.viewmodel
+package com.example.shoppingapp.ui.viewmodel.seller
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

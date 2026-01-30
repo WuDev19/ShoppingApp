@@ -6,7 +6,7 @@ import com.example.shoppingapp.data.repository.impl.CategoryRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.ProductRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.SellerRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.UserRepositoryImpl
-import com.example.shoppingapp.domain.repository.authrepo.AuthRepository
+import com.example.shoppingapp.domain.repository.auth.AuthRepository
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.domain.repository.category.CategoryRepository
 import com.example.shoppingapp.domain.repository.product.ProductRepository

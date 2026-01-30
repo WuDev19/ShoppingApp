@@ -5,5 +5,6 @@ data class SellerRequest(
     val tenShop: String,
     val sdtNguoiBan: String,
     val tenDiaChi: String,
-    var avtShop: String
+    var avtShop: String,
+    val roleName: String
 )

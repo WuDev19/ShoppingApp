@@ -1,5 +1,6 @@
 package com.example.shoppingapp.data.remote.api
 
+import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.UserAddressDTO
 import com.example.shoppingapp.data.remote.dto.get.UserDTOGet
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
@@ -18,6 +19,9 @@ interface UserAPI {
 
     @POST("user/create")
     suspend fun createUser(@Body user: UserDTOCreate): Response<UserDTOGet>
+
+    @POST("user/token")
+    suspend fun token(@Query("userId") userId: String): Response<AuthResponse>
 
     @GET("user/get/{id}")
     suspend fun getUser(@Path("id") id: String): Response<UserDTOGet>

@@ -1,8 +1,11 @@
 package com.example.shoppingapp.ui.viewmodel.seller
 
+import android.content.SharedPreferences
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.domain.usecase.profileusecase.UploadAvatarUseCase
 import com.example.shoppingapp.domain.usecase.sellerusecase.RegisterSellerUseCase
@@ -18,15 +21,17 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import androidx.core.content.edit
 
 @HiltViewModel
 class VerifyOtpViewModel @Inject constructor(
     private val verifyOtpUseCase: VerifyOtpUseCase,
     private val uploadAvatarUseCase: UploadAvatarUseCase,
     private val registerSellerUseCase: RegisterSellerUseCase,
+    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
-    private val _registerState: MutableStateFlow<StateListener<Any>> =
+    private val _registerState: MutableStateFlow<StateListener<AuthResponse>> =
         MutableStateFlow(StateListener.Idle)
     val registerState = _registerState.asStateFlow()
 
@@ -52,10 +57,18 @@ class VerifyOtpViewModel @Inject constructor(
                     is StateListener.Error -> throw Exception(it.e?.message)
                 }
             }.catch {
-                _registerState.value = StateListener.Error(Exception(it.message));
+                _registerState.value = StateListener.Error(Exception(it.message))
             }.collectLatest {
                 _registerState.value = it
             }
+        }
+    }
+
+    fun saveTokenToLocal(authResponse: AuthResponse) {
+        sharedPreferences.edit {
+            putString(StringConstants.TOKEN, authResponse.token)
+            putString(StringConstants.REFRESH_TOKEN, authResponse.refreshToken)
+            putString(StringConstants.TIME_CREATE_TOKEN, authResponse.createTime)
         }
     }
 

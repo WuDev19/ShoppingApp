@@ -1,18 +1,16 @@
-package com.example.shoppingapp.ui.view.fragment
+package com.example.shoppingapp.ui.view.fragment.seller
 
-import android.annotation.SuppressLint
 import android.content.Context
-import android.inputmethodservice.InputMethodService
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,7 +22,7 @@ import com.example.shoppingapp.databinding.FragmentSearchProductBinding
 import com.example.shoppingapp.domain.model.SearchProductShop
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
-import com.example.shoppingapp.ui.viewmodel.SearchProductViewModel
+import com.example.shoppingapp.ui.viewmodel.seller.SearchProductViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

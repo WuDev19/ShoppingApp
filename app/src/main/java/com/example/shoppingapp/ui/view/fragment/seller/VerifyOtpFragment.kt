@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.SellerDTO
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.databinding.FragmentVerifyOtpBinding
@@ -96,6 +97,7 @@ class VerifyOtpFragment() : BottomSheetDialogFragment() {
                     binding.shimmer.isVisible = true
                     binding.progressBar.isVisible = true
                     binding.constraintMain.isEnabled = false
+                    this@VerifyOtpFragment.isCancelable = false
                     val otp = buildString {
                         append(edt1.text.toString())
                         append(edt2.text.toString())
@@ -112,7 +114,8 @@ class VerifyOtpFragment() : BottomSheetDialogFragment() {
                             shopName!!,
                             shopPhone!!,
                             shopAddress!!,
-                            ""
+                            "",
+                            "ADMIN"
                         )
                     )
                 } else {
@@ -157,6 +160,7 @@ class VerifyOtpFragment() : BottomSheetDialogFragment() {
                                 binding.constraintMain.isEnabled = true
                                 binding.shimmer.isVisible = false
                                 binding.progressBar.isVisible = false
+                                this@VerifyOtpFragment.isCancelable = true
                                 Log.e(
                                     StringConstants.DEBUG,
                                     "onViewCreated: ${it.e?.message.toString()}"
@@ -164,23 +168,19 @@ class VerifyOtpFragment() : BottomSheetDialogFragment() {
                                 ToastUtils.showToast(requireContext(), it.e?.message.toString())
                             }
 
-                            is StateListener.Success<Any> -> {
+                            is StateListener.Success<AuthResponse> -> {
                                 val data = it.result
-                                when (data) {
-                                    is SellerDTO -> {
-                                        ToastUtils.showToast(requireContext(), "Register Successfully")
-                                        binding.constraintMain.isEnabled = true
-                                        binding.shimmer.isVisible = false
-                                        binding.progressBar.isVisible = false
-                                        this@VerifyOtpFragment.dismiss()
-                                    }
-                                    is Unit -> {
-                                        ToastUtils.showToast(requireContext(), "Xác nhận mã OTP thành công")
-                                    }
-                                    is String -> {
-                                        ToastUtils.showToast(requireContext(), "Upload avatar thành công")
-                                    }
-                                }
+                                Log.e(StringConstants.DEBUG, "onViewCreated: $data")
+
+                                ToastUtils.showToast(
+                                    requireContext(),
+                                    StringConstants.REGISTER_SELLER_SUCCESS
+                                )
+                                binding.constraintMain.isEnabled = true
+                                binding.shimmer.isVisible = false
+                                binding.progressBar.isVisible = false
+                                this@VerifyOtpFragment.isCancelable = true
+                                this@VerifyOtpFragment.dismiss()
                             }
                         }
                     }

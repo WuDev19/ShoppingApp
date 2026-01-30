@@ -7,7 +7,9 @@ import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
+import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.ActivityCreateAccountBinding
 import com.example.shoppingapp.ui.state.StateListener
@@ -21,6 +23,7 @@ import kotlinx.coroutines.launch
 class CreateAccountActivity : AppCompatActivity() {
     private val viewModel: CreateAccountViewModel by viewModels()
     private lateinit var viewBinding: ActivityCreateAccountBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -38,7 +41,14 @@ class CreateAccountActivity : AppCompatActivity() {
                         viewBinding.progressBarCreate.visibility = View.GONE
                     }
                     is StateListener.Success -> {
-                        startActivity(Intent(this@CreateAccountActivity, MainActivity::class.java))
+                        val dataLogin = it.result
+                        val bundle = bundleOf(
+                            StringConstants.EMAIL_KEY_INTENT to dataLogin.email,
+                            StringConstants.PASSWORD to dataLogin.password
+                        )
+                        val intentToLogin = Intent(this@CreateAccountActivity, LoginActivity::class.java)
+                        intentToLogin.putExtra(StringConstants.INTENT_LOGIN, bundle)
+                        startActivity(intentToLogin)
                         finishAffinity()
                     }
                 }

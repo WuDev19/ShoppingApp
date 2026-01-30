@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_profileFragment_to_registerSellerFragment"
             app:destination="@id/registerSellerFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_dashBoardSellerFragment"
+            app:destination="@id/dashBoardSellerFragment" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -111,6 +114,20 @@
             android:name="shop_address"
             app:argType="string"
             app:nullable="false" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/dashBoardSellerFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.DashBoardSellerFragment"
+        android:label="fragment_dash_board_seller"
+        tools:layout="@layout/fragment_dash_board_seller" >
+
+        <argument
+            android:name="userId"
+            app:argType="string"
+            app:nullable="false"
+            android:defaultValue=""/>
 
     </fragment>
 

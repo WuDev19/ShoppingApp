@@ -2,6 +2,8 @@ package com.example.shoppingapp.ui.viewmodel.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shoppingapp.data.remote.dto.get.AuthResponse
+import com.example.shoppingapp.domain.model.LoginModel
 import com.example.shoppingapp.domain.usecase.authusecase.CreateAccountUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.AuthResult
@@ -15,8 +17,8 @@ import javax.inject.Inject
 class CreateAccountViewModel @Inject constructor(private val createAccountUseCase: CreateAccountUseCase) :
     ViewModel() {
 
-    private val _state = MutableStateFlow<StateListener<AuthResult>>(StateListener.Idle)
-    val state: StateFlow<StateListener<AuthResult>> = _state
+    private val _state = MutableStateFlow<StateListener<LoginModel>>(StateListener.Idle)
+    val state: StateFlow<StateListener<LoginModel>> = _state
 
     fun createAccount(
         email: String,

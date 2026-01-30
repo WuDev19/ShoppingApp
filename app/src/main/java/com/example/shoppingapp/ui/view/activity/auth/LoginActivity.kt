@@ -32,8 +32,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var viewBinding : ActivityLoginBinding
+    private lateinit var viewBinding: ActivityLoginBinding
     private val viewModel: LoginViewModel by viewModels()
+    private lateinit var email: String
+    private lateinit var password: String
 
     @Inject
     lateinit var credentialManager: CredentialManager
@@ -47,58 +49,71 @@ class LoginActivity : AppCompatActivity() {
         viewBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
-        val email = intent.getStringExtra(StringConstants.EMAIL_KEY_INTENT)
-        email?.let {
-            viewBinding.edtEmail.setText(it)
-        } ?: viewBinding.edtEmail.setText("")
+        viewBinding.apply {
+
+            intent?.apply {
+                email = getStringExtra(StringConstants.EMAIL_KEY_INTENT) ?: ""
+                password = getStringExtra(StringConstants.PASSWORD) ?: ""
+                edtEmail.setText(email)
+                edtPassword.setText(password)
+            }
+
+            btnSignIn.setOnClickListener {
+                val mEmail = viewBinding.edtEmail.text.toString().trim()
+                val password = viewBinding.edtPassword.text.toString().trim()
+                viewModel.loginWithEmail(mEmail, password)
+            }
+
+            btnCreateAccount.setOnClickListener {
+                startActivity(Intent(this@LoginActivity, CreateAccountActivity::class.java))
+            }
+
+            tvForgotPassword.setOnClickListener {
+                startActivity(Intent(this@LoginActivity, ResetPasswordActivity::class.java))
+            }
+
+            imgGoogle.setOnClickListener {
+                lifecycleScope.launch {
+                    try {
+                        val credentialResponse =
+                            credentialManager.getCredential(this@LoginActivity, request)
+                        val credential = credentialResponse.credential
+                        handleSignIn(credential)
+                    } catch (e: Exception) {
+                        if (e is NoCredentialException) {
+                            ToastUtils.showToast(
+                                this@LoginActivity,
+                                StringConstants.NO_ACCOUNT_EXCEPTION
+                            )
+                        }
+                        Log.e("e", "onCreate: $e")
+                    }
+                }
+            }
+
+        }
 
         lifecycleScope.launch {
             viewModel.state.collectLatest {
-                when(it){
+                when (it) {
+                    is StateListener.Idle -> viewBinding.progressBar.visibility = View.GONE
                     is StateListener.Loading -> viewBinding.progressBar.visibility = View.VISIBLE
-                    is StateListener.Success -> {
-                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                        finishAffinity()
-                    }
                     is StateListener.Error -> {
                         ToastUtils.showToast(this@LoginActivity, StringConstants.HAS_ERROR)
                         Log.e("checkkk", "onCreate: ${it.e.toString()}")
                         viewBinding.progressBar.visibility = View.GONE
                     }
-                    is StateListener.Idle -> viewBinding.progressBar.visibility = View.GONE
-                }
-            }
-        }
 
-        viewBinding.btnSignIn.setOnClickListener{
-            val mEmail = viewBinding.edtEmail.text.toString().trim()
-            val password = viewBinding.edtPassword.text.toString().trim()
-            viewModel.loginWithEmail(mEmail, password)
-        }
-
-        viewBinding.btnCreateAccount.setOnClickListener{
-            startActivity(Intent(this@LoginActivity, CreateAccountActivity::class.java))
-        }
-
-        viewBinding.tvForgotPassword.setOnClickListener{
-            startActivity(Intent(this@LoginActivity, ResetPasswordActivity::class.java))
-        }
-
-        viewBinding.imgGoogle.setOnClickListener {
-            lifecycleScope.launch {
-                try {
-                    val credentialResponse = credentialManager.getCredential(this@LoginActivity, request)
-                    val credential = credentialResponse.credential
-                    handleSignIn(credential)
-                }
-                catch (e: Exception){
-                    if(e is NoCredentialException){
-                        ToastUtils.showToast(this@LoginActivity, StringConstants.NO_ACCOUNT_EXCEPTION)
+                    is StateListener.Success -> {
+                        Log.e(StringConstants.DEBUG, "onCreate: ${it.result}")
+                        viewModel.saveTokenToLocal(it.result)
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finishAffinity()
                     }
-                    Log.e("e", "onCreate: $e")
                 }
             }
         }
+
     }
 
     private fun handleSignIn(credential: Credential) {

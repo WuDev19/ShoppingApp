@@ -216,6 +216,8 @@ class UserRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     //implement ssot, pattern về quản lý dữ liệu tại một nơi duy nhất là room, room sẽ trả về Flow<List<Data>>
+    //nên tách room riêng ra một method, call api -> insert vào room ra một method, như vậy sẽ chuẩn hơn, như này thì mỗi lần gọi api thì lại truy vấn room ko ổn lắm
+    //room chỉ việc lắng nghe dữ liệu khi call api sau đó insert
     override fun getUserAddress(id: String): Flow<List<AddressItem>> = flow {
         //room là nơi phát nguồn dữ liệu chính
         emitAll(

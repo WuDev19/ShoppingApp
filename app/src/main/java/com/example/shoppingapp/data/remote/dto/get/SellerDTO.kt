@@ -1,10 +1,10 @@
 package com.example.shoppingapp.data.remote.dto.get
-
 data class SellerDTO(
-    var maNguoiBan: Int? = 0,
-    var tenShop: String? = "",
-    var sdtNguoiBan: String? = "",
-    var avtShop: String? = "",
-    var diachi: DiaChiDTO? = null,
-    var sanphams: Set<ProductDTO>? = emptySet()
+    val maNguoiBan: Int? = 0,
+    val maND: String? = "",
+    val tenShop: String? = "",
+    val sdtNguoiBan: String? = "",
+    val avtShop: String? = "",
+    val diachi: DiaChiDTO? = null,
+    val sanphams: Set<ProductDTO>? = emptySet()
 )

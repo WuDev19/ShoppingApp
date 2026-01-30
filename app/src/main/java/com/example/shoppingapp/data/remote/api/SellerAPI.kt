@@ -1,5 +1,6 @@
 package com.example.shoppingapp.data.remote.api
 
+import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.ListSellerDTO
 import com.example.shoppingapp.data.remote.dto.get.OtpDto
 import com.example.shoppingapp.data.remote.dto.get.SellerDTO
@@ -29,6 +30,6 @@ interface SellerAPI {
     suspend fun registerSeller(
         @Path("idUser") idUser: String,
         @Body sellerRequest: SellerRequest
-    ): Response<SellerDTO>
+    ): Response<AuthResponse>
 
 }

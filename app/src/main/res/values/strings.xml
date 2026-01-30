@@ -111,4 +111,6 @@
     <string name="send_otp">Send OTP</string>
     <string name="resend_otp"><u>Resend OTP</u></string>
     <string name="expire_in">Expire in</string>
+    <string name="go_to_my_store">Go to my store</string>
+    <string name="seller_dashboard">Seller dashboard</string>
 </resources>

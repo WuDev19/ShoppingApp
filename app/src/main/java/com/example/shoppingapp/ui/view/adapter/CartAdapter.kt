@@ -1,19 +1,15 @@
 package com.example.shoppingapp.ui.view.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.CartItemLayoutBinding
 import com.example.shoppingapp.domain.model.Cart
-import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.view.decoration.SeparationItemDecoration
 import com.example.shoppingapp.ui.viewmodel.product.CartViewModel
 import kotlinx.coroutines.flow.collectLatest

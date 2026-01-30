@@ -287,6 +287,35 @@
             app:strokeColor="@color/black"
             app:strokeWidth="1dp" />
 
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_seller"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="20dp"
+            android:layout_marginBottom="20dp"
+            app:cardElevation="10dp"
+            app:strokeWidth="0dp"
+            app:rippleColor="@color/button_color">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/go_to_my_store"
+                android:padding="8dp"
+                app:drawableEndCompat="@drawable/icon_next_shop"
+                android:drawablePadding="20dp"
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
     </LinearLayout>
 
     <ImageView

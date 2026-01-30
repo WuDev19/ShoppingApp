@@ -173,6 +173,16 @@ class ProfileFragment : Fragment() {
                 ViewPagerUtils.disableViewPager(viewPager2)
             }
 
+            cardSeller.setOnClickListener {
+                val action =
+                    ProfileFragmentDirections.actionProfileFragmentToDashBoardSellerFragment(
+                        viewModel.getCurrentUserId()
+                    )
+                controller.navigate(action)
+                BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
+                ViewPagerUtils.disableViewPager(viewPager2)
+            }
+
         }
 
     }

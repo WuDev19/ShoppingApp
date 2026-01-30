@@ -7,7 +7,8 @@ data class UserDTOCreate(
     override var ten: String? = null,
     override var email: String? = null,
     override var sdt: String? = null,
-    override var anhdaidien: String? = null
+    override var anhdaidien: String? = null,
+    val roleName: String
 ): UserDTOBase(
     maND, ten, email, sdt, anhdaidien
 )

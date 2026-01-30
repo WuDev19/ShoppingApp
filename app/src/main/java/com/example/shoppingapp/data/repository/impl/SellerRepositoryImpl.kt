@@ -1,15 +1,14 @@
 package com.example.shoppingapp.data.repository.impl
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.SellerMapper
 import com.example.shoppingapp.data.remote.api.SellerAPI
+import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
 import com.example.shoppingapp.data.remote.dto.get.OtpDto
-import com.example.shoppingapp.data.remote.dto.get.SellerDTO
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.data.source.paging_source.PagingSourceSeller
 import com.example.shoppingapp.domain.model.OtpModel
@@ -94,7 +93,7 @@ class SellerRepositoryImpl @Inject constructor(
         emit(StateListener.Error(Exception(it.message)))
     }.flowOn(Dispatchers.IO)
 
-    override fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<SellerDTO>> =
+    override fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<AuthResponse>> =
         flow {
             emit(StateListener.Loading)
             val response = sellerAPI.registerSeller(sellerRequest.maND, sellerRequest)

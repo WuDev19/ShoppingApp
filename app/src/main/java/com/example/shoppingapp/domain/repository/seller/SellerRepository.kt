@@ -1,6 +1,7 @@
 package com.example.shoppingapp.domain.repository.seller
 
 import androidx.paging.PagingData
+import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.SellerDTO
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.domain.model.OtpModel
@@ -13,6 +14,6 @@ interface SellerRepository {
     fun getSellerById(id: Int): Flow<StateListener<SellerInStore>>
     fun sendOtp(): Flow<StateListener<OtpModel>>
     fun verifyOtp(otp: String): Flow<StateListener<Unit>>
-    fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<SellerDTO>>
+    fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<AuthResponse>>
 
 }

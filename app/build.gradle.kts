@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.android.plugin.annotation.v9)
     implementation(libs.ccp)
+    implementation(libs.mpandroidchart)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
