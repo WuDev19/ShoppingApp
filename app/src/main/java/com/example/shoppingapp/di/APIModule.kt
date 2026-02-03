@@ -1,6 +1,7 @@
 package com.example.shoppingapp.di
 
 import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.data.remote.api.AuthAPI
 import com.example.shoppingapp.data.remote.api.CartAPI
 import com.example.shoppingapp.data.remote.api.CategoryAPI
 import com.example.shoppingapp.data.remote.api.ProductAPI
@@ -57,5 +58,9 @@ object APIModule {
     @Singleton
     fun provideCategoryAPI(retrofit: Retrofit): CategoryAPI =
         retrofit.create(CategoryAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAuthAPI(retrofit: Retrofit): AuthAPI = retrofit.create(AuthAPI::class.java)
 
 }

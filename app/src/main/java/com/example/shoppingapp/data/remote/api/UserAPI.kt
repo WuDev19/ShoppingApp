@@ -20,9 +20,6 @@ interface UserAPI {
     @POST("user/create")
     suspend fun createUser(@Body user: UserDTOCreate): Response<UserDTOGet>
 
-    @POST("user/token")
-    suspend fun token(@Query("userId") userId: String): Response<AuthResponse>
-
     @GET("user/get/{id}")
     suspend fun getUser(@Path("id") id: String): Response<UserDTOGet>
 

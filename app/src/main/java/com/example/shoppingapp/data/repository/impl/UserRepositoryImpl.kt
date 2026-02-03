@@ -2,9 +2,6 @@ package com.example.shoppingapp.data.repository.impl
 
 import android.net.Uri
 import android.util.Log
-import androidx.credentials.ClearCredentialStateRequest
-import androidx.credentials.CredentialManager
-import androidx.credentials.exceptions.ClearCredentialException
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
 import com.example.shoppingapp.data.local.mapper.UserAddressMapper
@@ -38,7 +35,6 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val userAPI: UserAPI,
-    private val credentialManager: CredentialManager,
     private val firestore: FirebaseFirestore,
     @param:AvatarUploader private val avatarUploader: CloudinaryUploader,
     private val moshi: Moshi,
@@ -75,18 +71,6 @@ class UserRepositoryImpl @Inject constructor(
                 emit(StateListener.Error(Exception("Bad Request")))
             }
         } catch (e: Exception) {
-            emit(StateListener.Error(e))
-        }
-    }.flowOn(Dispatchers.IO)
-
-    override fun logout(): Flow<StateListener<Boolean>> = flow {
-        emit(StateListener.Loading)
-        auth.signOut()
-        try {
-            val clearRequest = ClearCredentialStateRequest()
-            credentialManager.clearCredentialState(clearRequest)
-            emit(StateListener.Success(true))
-        } catch (e: ClearCredentialException) {
             emit(StateListener.Error(e))
         }
     }.flowOn(Dispatchers.IO)

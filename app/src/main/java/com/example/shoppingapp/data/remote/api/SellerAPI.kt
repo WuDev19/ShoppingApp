@@ -4,6 +4,7 @@ import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.ListSellerDTO
 import com.example.shoppingapp.data.remote.dto.get.OtpDto
 import com.example.shoppingapp.data.remote.dto.get.SellerDTO
+import com.example.shoppingapp.data.remote.dto.request.RegisterSellerRequest
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -29,7 +30,7 @@ interface SellerAPI {
     @POST("seller/register/{idUser}")
     suspend fun registerSeller(
         @Path("idUser") idUser: String,
-        @Body sellerRequest: SellerRequest
+        @Body registerSellerRequest: RegisterSellerRequest
     ): Response<AuthResponse>
 
 }

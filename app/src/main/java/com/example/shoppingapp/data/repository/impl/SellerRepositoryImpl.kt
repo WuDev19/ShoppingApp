@@ -9,8 +9,12 @@ import com.example.shoppingapp.data.remote.api.SellerAPI
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
 import com.example.shoppingapp.data.remote.dto.get.OtpDto
+import com.example.shoppingapp.data.remote.dto.request.GenerateTokenRequest
+import com.example.shoppingapp.data.remote.dto.request.RegisterSellerRequest
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.data.source.paging_source.PagingSourceSeller
+import com.example.shoppingapp.di.qualifier.DeviceId
+import com.example.shoppingapp.di.qualifier.IpAddress
 import com.example.shoppingapp.domain.model.OtpModel
 import com.example.shoppingapp.domain.model.SellerInStore
 import com.example.shoppingapp.domain.repository.seller.SellerRepository
@@ -25,7 +29,9 @@ import javax.inject.Inject
 
 class SellerRepositoryImpl @Inject constructor(
     private val sellerAPI: SellerAPI,
-    private val moshi: Moshi
+    private val moshi: Moshi,
+    @param:DeviceId private val deviceId: String?,
+    @param:IpAddress private val ipAddress: String?
 ) :
     SellerRepository {
 
@@ -96,7 +102,17 @@ class SellerRepositoryImpl @Inject constructor(
     override fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<AuthResponse>> =
         flow {
             emit(StateListener.Loading)
-            val response = sellerAPI.registerSeller(sellerRequest.maND, sellerRequest)
+            val response = sellerAPI.registerSeller(
+                sellerRequest.maND,
+                RegisterSellerRequest(
+                    sellerRequest = sellerRequest,
+                    generateTokenRequest = GenerateTokenRequest(
+                        sellerRequest.maND,
+                        deviceId,
+                        ipAddress
+                    )
+                )
+            )
             if (response.isSuccessful) {
                 val data = response.body()
                 data?.let {

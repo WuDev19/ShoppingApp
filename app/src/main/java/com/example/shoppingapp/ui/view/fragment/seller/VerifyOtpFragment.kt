@@ -171,7 +171,7 @@ class VerifyOtpFragment() : BottomSheetDialogFragment() {
                             is StateListener.Success<AuthResponse> -> {
                                 val data = it.result
                                 Log.e(StringConstants.DEBUG, "onViewCreated: $data")
-
+                                viewModel.saveTokenToLocal(data)
                                 ToastUtils.showToast(
                                     requireContext(),
                                     StringConstants.REGISTER_SELLER_SUCCESS

@@ -44,8 +44,9 @@ class MainActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
+                //chỗ này là khi gửi link email mới và đăng nhập để vào main activity, vào main thì cập nhật lại db, nếu lỗi thì cho logout và login lại
                 viewModel.updateEmailState.collectLatest {
-                    if(it is StateListener.Error){
+                    if (it is StateListener.Error) {
                         val builder = AlertDialog.Builder(this@MainActivity)
                             .setTitle("Ouchh")
                             .setMessage(StringConstants.HAS_ERROR + " \nPlease log out and log in again!")
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.logoutState.collectLatest {
-                    if(it is StateListener.Success){
+                    if (it is StateListener.Success) {
                         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                         finishAffinity()
                     }
@@ -180,7 +181,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if(!viewModel.getStateEmailVerify()){
+        if (!viewModel.getStateEmailVerify()) {
             lifecycleScope.launch {
                 try {
                     val currentUser = viewModel.auth.currentUser
