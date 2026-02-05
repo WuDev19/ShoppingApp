@@ -8,11 +8,11 @@ import androidx.room.withTransaction
 import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.entity.ProductEntity
 import com.example.shoppingapp.data.local.entity.RemoteKeyProduct
-import com.example.shoppingapp.data.remote.api.ProductAPI
+import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 
 @OptIn(ExperimentalPagingApi::class)
 class SearchProductInShopRemoteMediator(
-    private val productAPI: ProductAPI,
+    private val getProductAPI: GetProductAPI,
     private val appDatabase: AppDatabase,
     private val id: Int,
     private val text: String
@@ -43,7 +43,7 @@ class SearchProductInShopRemoteMediator(
                 }
             }
 
-            val response = productAPI.timKiemSanPhamCuaShop(id, text, page)
+            val response = getProductAPI.timKiemSanPhamCuaShop(id, text, page)
             val listProductDTO = response.body()
             val listProductEntity = listProductDTO?.contents?.map { productDTO ->
                 ProductEntity(

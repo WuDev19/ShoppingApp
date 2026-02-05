@@ -4,10 +4,10 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
-import com.example.shoppingapp.data.remote.api.ProductAPI
+import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 
-class PagingSourceOtherProductOfShop(private val productAPI: ProductAPI, private val id: Int) :
+class PagingSourceOtherProductOfShop(private val getProductAPI: GetProductAPI, private val id: Int) :
     PagingSource<Int, ProductDisplay>() {
 
     override fun getRefreshKey(state: PagingState<Int, ProductDisplay>): Int? {
@@ -20,7 +20,7 @@ class PagingSourceOtherProductOfShop(private val productAPI: ProductAPI, private
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductDisplay> {
         return try {
             val pageNumber = params.key ?: 0
-            val response = productAPI.getOtherProductsOfShop(id, pageNumber)
+            val response = getProductAPI.getOtherProductsOfShop(id, pageNumber)
             if(response.isSuccessful){
                 val data = response.body()
                 val listSanPham = data?.contents?.map {

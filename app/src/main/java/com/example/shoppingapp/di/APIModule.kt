@@ -1,25 +1,58 @@
 package com.example.shoppingapp.di
 
 import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.constants.TokenManager
 import com.example.shoppingapp.data.remote.api.AuthAPI
 import com.example.shoppingapp.data.remote.api.CartAPI
 import com.example.shoppingapp.data.remote.api.CategoryAPI
-import com.example.shoppingapp.data.remote.api.ProductAPI
-import com.example.shoppingapp.data.remote.api.SellerAPI
+import com.example.shoppingapp.data.remote.api.product.GetProductAPI
+import com.example.shoppingapp.data.remote.api.seller.NormalFunctionSellerAPI
 import com.example.shoppingapp.data.remote.api.UserAPI
+import com.example.shoppingapp.data.remote.api.product.ModifyProductAPI
+import com.example.shoppingapp.data.remote.api.seller.AdvancedFunctionsSellerAPI
+import com.example.shoppingapp.data.remote.interceptors.AuthInterceptor
+import com.example.shoppingapp.data.remote.interceptors.RefreshTokenInterceptor
+import com.example.shoppingapp.di.qualifier.IpAddress
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object APIModule {
+
+    @Provides
+    @Singleton
+    fun provideAuthInterceptor(tokenManager: TokenManager): AuthInterceptor =
+        AuthInterceptor(tokenManager)
+
+    @Provides
+    @Singleton
+    fun provideRefreshTokenInterceptor(
+        tokenManager: TokenManager,
+        authAPI: AuthAPI,
+        @IpAddress ipAddress: String?
+    ): RefreshTokenInterceptor =
+        RefreshTokenInterceptor(tokenManager, authAPI, ipAddress)
+
+    @Provides
+    @Singleton
+    fun provideOkhttpClient(
+        authInterceptor: AuthInterceptor,
+        refreshTokenInterceptor: RefreshTokenInterceptor
+    ): OkHttpClient =
+        OkHttpClient().newBuilder()
+            .addInterceptor(authInterceptor)
+            .addInterceptor(refreshTokenInterceptor)
+            .build()
 
     @Provides
     @Singleton
@@ -31,7 +64,8 @@ object APIModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(moshi: Moshi): Retrofit {
+    @Named(StringConstants.NO_AUTH)
+    fun provideRetrofitWithNoAuth(moshi: Moshi): Retrofit {
         return Retrofit.Builder()
             .baseUrl(StringConstants.BASE_URL)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -40,27 +74,56 @@ object APIModule {
 
     @Provides
     @Singleton
-    fun provideUserAPI(retrofit: Retrofit): UserAPI = retrofit.create(UserAPI::class.java)
+    @Named(StringConstants.NEED_AUTH)
+    fun provideRetrofitWithAuth(
+        moshi: Moshi,
+        client: OkHttpClient
+    ): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(StringConstants.BASE_URL)
+            .client(client)
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .build()
+    }
 
     @Provides
     @Singleton
-    fun provideProductAPI(retrofit: Retrofit): ProductAPI = retrofit.create(ProductAPI::class.java)
+    fun provideUserAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): UserAPI =
+        retrofit.create(UserAPI::class.java)
 
     @Provides
     @Singleton
-    fun provideSellerAPI(retrofit: Retrofit): SellerAPI = retrofit.create(SellerAPI::class.java)
+    fun provideGetProductAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): GetProductAPI =
+        retrofit.create(GetProductAPI::class.java)
 
     @Provides
     @Singleton
-    fun provideCartAPI(retrofit: Retrofit): CartAPI = retrofit.create(CartAPI::class.java)
+    fun provideModifyProductAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): ModifyProductAPI =
+        retrofit.create(ModifyProductAPI::class.java)
 
     @Provides
     @Singleton
-    fun provideCategoryAPI(retrofit: Retrofit): CategoryAPI =
+    fun provideNormalFunctionsSellerAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): NormalFunctionSellerAPI =
+        retrofit.create(NormalFunctionSellerAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAdvancedFunctionsSellerAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): AdvancedFunctionsSellerAPI =
+        retrofit.create(AdvancedFunctionsSellerAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCartAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): CartAPI =
+        retrofit.create(CartAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideCategoryAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): CategoryAPI =
         retrofit.create(CategoryAPI::class.java)
 
     @Provides
     @Singleton
-    fun provideAuthAPI(retrofit: Retrofit): AuthAPI = retrofit.create(AuthAPI::class.java)
+    fun provideAuthAPI(@Named(StringConstants.NO_AUTH) retrofit: Retrofit): AuthAPI =
+        retrofit.create(AuthAPI::class.java)
 
 }

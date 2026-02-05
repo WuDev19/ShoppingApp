@@ -21,5 +21,4 @@ interface AuthRepository {
     fun loginWithGoogle(idToken: String): Flow<StateListener<AuthResponse>>
     fun logout(): Flow<StateListener<Boolean>>
 
-    suspend fun refresh(refreshRequest: RefreshRequest): StateListener<AuthResponse>
 }

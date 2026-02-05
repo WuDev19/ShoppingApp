@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface SellerRepository {
     fun getAllSeller(): Flow<PagingData<SellerInStore>>
-    fun getSellerById(id: Int): Flow<StateListener<SellerInStore>>
+    fun getSellerById(idSeller: Int): Flow<StateListener<SellerInStore>>
     fun sendOtp(): Flow<StateListener<OtpModel>>
     fun verifyOtp(otp: String): Flow<StateListener<Unit>>
     fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<AuthResponse>>

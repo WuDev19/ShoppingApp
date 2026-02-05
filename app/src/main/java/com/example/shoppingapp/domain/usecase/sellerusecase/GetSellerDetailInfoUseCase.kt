@@ -8,6 +8,6 @@ import javax.inject.Inject
 
 class GetSellerDetailInfoUseCase @Inject constructor(private val repo: SellerRepository) {
 
-    operator fun invoke(id: Int): Flow<StateListener<SellerInStore>> = repo.getSellerById(id)
+    operator fun invoke(idSeller: Int): Flow<StateListener<SellerInStore>> = repo.getSellerById(idSeller)
 
 }

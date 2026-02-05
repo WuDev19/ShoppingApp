@@ -56,6 +56,7 @@ class LoginActivity : AppCompatActivity() {
                 password = getStringExtra(StringConstants.PASSWORD) ?: ""
                 edtEmail.setText(email)
                 edtPassword.setText(password)
+                Log.e(StringConstants.SEND_OTP_SUCCESS, "onCreate: $email và $password")
             }
 
             btnSignIn.setOnClickListener {

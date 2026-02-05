@@ -22,13 +22,14 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import androidx.core.content.edit
+import com.example.shoppingapp.constants.TokenManager
 
 @HiltViewModel
 class VerifyOtpViewModel @Inject constructor(
     private val verifyOtpUseCase: VerifyOtpUseCase,
     private val uploadAvatarUseCase: UploadAvatarUseCase,
     private val registerSellerUseCase: RegisterSellerUseCase,
-    private val sharedPreferences: SharedPreferences
+    private val tokenManager: TokenManager
 ) : ViewModel() {
 
     private val _registerState: MutableStateFlow<StateListener<AuthResponse>> =
@@ -65,11 +66,7 @@ class VerifyOtpViewModel @Inject constructor(
     }
 
     fun saveTokenToLocal(authResponse: AuthResponse) {
-        sharedPreferences.edit {
-            putString(StringConstants.TOKEN, authResponse.token)
-            putString(StringConstants.REFRESH_TOKEN, authResponse.refreshToken)
-            putString(StringConstants.TIME_CREATE_TOKEN, authResponse.createTime)
-        }
+        tokenManager.writeAll(authResponse)
     }
 
 }

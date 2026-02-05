@@ -42,12 +42,10 @@ class CreateAccountActivity : AppCompatActivity() {
                     }
                     is StateListener.Success -> {
                         val dataLogin = it.result
-                        val bundle = bundleOf(
-                            StringConstants.EMAIL_KEY_INTENT to dataLogin.email,
-                            StringConstants.PASSWORD to dataLogin.password
-                        )
+                        Log.e(StringConstants.SEND_OTP_SUCCESS, "onCreate: ${dataLogin.email} và ${dataLogin.password}")
                         val intentToLogin = Intent(this@CreateAccountActivity, LoginActivity::class.java)
-                        intentToLogin.putExtra(StringConstants.INTENT_LOGIN, bundle)
+                        intentToLogin.putExtra(StringConstants.EMAIL_KEY_INTENT, dataLogin.email)
+                        intentToLogin.putExtra(StringConstants.PASSWORD, dataLogin.password)
                         startActivity(intentToLogin)
                         finishAffinity()
                     }

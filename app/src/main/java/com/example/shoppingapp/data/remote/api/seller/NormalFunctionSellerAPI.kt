@@ -1,11 +1,10 @@
-package com.example.shoppingapp.data.remote.api
+package com.example.shoppingapp.data.remote.api.seller
 
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.ListSellerDTO
 import com.example.shoppingapp.data.remote.dto.get.OtpDto
 import com.example.shoppingapp.data.remote.dto.get.SellerDTO
 import com.example.shoppingapp.data.remote.dto.request.RegisterSellerRequest
-import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,13 +12,13 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface SellerAPI {
+interface NormalFunctionSellerAPI {
 
     @GET("seller/get")
     suspend fun getAllSeller(@Query("pageNumber") pageNumber: Int): Response<ListSellerDTO>
 
-    @GET("seller/{id}")
-    suspend fun getSellerById(@Path("id") id: Int): Response<SellerDTO>
+    @GET("seller/{idSeller}")
+    suspend fun getSellerById(@Path("idSeller") idSeller: Int): Response<SellerDTO>
 
     @POST("seller/send/otp")
     suspend fun sendOtp(): Response<OtpDto>

@@ -4,10 +4,10 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.SellerMapper
-import com.example.shoppingapp.data.remote.api.SellerAPI
+import com.example.shoppingapp.data.remote.api.seller.NormalFunctionSellerAPI
 import com.example.shoppingapp.domain.model.SellerInStore
 
-class PagingSourceSeller(private val sellerAPI: SellerAPI) :
+class PagingSourceSeller(private val normalFunctionSellerAPI: NormalFunctionSellerAPI) :
     PagingSource<Int, SellerInStore>() {
 
     override fun getRefreshKey(state: PagingState<Int, SellerInStore>): Int? {
@@ -20,7 +20,7 @@ class PagingSourceSeller(private val sellerAPI: SellerAPI) :
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, SellerInStore> {
         return try {
             val pageNumber = params.key ?: 0
-            val response = sellerAPI.getAllSeller(pageNumber)
+            val response = normalFunctionSellerAPI.getAllSeller(pageNumber)
             if (response.isSuccessful) {
                 val data = response.body()
                 val listSeller = data?.contents?.map {

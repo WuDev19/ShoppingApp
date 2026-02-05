@@ -5,11 +5,11 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
-import com.example.shoppingapp.data.remote.api.ProductAPI
+import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 
 class PagingSourceProductByCategory(
-    private val productAPI: ProductAPI,
+    private val getProductAPI: GetProductAPI,
     private val theLoai: String
 ) : PagingSource<Int, ProductDisplay>() {
 
@@ -23,7 +23,7 @@ class PagingSourceProductByCategory(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ProductDisplay> {
         return try {
             val pageNumber = params.key ?: 0
-            val response = productAPI.getProductByCategory(theLoai, pageNumber)
+            val response = getProductAPI.getProductByCategory(theLoai, pageNumber)
             Log.e(StringConstants.DEBUG, "load: ${params.loadSize}")
             if (response.isSuccessful) {
                 val data = response.body()

@@ -9,7 +9,7 @@ import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.mapper.ProductEntityMapper
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
-import com.example.shoppingapp.data.remote.api.ProductAPI
+import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 import com.example.shoppingapp.data.source.paging_source.PagingSourceOtherProductOfShop
 import com.example.shoppingapp.data.source.paging_source.PagingSourceProduct
 import com.example.shoppingapp.data.source.paging_source.PagingSourceProductByCategory
@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
-    private val productAPI: ProductAPI,
+    private val getProductAPI: GetProductAPI,
     private val appDatabase: AppDatabase,
 ) :
     ProductRepository {
@@ -43,7 +43,7 @@ class ProductRepositoryImpl @Inject constructor(
                 pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false
             ),
-            pagingSourceFactory = { PagingSourceProduct(productAPI) }
+            pagingSourceFactory = { PagingSourceProduct(getProductAPI) }
         ).flow
     }
 
@@ -54,7 +54,7 @@ class ProductRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                PagingSourceProductByCategory(productAPI, theLoai)
+                PagingSourceProductByCategory(getProductAPI, theLoai)
             }
         ).flow
     }
@@ -66,13 +66,13 @@ class ProductRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                PagingSourceSearchProduct(productAPI, text)
+                PagingSourceSearchProduct(getProductAPI, text)
             }
         ).flow
     }
 
     override fun getProductDetail(id: Int): Flow<StateListener<ProductDetail>> = flow {
-        val response = productAPI.getProductDetail(id)
+        val response = getProductAPI.getProductDetail(id)
         if (response.isSuccessful) {
             val dataDTO = response.body()
             dataDTO?.let {
@@ -91,7 +91,7 @@ class ProductRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                PagingSourceOtherProductOfShop(productAPI, id)
+                PagingSourceOtherProductOfShop(getProductAPI, id)
             }
         ).flow
     }
@@ -103,13 +103,13 @@ class ProductRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                PagingSourceRelatedProduct(productAPI, id)
+                PagingSourceRelatedProduct(getProductAPI, id)
             }
         ).flow
     }
 
     override fun getSanPhamChiTiet(id: Int): Flow<StateListener<List<ProductChiTiet>>> = flow {
-        val response = productAPI.ganSanPhamChiTiet(id)
+        val response = getProductAPI.ganSanPhamChiTiet(id)
         if (response.isSuccessful) {
             val data = response.body()
             val listProductChiTiet = data?.map {
@@ -128,7 +128,7 @@ class ProductRepositoryImpl @Inject constructor(
                 pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false,
             ),
-            remoteMediator = SearchProductInShopRemoteMediator(productAPI, appDatabase, id, text),
+            remoteMediator = SearchProductInShopRemoteMediator(getProductAPI, appDatabase, id, text),
             pagingSourceFactory = {
                 appDatabase.productDao().getPagingSourceSearchProductShop(id, text)
             }
@@ -147,7 +147,7 @@ class ProductRepositoryImpl @Inject constructor(
                 pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false,
             ),
-            remoteMediator = AllProductOfShopRemoteMediator(productAPI, appDatabase, queryKey, id),
+            remoteMediator = AllProductOfShopRemoteMediator(getProductAPI, appDatabase, queryKey, id),
             pagingSourceFactory = {
                 appDatabase.productDao().pagingSourceProductShop(id)
             }
@@ -167,7 +167,7 @@ class ProductRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             remoteMediator = BestSellerProductShopRemoteMediator(
-                productAPI,
+                getProductAPI,
                 appDatabase,
                 id,
                 queryKey
@@ -194,7 +194,7 @@ class ProductRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             remoteMediator = CategoryAndProductShopRemoteMediator(
-                productAPI,
+                getProductAPI,
                 appDatabase,
                 queryKey,
                 id,

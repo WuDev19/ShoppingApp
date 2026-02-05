@@ -5,7 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.mapper.SellerMapper
-import com.example.shoppingapp.data.remote.api.SellerAPI
+import com.example.shoppingapp.data.remote.api.seller.NormalFunctionSellerAPI
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
 import com.example.shoppingapp.data.remote.dto.get.OtpDto
@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 class SellerRepositoryImpl @Inject constructor(
-    private val sellerAPI: SellerAPI,
+    private val normalFunctionSellerAPI: NormalFunctionSellerAPI,
     private val moshi: Moshi,
     @param:DeviceId private val deviceId: String?,
     @param:IpAddress private val ipAddress: String?
@@ -42,14 +42,14 @@ class SellerRepositoryImpl @Inject constructor(
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {
-                PagingSourceSeller(sellerAPI)
+                PagingSourceSeller(normalFunctionSellerAPI)
             }
         ).flow
     }
 
-    override fun getSellerById(id: Int): Flow<StateListener<SellerInStore>> = flow {
+    override fun getSellerById(idSeller: Int): Flow<StateListener<SellerInStore>> = flow {
         try {
-            val response = sellerAPI.getSellerById(id)
+            val response = normalFunctionSellerAPI.getSellerById(idSeller)
             if (response.isSuccessful) {
                 val sellerDTO = response.body()
                 val sellerInStore = sellerDTO?.let {
@@ -67,7 +67,7 @@ class SellerRepositoryImpl @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     override fun sendOtp(): Flow<StateListener<OtpModel>> = flow {
-        val response = sellerAPI.sendOtp()
+        val response = normalFunctionSellerAPI.sendOtp()
         if (response.isSuccessful) {
             val data = response.body()
             data?.let { emit(StateListener.Success(it.mapToOtpModel())) }
@@ -85,7 +85,7 @@ class SellerRepositoryImpl @Inject constructor(
 
     override fun verifyOtp(otp: String): Flow<StateListener<Unit>> = flow {
         emit(StateListener.Loading)
-        val response = sellerAPI.verifyOtp(otp)
+        val response = normalFunctionSellerAPI.verifyOtp(otp)
         if (response.isSuccessful) {
             emit(StateListener.Success(Unit))
         } else {
@@ -102,7 +102,7 @@ class SellerRepositoryImpl @Inject constructor(
     override fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<AuthResponse>> =
         flow {
             emit(StateListener.Loading)
-            val response = sellerAPI.registerSeller(
+            val response = normalFunctionSellerAPI.registerSeller(
                 sellerRequest.maND,
                 RegisterSellerRequest(
                     sellerRequest = sellerRequest,

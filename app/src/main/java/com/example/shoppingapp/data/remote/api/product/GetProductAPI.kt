@@ -1,4 +1,4 @@
-package com.example.shoppingapp.data.remote.api
+package com.example.shoppingapp.data.remote.api.product
 
 import com.example.shoppingapp.data.remote.dto.get.ListCategoryAndProductDTO
 import com.example.shoppingapp.data.remote.dto.get.ListProductDTO
@@ -9,7 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface ProductAPI {
+interface GetProductAPI {
 
     @GET("sanpham/get")
     suspend fun getProducts(@Query("pageNumber") pageNumber: Int) : Response<ListProductDTO>

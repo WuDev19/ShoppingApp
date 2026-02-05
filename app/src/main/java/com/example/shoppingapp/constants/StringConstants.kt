@@ -83,4 +83,8 @@ object StringConstants {
     const val TOKEN = "token"
     const val REFRESH_TOKEN = "refresh_token"
     const val TIME_CREATE_TOKEN = "created_at"
+    const val NO_AUTH = "NoAuth"
+    const val ROLE_ADMIN = "RoleAdmin"
+    const val ROLE_USER = "RoleUser"
+    const val NEED_AUTH = "NeedAuth"
 }

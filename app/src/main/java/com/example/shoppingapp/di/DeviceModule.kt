@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import androidx.core.content.edit
+import com.example.shoppingapp.constants.TokenManager
 import com.example.shoppingapp.di.qualifier.DeviceId
 import com.example.shoppingapp.di.qualifier.IpAddress
 import dagger.Module
@@ -26,10 +27,12 @@ object DeviceModule {
     fun provideIpAddress(@ApplicationContext context: Context): String? {
         val connectManager =
             context.applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager // sử dụng dịch vụ hệ thống connectivity manager, cách này mới ko bị deprecate
-        val network = connectManager.activeNetwork ?: return null
-        val linkProperties = connectManager.getLinkProperties(network) ?: return null
-        for (address in linkProperties.linkAddresses) {
-            val ipAddress = address.address
+        val network = connectManager.activeNetwork
+            ?: return null //lấy ra các mạng đang hoạt động (wifi, 4g, 5g, ...)
+        val linkProperties = connectManager.getLinkProperties(network)
+            ?: return null //lấy ra các thông số của danh sách mạng đang kết nối
+        for (address in linkProperties.linkAddresses) { //lấy ra các địa chỉ ip
+            val ipAddress = address.address //lấy ra kiểu InetAddress để check ipv4 với ipv6
             if (ipAddress is Inet4Address && !ipAddress.isLoopbackAddress) {
                 return ipAddress.hostAddress
             }
@@ -47,6 +50,12 @@ object DeviceModule {
             sharedPreferences.edit { putString(DEVICE_KEY, id) }
         }
         return id
+    }
+
+    @Provides
+    @Singleton
+    fun provideTokenManager(sharedPreferences: SharedPreferences): TokenManager {
+        return TokenManager(sharedPreferences)
     }
 
 }

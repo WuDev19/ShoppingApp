@@ -25,9 +25,9 @@ class SellerViewModel @Inject constructor(
     var positionTabState: Int = 0
     var fragment: Fragment? = null
 
-    fun getSellerDetail(id: Int) {
+    fun getSellerDetail(idSeller: Int) {
         viewModelScope.launch {
-            getSellerDetailInfoUseCase(id).collectLatest {
+            getSellerDetailInfoUseCase(idSeller).collectLatest {
                 _sellerDetailState.value = it
             }
         }

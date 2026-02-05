@@ -9,11 +9,11 @@ import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.entity.CategoryAndProductEntity
 import com.example.shoppingapp.data.local.entity.RemoteKeyEntity
-import com.example.shoppingapp.data.remote.api.ProductAPI
+import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 
 @OptIn(ExperimentalPagingApi::class)
 class CategoryAndProductShopRemoteMediator(
-    private val productAPI: ProductAPI,
+    private val getProductAPI: GetProductAPI,
     private val appDatabase: AppDatabase,
     private val queryKey: String,
     private val idSeller: Int,
@@ -35,7 +35,7 @@ class CategoryAndProductShopRemoteMediator(
                 LoadType.APPEND -> remoteKey?.nextKey ?: return MediatorResult.Success(true)
             }
 
-            val response = productAPI.getCategoryAndProductByShop(idSeller, tenDanhMuc, page)
+            val response = getProductAPI.getCategoryAndProductByShop(idSeller, tenDanhMuc, page)
             val dataResponse = response.body()
             val endOfPagination = dataResponse?.contents?.isEmpty() == true || dataResponse?.contents?.size!! < StringConstants.PAGE_SIZE
 

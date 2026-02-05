@@ -5,6 +5,7 @@ import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.exceptions.ClearCredentialException
 import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.constants.TokenManager
 import com.example.shoppingapp.data.remote.api.AuthAPI
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
@@ -40,8 +41,8 @@ class AuthRepositoryImpl @Inject constructor(
     private val credentialManager: CredentialManager,
     @param:IpAddress private val ipAddress: String?,
     @param:DeviceId private val deviceId: String?,
-    private val sharedPreferences: SharedPreferences
-) : AuthRepository {
+    private val tokenManager: TokenManager
+    ) : AuthRepository {
 
     override suspend fun getCurrentUser(): AuthUser? {
         return auth.currentUser?.mapToAuthUser()
@@ -106,7 +107,7 @@ class AuthRepositoryImpl @Inject constructor(
                         .document(it.uid)
                         .set(user)
                         .await()
-                    val responsePostUser = userAPI.createUser(user)
+                    val responsePostUser = authAPI.createUser(user)
                     if (responsePostUser.isSuccessful) {
                         val useTmp = responsePostUser.body()
                         if (useTmp == null) {
@@ -152,7 +153,7 @@ class AuthRepositoryImpl @Inject constructor(
                         .document(user.maND!!)
                         .set(user)
                         .await()
-                    val responsePostUser = userAPI.createUser(user)
+                    val responsePostUser = authAPI.createUser(user)
                     if (responsePostUser.isSuccessful) {
                         val useTmp = responsePostUser.body()
                         if (useTmp == null) {
@@ -196,8 +197,8 @@ class AuthRepositoryImpl @Inject constructor(
 
     override fun logout(): Flow<StateListener<Boolean>> = flow {
         emit(StateListener.Loading)
-        val token = sharedPreferences.getString(StringConstants.TOKEN, null)
-        val refreshToken = sharedPreferences.getString(StringConstants.REFRESH_TOKEN, null)
+        val token = tokenManager.getAccessToken()
+        val refreshToken = tokenManager.getRefreshToken()
         if (token == null || refreshToken == null) {
             emit(StateListener.Error(Exception(StringConstants.HAS_ERROR)))
         } else {
@@ -207,6 +208,7 @@ class AuthRepositoryImpl @Inject constructor(
                 credentialManager.clearCredentialState(clearRequest)
                 val response = authAPI.logout(LogoutRequest(token, refreshToken))
                 if (response.isSuccessful) {
+                    tokenManager.deleteAll()
                     emit(StateListener.Success(true))
                 } else {
                     val errorBody = response.errorBody()
@@ -221,32 +223,6 @@ class AuthRepositoryImpl @Inject constructor(
             }
         }
     }.flowOn(Dispatchers.IO)
-
-    override suspend fun refresh(refreshRequest: RefreshRequest): StateListener<AuthResponse> {
-        try {
-            val response = authAPI.refresh(refreshRequest)
-            if (response.isSuccessful) {
-                val authResult = response.body()
-                authResult?.let {
-                    return StateListener.Success(it)
-                }
-            } else {
-                val errorResponse = response.errorBody()
-                val adapter = moshi.adapter(ErrorResponseDTO::class.java)
-                val errorResponseDTO = errorResponse?.string()?.let {
-                    adapter.fromJson(it)
-                }
-                return StateListener.Error(Exception(buildString {
-                    append(errorResponseDTO?.status)
-                    append("_")
-                    append(errorResponseDTO?.message)
-                }))
-            }
-        } catch (e: Exception) {
-            return StateListener.Error(e)
-        }
-        return StateListener.Error(Exception(StringConstants.API_ERROR))
-    }
 
     private fun FirebaseUser.mapToAuthUser(): AuthUser {
         return AuthUser(uid)

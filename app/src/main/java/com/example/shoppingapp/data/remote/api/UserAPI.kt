@@ -17,9 +17,6 @@ import retrofit2.http.Query
 
 interface UserAPI {
 
-    @POST("user/create")
-    suspend fun createUser(@Body user: UserDTOCreate): Response<UserDTOGet>
-
     @GET("user/get/{id}")
     suspend fun getUser(@Path("id") id: String): Response<UserDTOGet>
 
