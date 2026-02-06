@@ -1,6 +1,5 @@
 package com.example.shoppingapp.ui.view.activity.common
 
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +15,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.BottomNavigationUtils
+import com.example.shoppingapp.constants.SessionManager
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.constants.ViewPagerUtils
@@ -25,9 +25,11 @@ import com.example.shoppingapp.ui.view.activity.auth.LoginActivity
 import com.example.shoppingapp.ui.view.adapter.ViewPagerAdapter
 import com.example.shoppingapp.ui.viewmodel.common.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -35,6 +37,9 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModels()
     private lateinit var viewbinding: ActivityMainBinding
     private val viewPagerAdapter: ViewPagerAdapter by lazy { ViewPagerAdapter(this@MainActivity) }
+
+    @Inject
+    lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +78,18 @@ class MainActivity : AppCompatActivity() {
                     if (it is StateListener.Success) {
                         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                         finishAffinity()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                sessionManager.needLogoutState.collectLatest { needLogout ->
+                    delay(2000)
+                    if (needLogout) {
+                        val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                        startActivity(intent)
                     }
                 }
             }

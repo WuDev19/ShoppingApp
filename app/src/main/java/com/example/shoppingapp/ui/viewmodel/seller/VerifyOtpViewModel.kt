@@ -67,6 +67,7 @@ class VerifyOtpViewModel @Inject constructor(
 
     fun saveTokenToLocal(authResponse: AuthResponse) {
         tokenManager.writeAll(authResponse)
+        tokenManager.setSeller()
     }
 
 }

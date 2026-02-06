@@ -94,6 +94,7 @@
             android:id="@+id/action_registerSellerFragment_to_sendOtpFragment"
             app:destination="@id/sendOtpFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/sendOtpFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.SendOtpFragment"
@@ -121,14 +122,33 @@
         android:id="@+id/dashBoardSellerFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.DashBoardSellerFragment"
         android:label="fragment_dash_board_seller"
-        tools:layout="@layout/fragment_dash_board_seller" >
+        tools:layout="@layout/fragment_dash_board_seller">
 
         <argument
             android:name="userId"
+            android:defaultValue=""
             app:argType="string"
-            app:nullable="false"
-            android:defaultValue=""/>
+            app:nullable="false" />
+
+        <action
+            android:id="@+id/action_dashBoardSellerFragment_to_postProductFragment"
+            app:destination="@id/postProductFragment" />
 
     </fragment>
+
+    <fragment
+        android:id="@+id/postProductFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.PostProductFragment"
+        android:label="fragment_post_product"
+        tools:layout="@layout/fragment_post_product" >
+        <action
+            android:id="@+id/action_postProductFragment_to_postProductDetailFragment"
+            app:destination="@id/postProductDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/postProductDetailFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.PostProductDetailFragment"
+        android:label="fragment_post_product_detail"
+        tools:layout="@layout/fragment_post_product_detail" />
 
 </navigation>

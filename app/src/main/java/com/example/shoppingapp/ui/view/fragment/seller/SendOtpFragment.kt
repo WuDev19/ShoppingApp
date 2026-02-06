@@ -23,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.shoppingapp.R
+import com.example.shoppingapp.constants.SessionManager
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
 import com.example.shoppingapp.databinding.FragmentSendOtpBinding
@@ -32,6 +33,7 @@ import com.example.shoppingapp.ui.viewmodel.seller.SendOtpViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SendOtpFragment : Fragment() {
@@ -77,7 +79,8 @@ class SendOtpFragment : Fragment() {
         binding.apply {
 
             btnSendOtp.setOnClickListener {
-                if(edtPhone.text.toString().trim().isEmpty()){
+                val phone = edtPhone.text.toString().trim()
+                if(phone.isEmpty() || phone.length < 9){
                     ToastUtils.showToast(requireContext(), "Please enter shop phone number")
                     return@setOnClickListener
                 }

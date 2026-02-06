@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -21,6 +22,7 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.BottomNavigationUtils
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.constants.TokenManager
 import com.example.shoppingapp.constants.ViewPagerUtils
 import com.example.shoppingapp.databinding.CustomDialogImageAvatarCircleBinding
 import com.example.shoppingapp.databinding.FragmentProfileBinding
@@ -32,6 +34,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -40,6 +43,11 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
+    private var isSeller: Boolean = false
+
+    @Inject
+    lateinit var tokenManager: TokenManager
+
     private val bottomNavigationView: BottomNavigationView by lazy {
         requireActivity().findViewById(
             R.id.bottom_navigation_view
@@ -50,6 +58,11 @@ class ProfileFragment : Fragment() {
 
     private val viewPager2: ViewPager2 by lazy {
         requireActivity().findViewById(R.id.view_pager2)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        isSeller = tokenManager.isSeller()
     }
 
     override fun onCreateView(
@@ -121,6 +134,8 @@ class ProfileFragment : Fragment() {
         }
 
         binding.apply {
+
+            cardSeller.isVisible = isSeller
 
             btnEdit.setOnClickListener {
                 controller.navigate(R.id.action_profileFragment_to_editProfileFragment)

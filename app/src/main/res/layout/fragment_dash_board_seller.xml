@@ -33,24 +33,24 @@
                 app:tint="@color/white" />
 
             <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="20dp"
+                android:layout_weight="1"
                 android:text="@string/seller_dashboard"
                 android:textColor="@color/white"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_weight="1"/>
+                android:textStyle="bold" />
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/icon_setting"
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="10dp"
-                app:tint="@color/white"
-                android:layout_marginBottom="10dp"/>
+                android:importantForAccessibility="no"
+                android:src="@drawable/icon_setting"
+                app:tint="@color/white" />
 
         </LinearLayout>
 
@@ -67,9 +67,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:text="Thống kê các danh mục bán chạy"
+            android:text="@string/statistical"
             android:textColor="@color/black"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart_revenue"
@@ -84,9 +84,39 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:text="Doanh thu bán hàng từng tháng"
+            android:text="@string/doanh_thu"
             android:textColor="@color/black"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_my_product"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:text="@string/my_product"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/button_color"
+            app:cornerRadius="10dp" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/btn_new_product"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
+            android:text="@string/new_product"
+            app:backgroundTint="@color/white"
+            app:extendStrategy="wrap_content"
+            app:icon="@drawable/icon_add"
+            app:iconTint="@null"
+            app:strokeColor="@color/button_color"
+            app:strokeWidth="1dp"
+            android:layout_gravity="bottom|end"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            app:elevation="10dp"
+            app:cornerRadius="10dp"/>
 
     </LinearLayout>
 

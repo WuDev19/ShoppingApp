@@ -113,4 +113,24 @@
     <string name="expire_in">Expire in</string>
     <string name="go_to_my_store">Go to my store</string>
     <string name="seller_dashboard">Seller dashboard</string>
+    <string name="statistical">Thống kê các danh mục bán chạy</string>
+    <string name="doanh_thu">Doanh thu bán hàng từng tháng</string>
+    <string name="my_product">My Product</string>
+    <string name="new_product">New Product</string>
+    <string name="enter_a_description_for_the_product">Enter a description for the product</string>
+    <string name="post_product">New Product</string>
+    <string name="enter_product_price">Enter product price</string>
+    <string name="add_product_images">Add general product images</string>
+    <string name="enter_the_discount">Enter the discount</string>
+    <string name="add_product_details">Add product details</string>
+    <string name="detail_products">Detail Products</string>
+    <string name="product_specifications">Product specifications</string>
+    <string name="enter_product_specifications">Enter product specifications</string>
+    <string name="general_introduction">General introduction</string>
+    <string name="enter_general_introduction">Enter general introduction</string>
+    <string name="enter_the_detailed_product_name">Enter the detailed product name</string>
+    <string name="enter_the_quantity_of_goods_in_stock">Enter the quantity of goods in stock: </string>
+    <string name="enter_price">Enter the price (it must be greater than or equal to the general price)</string>
+    <string name="save_temporarily">Save temporarily</string>
+    <string name="post_products_for_sale">Post products for sale</string>
 </resources>

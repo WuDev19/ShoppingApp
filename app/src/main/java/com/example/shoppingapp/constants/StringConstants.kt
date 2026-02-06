@@ -87,4 +87,8 @@ object StringConstants {
     const val ROLE_ADMIN = "RoleAdmin"
     const val ROLE_USER = "RoleUser"
     const val NEED_AUTH = "NeedAuth"
+    const val IS_SELLER = "is_seller"
+    const val OKHTTP_INTERCEPTOR = "okhttp_with_interceptor"
+    const val OKHTTP_NO_INTERCEPTOR = "okhttp_with_no_interceptor"
+
 }

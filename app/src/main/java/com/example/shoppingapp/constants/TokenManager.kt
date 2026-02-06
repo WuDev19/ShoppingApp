@@ -46,4 +46,12 @@ class TokenManager(private val sharedPreferences: SharedPreferences) {
         }
     }
 
+    fun setSeller() {
+        sharedPreferences.edit {
+            putBoolean(StringConstants.IS_SELLER, true)
+        }
+    }
+
+    fun isSeller(): Boolean = sharedPreferences.getBoolean(StringConstants.IS_SELLER, false)
+
 }

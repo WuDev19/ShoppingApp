@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import androidx.core.content.edit
+import com.example.shoppingapp.constants.SessionManager
 import com.example.shoppingapp.constants.TokenManager
 import com.example.shoppingapp.di.qualifier.DeviceId
 import com.example.shoppingapp.di.qualifier.IpAddress
@@ -56,6 +57,12 @@ object DeviceModule {
     @Singleton
     fun provideTokenManager(sharedPreferences: SharedPreferences): TokenManager {
         return TokenManager(sharedPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSessionManager(): SessionManager {
+        return SessionManager()
     }
 
 }

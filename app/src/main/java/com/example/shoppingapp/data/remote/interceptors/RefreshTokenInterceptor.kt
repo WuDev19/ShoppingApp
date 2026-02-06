@@ -1,5 +1,6 @@
 package com.example.shoppingapp.data.remote.interceptors
 
+import com.example.shoppingapp.constants.SessionManager
 import com.example.shoppingapp.constants.TokenManager
 import com.example.shoppingapp.data.remote.api.AuthAPI
 import com.example.shoppingapp.data.remote.dto.request.RefreshRequest
@@ -9,6 +10,7 @@ import okio.IOException
 
 class RefreshTokenInterceptor(
     private val tokenManager: TokenManager,
+    private val sessionManager: SessionManager,
     private val authAPI: AuthAPI,
     private val ipAddress: String?
 ) : Interceptor {
@@ -34,7 +36,9 @@ class RefreshTokenInterceptor(
                     authAPI.refresh(RefreshRequest(currentToken!!, refreshToken!!, ipAddress))
                         .execute()
                 if (!newResponse.isSuccessful) {
-                    throw IOException("REFRESH_TOKEN_FAILED")
+                    tokenManager.deleteAll()
+                    sessionManager.postEvent()
+                    throw IOException("Login session has expired, please log in again")
                 }
 
                 val newBothToken = newResponse.body()!!

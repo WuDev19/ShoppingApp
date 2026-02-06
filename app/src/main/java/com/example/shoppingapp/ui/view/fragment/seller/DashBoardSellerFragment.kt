@@ -15,6 +15,8 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import androidx.core.graphics.toColorInt
+import androidx.navigation.fragment.findNavController
+import com.example.shoppingapp.R
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -28,8 +30,13 @@ class DashBoardSellerFragment : Fragment() {
     private var _binding: FragmentDashBoardSellerBinding? = null
     private val binding
         get() = _binding!!
+
     private val userId: String
         get() = args.userId
+
+    private val controller by lazy {
+        findNavController()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +54,11 @@ class DashBoardSellerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         showCategorySoldChart(binding)
         showRevenueEachMonth(binding)
+        binding.apply {
+            btnNewProduct.setOnClickListener {
+                controller.navigate(R.id.action_dashBoardSellerFragment_to_postProductFragment)
+            }
+        }
     }
 
     override fun onDestroyView() {
