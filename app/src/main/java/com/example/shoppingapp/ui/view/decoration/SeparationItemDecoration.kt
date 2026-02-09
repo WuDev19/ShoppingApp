@@ -9,9 +9,10 @@ class SeparationItemDecoration(
     private val height: Int,
     private val mauSac: Int
 ) : ItemDecoration() {
+    //định nghĩa bút vẽ
     private val paint = Paint().apply {
-        this.color = mauSac
-        this.strokeWidth = height.toFloat()
+        this.color = mauSac //màu sắc của bút
+        this.strokeWidth = height.toFloat() //độ rộng nét bút
         this.style = Paint.Style.FILL
         isAntiAlias = true
     }
@@ -27,7 +28,7 @@ class SeparationItemDecoration(
             val params = child.layoutParams as RecyclerView.LayoutParams
             val top = (child.bottom + params.bottomMargin).toFloat()
             val bottom = top + height
-
+            //canvas như cái giấy để paint (bút) vẽ lên
             c.drawRect(left, top, right, bottom, paint)
         }
     }

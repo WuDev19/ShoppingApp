@@ -19,7 +19,7 @@ class LoginViewModel @Inject constructor(
     private val loginEmailUseCase: LoginEmailUseCase,
     private val loginGoogleUseCase: LoginGoogleUseCase,
     private val tokenManager: TokenManager
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow<StateListener<AuthResponse>>(StateListener.Idle)
     val state: StateFlow<StateListener<AuthResponse>> = _state
@@ -40,8 +40,11 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun saveTokenToLocal(authResponse: AuthResponse){
-       tokenManager.writeAll(authResponse)
+    fun saveTokenToLocal(authResponse: AuthResponse) {
+        authResponse.sellerId?.let {
+            tokenManager.setSeller(it)
+        }
+        tokenManager.writeAll(authResponse)
     }
 
 }

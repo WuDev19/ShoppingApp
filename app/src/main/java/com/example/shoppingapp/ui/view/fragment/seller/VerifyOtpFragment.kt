@@ -37,7 +37,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class VerifyOtpFragment() : BottomSheetDialogFragment() {
+class VerifyOtpFragment(private val onSuccess: () -> Unit) : BottomSheetDialogFragment() {
 
     private val viewModel: VerifyOtpViewModel by viewModels()
     private val parentViewModel: SendOtpViewModel by viewModels(ownerProducer = {
@@ -180,6 +180,7 @@ class VerifyOtpFragment() : BottomSheetDialogFragment() {
                                 binding.shimmer.isVisible = false
                                 binding.progressBar.isVisible = false
                                 this@VerifyOtpFragment.isCancelable = true
+                                onSuccess()
                                 this@VerifyOtpFragment.dismiss()
                             }
                         }

@@ -1,10 +1,8 @@
 package com.example.shoppingapp.ui.viewmodel.seller
 
-import android.content.SharedPreferences
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.domain.usecase.profileusecase.UploadAvatarUseCase
@@ -21,7 +19,6 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import androidx.core.content.edit
 import com.example.shoppingapp.constants.TokenManager
 
 @HiltViewModel
@@ -67,7 +64,7 @@ class VerifyOtpViewModel @Inject constructor(
 
     fun saveTokenToLocal(authResponse: AuthResponse) {
         tokenManager.writeAll(authResponse)
-        tokenManager.setSeller()
+        tokenManager.setSeller(authResponse.sellerId)
     }
 
 }

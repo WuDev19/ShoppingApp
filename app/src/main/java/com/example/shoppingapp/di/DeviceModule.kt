@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import androidx.core.content.edit
+import com.example.shoppingapp.constants.UploadingManager
 import com.example.shoppingapp.constants.SessionManager
 import com.example.shoppingapp.constants.TokenManager
 import com.example.shoppingapp.di.qualifier.DeviceId
@@ -64,5 +65,9 @@ object DeviceModule {
     fun provideSessionManager(): SessionManager {
         return SessionManager()
     }
+
+    @Provides
+    @Singleton
+    fun provideDownloadingManager(): UploadingManager = UploadingManager()
 
 }

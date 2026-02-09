@@ -1,6 +1,7 @@
 package com.example.shoppingapp.data.repository.impl
 
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.exceptions.ClearCredentialException
@@ -35,7 +36,6 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val firestore: FirebaseFirestore,
-    private val userAPI: UserAPI,
     private val authAPI: AuthAPI,
     private val moshi: Moshi,
     private val credentialManager: CredentialManager,
@@ -192,6 +192,7 @@ class AuthRepositoryImpl @Inject constructor(
                 } ?: emit(StateListener.Error(Exception("User not exist")))
             } catch (e: Exception) {
                 emit(StateListener.Error(e))
+                Log.e(StringConstants.DEBUG, "loginWithGoogle: ${e.message}", )
             }
         }
 

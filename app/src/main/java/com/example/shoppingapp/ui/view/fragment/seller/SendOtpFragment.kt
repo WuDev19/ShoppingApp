@@ -21,6 +21,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.shoppingapp.R
 import com.example.shoppingapp.constants.SessionManager
@@ -40,6 +41,7 @@ class SendOtpFragment : Fragment() {
     private val viewmodel: SendOtpViewModel by viewModels()
     private var _binding: FragmentSendOtpBinding? = null
     private val binding get() = _binding!!
+    private val controller by lazy { findNavController() }
     private val argsRegister: SendOtpFragmentArgs by navArgs()
 
     private val uriAnh: Uri?
@@ -77,6 +79,10 @@ class SendOtpFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+
+            imgBack.setOnClickListener {
+                controller.popBackStack()
+            }
 
             btnSendOtp.setOnClickListener {
                 val phone = edtPhone.text.toString().trim()
@@ -158,7 +164,9 @@ class SendOtpFragment : Fragment() {
 
     private fun showVerifyFragment(otpModel: OtpModel) {
         binding.apply {
-            val verifyOtpFragment = VerifyOtpFragment()
+            val verifyOtpFragment = VerifyOtpFragment{
+                controller.popBackStack()
+            }
             Log.e(StringConstants.DEBUG, "kajshda: $shopName va \n $shopAddress")
             val bundle = bundleOf(
                 StringConstants.URI_ANH to uriAnh,

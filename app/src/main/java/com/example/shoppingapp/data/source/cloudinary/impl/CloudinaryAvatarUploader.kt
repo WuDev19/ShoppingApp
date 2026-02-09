@@ -21,7 +21,7 @@ import kotlin.coroutines.resumeWithException
 //resumeWith sẽ gói cả thành công hay thất bại vào trong 1 Result
 class CloudinaryAvatarUploader @Inject constructor() : CloudinaryUploader {
     override suspend fun upload(
-        uri: Uri
+        uri: Uri, position: Int?
     ): String = suspendCancellableCoroutine { continuation ->
 
         continuation.invokeOnCancellation {

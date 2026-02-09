@@ -16,12 +16,16 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import androidx.core.graphics.toColorInt
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
+import com.example.shoppingapp.constants.BottomNavigationUtils
+import com.example.shoppingapp.constants.ViewPagerUtils
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class DashBoardSellerFragment : Fragment() {
 
@@ -36,6 +40,12 @@ class DashBoardSellerFragment : Fragment() {
 
     private val controller by lazy {
         findNavController()
+    }
+    private val bottomNavigationView: BottomNavigationView by lazy {
+        requireActivity().findViewById(R.id.bottom_navigation_view)
+    }
+    private val viewPager2: ViewPager2 by lazy {
+        requireActivity().findViewById(R.id.view_pager2)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,6 +67,11 @@ class DashBoardSellerFragment : Fragment() {
         binding.apply {
             btnNewProduct.setOnClickListener {
                 controller.navigate(R.id.action_dashBoardSellerFragment_to_postProductFragment)
+            }
+            imgBack.setOnClickListener {
+                controller.popBackStack()
+                ViewPagerUtils.enableViewPager(viewPager2, controller)
+                BottomNavigationUtils.showBottomNavigation(bottomNavigationView, controller)
             }
         }
     }

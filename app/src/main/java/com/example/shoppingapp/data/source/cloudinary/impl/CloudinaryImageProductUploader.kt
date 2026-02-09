@@ -4,8 +4,10 @@ import android.net.Uri
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
+import com.example.shoppingapp.constants.UploadingManager
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.collections.get
@@ -14,9 +16,11 @@ import kotlin.coroutines.resumeWithException
 
 //khai báo cách khởi tạo class như này, bới vì đây là class mình tự tạo
 //dùng @Module + @Provides cũng được nhưng nên dùng cho các thư viện ngoài ko sửa được source
-class CloudinaryImageProductUploader @Inject constructor() : CloudinaryUploader {
+class CloudinaryImageProductUploader @Inject constructor(
+    private val uploadingManager: UploadingManager
+) : CloudinaryUploader {
     override suspend fun upload(
-        uri: Uri
+        uri: Uri, position: Int?
     ): String = suspendCancellableCoroutine { continuation ->
 
         continuation.invokeOnCancellation {
@@ -34,6 +38,14 @@ class CloudinaryImageProductUploader @Inject constructor() : CloudinaryUploader 
                     bytes: Long,
                     totalBytes: Long
                 ) {
+                    if(position != -1){
+                        uploadingManager.pushPercent(
+                            position!!,
+                            bytes.toFloat() / totalBytes * 100,
+                            requestId,
+                            uri
+                        )
+                    }
                 }
 
                 override fun onSuccess(

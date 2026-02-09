@@ -43,11 +43,6 @@ class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
-    private var isSeller: Boolean = false
-
-    @Inject
-    lateinit var tokenManager: TokenManager
-
     private val bottomNavigationView: BottomNavigationView by lazy {
         requireActivity().findViewById(
             R.id.bottom_navigation_view
@@ -62,7 +57,6 @@ class ProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        isSeller = tokenManager.isSeller()
     }
 
     override fun onCreateView(
@@ -134,8 +128,6 @@ class ProfileFragment : Fragment() {
         }
 
         binding.apply {
-
-            cardSeller.isVisible = isSeller
 
             btnEdit.setOnClickListener {
                 controller.navigate(R.id.action_profileFragment_to_editProfileFragment)

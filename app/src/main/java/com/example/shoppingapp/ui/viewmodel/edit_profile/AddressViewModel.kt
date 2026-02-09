@@ -15,7 +15,7 @@ class AddressViewModel @Inject constructor(
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
-    val userAddressState = getUserAddressUseCase("u16")
+    val userAddressState = getUserAddressUseCase(auth.currentUser?.uid ?: "")
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 }

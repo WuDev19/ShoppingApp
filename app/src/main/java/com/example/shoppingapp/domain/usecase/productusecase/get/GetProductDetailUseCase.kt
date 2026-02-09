@@ -1,4 +1,4 @@
-package com.example.shoppingapp.domain.usecase.productusecase
+package com.example.shoppingapp.domain.usecase.productusecase.get
 
 import com.example.shoppingapp.domain.model.product.ProductDetail
 import com.example.shoppingapp.domain.repository.product.ProductRepository

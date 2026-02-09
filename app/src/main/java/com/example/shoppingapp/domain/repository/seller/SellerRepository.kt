@@ -2,7 +2,6 @@ package com.example.shoppingapp.domain.repository.seller
 
 import androidx.paging.PagingData
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
-import com.example.shoppingapp.data.remote.dto.get.SellerDTO
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.domain.model.OtpModel
 import com.example.shoppingapp.domain.model.SellerInStore

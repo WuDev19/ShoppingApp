@@ -1,6 +1,8 @@
 package com.example.shoppingapp.domain.repository.product
 
+import android.net.Uri
 import androidx.paging.PagingData
+import com.example.shoppingapp.data.remote.dto.request.PostProductRequest
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 import com.example.shoppingapp.domain.model.product.ProductChiTiet
 import com.example.shoppingapp.domain.model.product.ProductDetail
@@ -20,5 +22,8 @@ interface ProductRepository {
     fun getAllProductOfShop(id: Int): Flow<PagingData<ProductDisplay>>
     fun getBestSellerProductByShop(id: Int): Flow<PagingData<ProductDisplay>>
     fun getCategoryAndProductByShop(id: Int, tenDanhMuc: String): Flow<PagingData<ProductDisplay>>
+
+    suspend fun postProduct(sellerId: Int, postProductRequest: PostProductRequest): Int
+    suspend fun uploadImageDetail(uri: Uri, position: Int): String
 
 }

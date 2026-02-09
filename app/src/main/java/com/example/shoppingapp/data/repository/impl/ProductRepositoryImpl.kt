@@ -1,5 +1,6 @@
 package com.example.shoppingapp.data.repository.impl
 
+import android.net.Uri
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -10,6 +11,8 @@ import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.mapper.ProductEntityMapper
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.product.GetProductAPI
+import com.example.shoppingapp.data.remote.api.product.ModifyProductAPI
+import com.example.shoppingapp.data.remote.dto.request.PostProductRequest
 import com.example.shoppingapp.data.source.paging_source.PagingSourceOtherProductOfShop
 import com.example.shoppingapp.data.source.paging_source.PagingSourceProduct
 import com.example.shoppingapp.data.source.paging_source.PagingSourceProductByCategory
@@ -19,21 +22,27 @@ import com.example.shoppingapp.data.repository.mediator.AllProductOfShopRemoteMe
 import com.example.shoppingapp.data.repository.mediator.BestSellerProductShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.CategoryAndProductShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.SearchProductInShopRemoteMediator
+import com.example.shoppingapp.data.source.cloudinary.impl.CloudinaryImageProductUploader
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 import com.example.shoppingapp.domain.model.product.ProductChiTiet
 import com.example.shoppingapp.domain.model.product.ProductDetail
 import com.example.shoppingapp.domain.repository.product.ProductRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ProductRepositoryImpl @Inject constructor(
     private val getProductAPI: GetProductAPI,
+    private val modifyProductAPI: ModifyProductAPI,
     private val appDatabase: AppDatabase,
+    private val uploader: CloudinaryImageProductUploader
 ) :
     ProductRepository {
 
@@ -128,7 +137,12 @@ class ProductRepositoryImpl @Inject constructor(
                 pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false,
             ),
-            remoteMediator = SearchProductInShopRemoteMediator(getProductAPI, appDatabase, id, text),
+            remoteMediator = SearchProductInShopRemoteMediator(
+                getProductAPI,
+                appDatabase,
+                id,
+                text
+            ),
             pagingSourceFactory = {
                 appDatabase.productDao().getPagingSourceSearchProductShop(id, text)
             }
@@ -147,7 +161,12 @@ class ProductRepositoryImpl @Inject constructor(
                 pageSize = StringConstants.PAGE_SIZE,
                 enablePlaceholders = false,
             ),
-            remoteMediator = AllProductOfShopRemoteMediator(getProductAPI, appDatabase, queryKey, id),
+            remoteMediator = AllProductOfShopRemoteMediator(
+                getProductAPI,
+                appDatabase,
+                queryKey,
+                id
+            ),
             pagingSourceFactory = {
                 appDatabase.productDao().pagingSourceProductShop(id)
             }
@@ -210,5 +229,15 @@ class ProductRepositoryImpl @Inject constructor(
             }
         }
     }
+
+    override suspend fun postProduct(sellerId: Int, postProductRequest: PostProductRequest): Int =
+        withContext(Dispatchers.IO) {
+            modifyProductAPI.postProduct(sellerId, postProductRequest)
+        }
+
+    override suspend fun uploadImageDetail(uri: Uri, position: Int): String =
+        withContext(Dispatchers.IO) {
+            uploader.upload(uri, position)
+        }
 
 }

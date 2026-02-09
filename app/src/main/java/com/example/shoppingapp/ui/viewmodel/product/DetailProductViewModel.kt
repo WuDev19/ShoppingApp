@@ -6,9 +6,9 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 import com.example.shoppingapp.domain.model.product.ProductDetail
-import com.example.shoppingapp.domain.usecase.productusecase.GetOtherProductsOfShopUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.GetProductDetailUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.GetSanPhamRelatedUseCase
+import com.example.shoppingapp.domain.usecase.productusecase.get.GetOtherProductsOfShopUseCase
+import com.example.shoppingapp.domain.usecase.productusecase.get.GetProductDetailUseCase
+import com.example.shoppingapp.domain.usecase.productusecase.get.GetSanPhamRelatedUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow

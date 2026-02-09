@@ -51,7 +51,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:text="@string/enter_the_detailed_product_name"
-            android:textColor="@color/black"
+            android:textColor="@color/red"
             android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
@@ -64,12 +64,13 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
+            app:boxStrokeColor="@color/button_color"
             app:counterEnabled="true"
             app:counterMaxLength="255"
-            app:endIconMode="clear_text"
-            app:boxStrokeColor="@color/button_color">
+            app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edt_product_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:maxLength="255" />
@@ -90,7 +91,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:text="@string/enter_the_quantity_of_goods_in_stock"
-                android:textColor="@color/black"
+                android:textColor="@color/red"
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -104,6 +105,7 @@
                 app:boxStrokeColor="@color/button_color">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edt_in_stock"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
                     android:inputType="number" />
@@ -118,11 +120,11 @@
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
             android:text="@string/enter_price"
-            android:textColor="@color/black"
+            android:textColor="@color/red"
             android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
@@ -131,18 +133,19 @@
             app:boxCornerRadiusBottomStart="20dp"
             app:boxCornerRadiusTopEnd="20dp"
             app:boxCornerRadiusTopStart="20dp"
-            app:endIconMode="clear_text"
-            app:boxStrokeColor="@color/button_color">
+            app:boxStrokeColor="@color/button_color"
+            app:endIconMode="clear_text">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="wrap_content"
+                android:id="@+id/edt_unit_price"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="number" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
@@ -157,29 +160,30 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 app:boxCornerRadiusBottomEnd="20dp"
                 app:boxCornerRadiusBottomStart="20dp"
                 app:boxCornerRadiusTopEnd="20dp"
                 app:boxCornerRadiusTopStart="20dp"
-                app:endIconMode="clear_text"
+                app:boxStrokeColor="@color/button_color"
                 app:counterEnabled="true"
                 app:counterMaxLength="25"
-                app:boxStrokeColor="@color/button_color">
+                app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="wrap_content"
+                    android:id="@+id/edt_color"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="25"/>
+                    android:maxLength="25" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
@@ -194,37 +198,87 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
                 app:boxCornerRadiusBottomEnd="20dp"
                 app:boxCornerRadiusBottomStart="20dp"
                 app:boxCornerRadiusTopEnd="20dp"
                 app:boxCornerRadiusTopStart="20dp"
-                app:endIconMode="clear_text"
+                app:boxStrokeColor="@color/button_color"
                 app:counterEnabled="true"
                 app:counterMaxLength="25"
-                app:boxStrokeColor="@color/button_color">
+                app:endIconMode="clear_text">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="wrap_content"
+                    android:id="@+id/edt_size"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="25"/>
+                    android:maxLength="25" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
         </LinearLayout>
 
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/add_detailed_photos"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_take_photo"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                app:srcCompat="@drawable/icon_photo_camera" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_gallery"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="20dp"
+                app:srcCompat="@drawable/icon_from_gallery" />
+
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="10dp"
+            app:cardCornerRadius="10dp"
+            app:strokeWidth="0dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_product_image"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="fitXY" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp">
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:orientation="horizontal">
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_tmp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/save_temporarily"
@@ -233,15 +287,22 @@
                 app:cornerRadius="10dp" />
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_post"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:text="@string/post_products_for_sale"
+                android:text="@string/post_products"
                 android:textColor="@color/white"
                 app:backgroundTint="@color/button_color"
                 app:cornerRadius="10dp" />
 
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_download"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"/>
 
     </LinearLayout>
 

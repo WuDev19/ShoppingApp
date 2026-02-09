@@ -14,7 +14,7 @@ import kotlin.coroutines.resumeWithException
 
 class CloudinaryVideoProductUploader @Inject constructor() : CloudinaryUploader {
     override suspend fun upload(
-        uri: Uri
+        uri: Uri, position: Int?
     ): String = suspendCancellableCoroutine { continuation ->
 
         continuation.invokeOnCancellation {

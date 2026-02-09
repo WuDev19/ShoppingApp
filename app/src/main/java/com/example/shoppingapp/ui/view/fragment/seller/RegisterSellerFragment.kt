@@ -1,7 +1,6 @@
 package com.example.shoppingapp.ui.view.fragment.seller
 
 import android.net.Uri
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.view.Gravity
 import androidx.fragment.app.Fragment
@@ -12,19 +11,20 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
+import com.example.shoppingapp.constants.BottomNavigationUtils
 import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.constants.ViewPagerUtils
 import com.example.shoppingapp.databinding.CustomDialogImageAvatarCircleBinding
 import com.example.shoppingapp.databinding.FragmentRegisterSellerBinding
-import com.example.shoppingapp.ui.state.StateListener
-import dagger.hilt.android.AndroidEntryPoint
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -43,6 +43,12 @@ class RegisterSellerFragment : Fragment() {
                     .into(binding.imgAvt)
             }
         }
+    private val bottomNavigationView: BottomNavigationView by lazy {
+        requireActivity().findViewById(R.id.bottom_navigation_view)
+    }
+    private val viewPager2: ViewPager2 by lazy {
+        requireActivity().findViewById(R.id.view_pager2)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +66,12 @@ class RegisterSellerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
+
+            imgBack.setOnClickListener {
+                controller.popBackStack()
+                ViewPagerUtils.enableViewPager(viewPager2, controller)
+                BottomNavigationUtils.showBottomNavigation(bottomNavigationView, controller)
+            }
 
             btnContinue.setOnClickListener {
                 val shopName = edtShopName.text.toString().trim()

@@ -140,15 +140,52 @@
         android:id="@+id/postProductFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.PostProductFragment"
         android:label="fragment_post_product"
-        tools:layout="@layout/fragment_post_product" >
+        tools:layout="@layout/fragment_post_product">
         <action
             android:id="@+id/action_postProductFragment_to_postProductDetailFragment"
             app:destination="@id/postProductDetailFragment" />
+        <action
+            android:id="@+id/action_postProductFragment_to_imageDescriptionProductFragment3"
+            app:destination="@id/imageDescriptionProductFragment3" />
     </fragment>
     <fragment
         android:id="@+id/postProductDetailFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.PostProductDetailFragment"
         android:label="fragment_post_product_detail"
-        tools:layout="@layout/fragment_post_product_detail" />
+        tools:layout="@layout/fragment_post_product_detail">
+
+        <argument
+            android:name="description"
+            app:argType="string"
+            app:nullable="false"
+            android:defaultValue=""/>
+
+        <argument
+            android:name="generalPrice"
+            app:argType="integer"
+            app:nullable="false"
+            android:defaultValue="-1"/>
+
+        <argument
+            android:name="discount"
+            app:argType="integer"
+            android:defaultValue="-1"/>
+
+        <argument
+            android:name="introduction"
+            app:argType="string"
+            app:nullable="true" />
+
+        <argument
+            android:name="uriList"
+            app:argType="string[]"
+            app:nullable="false"/>
+
+    </fragment>
+    <fragment
+        android:id="@+id/imageDescriptionProductFragment3"
+        android:name="com.example.shoppingapp.ui.view.fragment.product.ImageDescriptionProductFragment"
+        android:label="fragment_image_description_product"
+        tools:layout="@layout/fragment_image_description_product" />
 
 </navigation>

@@ -83,6 +83,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        // TODO: them dialog
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 sessionManager.needLogoutState.collectLatest { needLogout ->

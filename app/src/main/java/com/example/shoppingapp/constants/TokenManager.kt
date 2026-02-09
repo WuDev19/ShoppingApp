@@ -43,15 +43,18 @@ class TokenManager(private val sharedPreferences: SharedPreferences) {
             remove(StringConstants.TOKEN)
             remove(StringConstants.REFRESH_TOKEN)
             remove(StringConstants.TIME_CREATE_TOKEN)
+            remove(StringConstants.ID_SELLER)
         }
     }
 
-    fun setSeller() {
+    fun setSeller(sellerId: Int?) {
         sharedPreferences.edit {
-            putBoolean(StringConstants.IS_SELLER, true)
+            sellerId?.let {
+                putInt(StringConstants.ID_SELLER, it)
+            }
         }
     }
 
-    fun isSeller(): Boolean = sharedPreferences.getBoolean(StringConstants.IS_SELLER, false)
+    fun getSellerId(): Int = sharedPreferences.getInt(StringConstants.ID_SELLER, -1)
 
 }

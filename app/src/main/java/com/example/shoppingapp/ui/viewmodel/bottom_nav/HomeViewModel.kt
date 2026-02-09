@@ -7,8 +7,8 @@ import androidx.paging.cachedIn
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 import com.example.shoppingapp.domain.usecase.authusecase.GetUserCurrentUseCase
 import com.example.shoppingapp.domain.usecase.cartusecase.GetNumberCartItemUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.GetProductUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.SearchProductUseCase
+import com.example.shoppingapp.domain.usecase.productusecase.get.GetProductUseCase
+import com.example.shoppingapp.domain.usecase.productusecase.get.SearchProductUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -1,3 +1,8 @@
 package com.example.shoppingapp.data.remote.dto.get
 
-data class AuthResponse(val token: String?, val refreshToken: String?, val createTime: String?)
+data class AuthResponse(
+    val token: String?,
+    val refreshToken: String?,
+    val createTime: String?,
+    val sellerId: Int?
+)
