@@ -85,7 +85,7 @@ class PostProductDetailViewModel @Inject constructor(
                     _postProductState.value = StateListener.Error(Exception("Image upload failed."))
                 }
             } catch (e: Exception) {
-
+                _postProductState.value = StateListener.Error(e)
             } finally {
                 _numberImageSuccess.value = 0
             }

@@ -11,13 +11,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.navArgs
 import com.example.shoppingapp.databinding.FragmentPostProductDetailBinding
 import com.example.shoppingapp.ui.viewmodel.seller.PostProductDetailViewModel
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -34,7 +34,6 @@ import com.example.shoppingapp.ui.view.adapter.UploadImageAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class PostProductDetailFragment : Fragment() {
@@ -110,16 +109,34 @@ class PostProductDetailFragment : Fragment() {
                         when (it) {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> {
-
+                                binding.apply {
+                                    shimmer.isVisible = true
+                                    progressBar.isVisible = true
+                                    mainLinear.isEnabled = false
+                                }
                             }
 
                             is StateListener.Error -> {
-
+                                binding.apply {
+                                    shimmer.isVisible = false
+                                    progressBar.isVisible = false
+                                    mainLinear.isEnabled = true
+                                }
+                                ToastUtils.showToast(requireContext(), it.e?.message.toString())
                             }
 
                             is StateListener.Success<Int> -> {
-
+                                binding.apply {
+                                    shimmer.isVisible = false
+                                    progressBar.isVisible = false
+                                    mainLinear.isEnabled = true
+                                }
+                                ToastUtils.showToast(
+                                    requireContext(),
+                                    "Post new product successfully"
+                                )
                             }
+
                         }
                     }
                 }
@@ -128,6 +145,7 @@ class PostProductDetailFragment : Fragment() {
                     viewModel.numberImageSuccess.collect {
                         if (it > 0) {
                             Log.e(StringConstants.DEBUG, "onViewCreated: thanh cong $it")
+                            ToastUtils.showToast(requireContext(), "Upload $it image successfully")
                         }
                     }
                 }
