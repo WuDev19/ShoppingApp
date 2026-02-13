@@ -1,9 +1,11 @@
 package com.example.shoppingapp.ui.viewmodel.seller
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.constants.SessionManager
+import com.example.shoppingapp.constants.StringConstants
 import com.example.shoppingapp.constants.TokenManager
 import com.example.shoppingapp.constants.UploadingManager
 import com.example.shoppingapp.data.remote.dto.request.ImageDescriptionProduct
@@ -41,9 +43,8 @@ class PostProductDetailViewModel @Inject constructor(
     private val tokenManager: TokenManager
 ) : ViewModel() {
 
-    private val _postProductState: MutableStateFlow<StateListener<Int>> =
-        MutableStateFlow(StateListener.Idle)
-    val postProductState = _postProductState.asStateFlow()
+    private val _postProductState: MutableSharedFlow<StateListener<Int>> = MutableSharedFlow()
+    val postProductState = _postProductState.asSharedFlow()
 
     private val _numberImageSuccess: MutableStateFlow<Int> = MutableStateFlow(0)
     val numberImageSuccess = _numberImageSuccess.asStateFlow()
@@ -58,20 +59,26 @@ class PostProductDetailViewModel @Inject constructor(
         postProductRequest: PostProductRequest
     ) {
         viewModelScope.launch {
-            _postProductState.value = StateListener.Loading
+            _postProductState.emit(StateListener.Loading)
             try {
                 val listImagesGeneral = listUri.asFlow()
+                    //cho chạy đồng thời 5 cái cùng lúc
                     .flatMapMerge(5) { uri ->
                         flow {
-                            val result = runCatching { uploader.upload(uri) }.getOrNull()
+                            val result =
+                                runCatching { uploader.upload(uri) }.getOrNull() //runCatching có nhiệm vụ tránh cho exception làm crash
+                            Log.e(
+                                StringConstants.DEBUG,
+                                "postProduct: ${Thread.currentThread().name}"
+                            )
                             emit(result)
                         }.flowOn(Dispatchers.IO)
                     }
-                    .filterNotNull()
+                    .filterNotNull() //lọc nhưng result khác null
                     .onEach {
                         _numberImageSuccess.value += 1
                     }
-                    .toList()
+                    .toList() //toList là suspend function
 
                 if (listImagesGeneral.isNotEmpty() && listImagesGeneral.size == listUri.size) {
                     val imageDescriptionProducts = listImagesGeneral.map {
@@ -80,12 +87,12 @@ class PostProductDetailViewModel @Inject constructor(
                     postProductRequest.imageDescriptionProducts = imageDescriptionProducts
                     postProductRequest.thumbnail = imageDescriptionProducts.first().url
                     val result = postProductUseCase(tokenManager.getSellerId(), postProductRequest)
-                    _postProductState.value = StateListener.Success(result)
+                    _postProductState.emit(StateListener.Success(result))
                 } else {
-                    _postProductState.value = StateListener.Error(Exception("Image upload failed."))
+                    _postProductState.emit(StateListener.Error(Exception("Image upload failed, please try again")))
                 }
             } catch (e: Exception) {
-                _postProductState.value = StateListener.Error(e)
+                _postProductState.emit(StateListener.Error(e))
             } finally {
                 _numberImageSuccess.value = 0
             }

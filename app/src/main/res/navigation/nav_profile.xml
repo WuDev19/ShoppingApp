@@ -133,6 +133,9 @@
         <action
             android:id="@+id/action_dashBoardSellerFragment_to_postProductFragment"
             app:destination="@id/postProductFragment" />
+        <action
+            android:id="@+id/action_dashBoardSellerFragment_to_sellerSettingFragment"
+            app:destination="@id/sellerSettingFragment" />
 
     </fragment>
 
@@ -187,5 +190,10 @@
         android:name="com.example.shoppingapp.ui.view.fragment.product.ImageDescriptionProductFragment"
         android:label="fragment_image_description_product"
         tools:layout="@layout/fragment_image_description_product" />
+    <fragment
+        android:id="@+id/sellerSettingFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.SellerSettingFragment"
+        android:label="fragment_seller_setting"
+        tools:layout="@layout/fragment_seller_setting" />
 
 </navigation>

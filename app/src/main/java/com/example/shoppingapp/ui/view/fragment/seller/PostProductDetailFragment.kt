@@ -21,6 +21,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
@@ -42,6 +43,7 @@ class PostProductDetailFragment : Fragment() {
     private var _binding: FragmentPostProductDetailBinding? = null
     private val binding
         get() = _binding!!
+    private val controller by lazy { findNavController() }
     private val args: PostProductDetailFragmentArgs by navArgs()
     private val description
         get() = args.description
@@ -135,6 +137,7 @@ class PostProductDetailFragment : Fragment() {
                                     requireContext(),
                                     "Post new product successfully"
                                 )
+                                controller.popBackStack()
                             }
 
                         }
@@ -264,6 +267,10 @@ class PostProductDetailFragment : Fragment() {
                 galleryResult.launch("image/*")
             }
 
+            imgBack.setOnClickListener {
+                controller.popBackStack()
+            }
+            
         }
     }
 

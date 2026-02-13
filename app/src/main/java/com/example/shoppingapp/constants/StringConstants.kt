@@ -17,7 +17,7 @@ object StringConstants {
     const val MORNING = "Good morning"
     const val AFTERNOON = "Good afternoon"
     const val EVENING = "Good evening"
-    const val BASE_URL = "http://192.168.1.12:8080/api/"
+    const val BASE_URL = "http://192.168.1.9:8080/api/"
     const val SOLD = "Sold "
     const val DEBUG = "Debug"
     const val ID_PRODUCT = "id_product"
@@ -89,5 +89,6 @@ object StringConstants {
     const val NEED_AUTH = "NeedAuth"
     const val OKHTTP_INTERCEPTOR = "okhttp_with_interceptor"
     const val OKHTTP_NO_INTERCEPTOR = "okhttp_with_no_interceptor"
-
+    const val UPDATE_SUCCESS = "Update successfully"
+    const val UPDATE_FAILED = "Update failed, please try again"
 }

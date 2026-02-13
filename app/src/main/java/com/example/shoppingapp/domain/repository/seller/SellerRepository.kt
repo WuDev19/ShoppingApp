@@ -14,5 +14,6 @@ interface SellerRepository {
     fun sendOtp(): Flow<StateListener<OtpModel>>
     fun verifyOtp(otp: String): Flow<StateListener<Unit>>
     fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<AuthResponse>>
+    fun editProfile(sellerId: Int, profile: Map<String, String>) : Flow<StateListener<Unit>>
 
 }

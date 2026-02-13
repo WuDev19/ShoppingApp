@@ -1,9 +1,11 @@
 package com.example.shoppingapp.data.repository.impl
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.data.remote.api.seller.AdvancedFunctionsSellerAPI
 import com.example.shoppingapp.data.remote.mapper.SellerMapper
 import com.example.shoppingapp.data.remote.api.seller.NormalFunctionSellerAPI
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
@@ -25,10 +27,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SellerRepositoryImpl @Inject constructor(
     private val normalFunctionSellerAPI: NormalFunctionSellerAPI,
+    private val advancedFunctionsSellerAPI: AdvancedFunctionsSellerAPI,
     private val moshi: Moshi,
     @param:DeviceId private val deviceId: String?,
     @param:IpAddress private val ipAddress: String?
@@ -128,6 +132,27 @@ class SellerRepositoryImpl @Inject constructor(
         }.catch {
             emit(StateListener.Error(Exception(it.message)))
         }.flowOn(Dispatchers.IO)
+
+    override fun editProfile(
+        sellerId: Int,
+        profile: Map<String, String>
+    ): Flow<StateListener<Unit>> = flow {
+        try {
+            val result = advancedFunctionsSellerAPI.editProfile(sellerId, profile)
+            if (result.isSuccessful) {
+                emit(StateListener.Success(Unit))
+            } else {
+                val errorBody = result.errorBody()
+                val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+                errorBody?.string()?.let {
+                    emit(StateListener.Error(Exception(adapter.fromJson(it)?.message)))
+                } ?: emit(StateListener.Error(Exception(StringConstants.API_ERROR)))
+            }
+        } catch (e: Exception) {
+            Log.e(StringConstants.DEBUG, "editProfile: ${e.message}", )
+            emit(StateListener.Error(e))
+        }
+    }
 
     private fun OtpDto.mapToOtpModel(): OtpModel {
         return OtpModel(this.expireTime, this.message)

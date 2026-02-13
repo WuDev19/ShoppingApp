@@ -65,14 +65,21 @@ class DashBoardSellerFragment : Fragment() {
         showCategorySoldChart(binding)
         showRevenueEachMonth(binding)
         binding.apply {
+
             btnNewProduct.setOnClickListener {
                 controller.navigate(R.id.action_dashBoardSellerFragment_to_postProductFragment)
             }
+
             imgBack.setOnClickListener {
                 controller.popBackStack()
                 ViewPagerUtils.enableViewPager(viewPager2, controller)
                 BottomNavigationUtils.showBottomNavigation(bottomNavigationView, controller)
             }
+
+            imgSetting.setOnClickListener {
+                controller.navigate(R.id.action_dashBoardSellerFragment_to_sellerSettingFragment)
+            }
+
         }
     }
 

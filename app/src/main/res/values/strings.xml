@@ -134,4 +134,11 @@
     <string name="post_products">Post products</string>
     <string name="add_detailed_photos">Add detailed photos</string>
     <string name="hai_cham">:</string>
+    <string name="setting">Setting</string>
+    <string name="shop_name">Shop name</string>
+    <string name="shop_address">Shop address</string>
+    <string name="change">Change</string>
+    <string name="enter_new_phone_number">Enter new phone number</string>
+    <string name="enter_new_name">Enter new name</string>
+    <string name="enter_new_address">Enter new address</string>
 </resources>

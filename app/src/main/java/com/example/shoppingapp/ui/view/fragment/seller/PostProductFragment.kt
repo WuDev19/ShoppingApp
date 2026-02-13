@@ -176,7 +176,18 @@ class PostProductFragment : Fragment() {
                     discount = discount,
                     uriList = uriList.toTypedArray(),
                 )
+            clearDataOnView(binding)
             controller.navigate(action)
+        }
+    }
+
+    private fun clearDataOnView(binding: FragmentPostProductBinding) {
+        binding.apply {
+            edtDescription.setText("")
+            edtProductPrice.setText("")
+            edtDiscount.setText("")
+            edtIntroduction.setText("")
+            imageDescriptionAdapter.submitList(emptyList())
         }
     }
 
