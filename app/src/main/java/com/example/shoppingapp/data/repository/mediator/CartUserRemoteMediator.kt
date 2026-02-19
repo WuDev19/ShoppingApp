@@ -8,11 +8,13 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.entity.CartEntity
 import com.example.shoppingapp.data.local.entity.RemoteKeyEntity
+import com.example.shoppingapp.data.local.mapper.CartMapper
 import com.example.shoppingapp.data.remote.api.CartAPI
+import com.example.shoppingapp.domain.model.CartItemInCart
 
 @OptIn(ExperimentalPagingApi::class)
 class CartUserRemoteMediator(
@@ -20,15 +22,16 @@ class CartUserRemoteMediator(
     private val appDatabase: AppDatabase,
     private val idUser: String,
     private val queryKey: String
-) : RemoteMediator<Int, CartEntity>() {
+) : RemoteMediator<Int, CartItemInCart>() {
 
     private val cartDao = appDatabase.cartDao()
+    private val cartItemDao = appDatabase.cartItemDao()
     private val remoteKeyDAO = appDatabase.remoteKeyDao()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override suspend fun load(
         loadType: LoadType,
-        state: PagingState<Int, CartEntity>
+        state: PagingState<Int, CartItemInCart>
     ): MediatorResult {
         return try {
             val remoteKey = remoteKeyDAO.getRemoteKey(queryKey)
@@ -54,20 +57,15 @@ class CartUserRemoteMediator(
                 val prevKey = if (page == 0) null else page - 1
                 val nextKey = if (endOfPagination) null else page + 1
 
-                val listCartEntity = dataResponse?.contents?.map {
-                    CartEntity(
-                        it.cartId ?: 0,
-                        it.maND ?: "",
-                        it.tenND ?: "",
-                        it.maNB ?: 0,
-                        it.tenShop ?: "",
-                        it.updateTime ?: 0
-                    )
+                dataResponse?.contents?.forEach { cartDTO ->
+                    cartDao.insert(CartMapper.mapToCartEntity(cartDTO))
+                    cartItemDao.insertAll(cartDTO.cartItemDTOS.map { cartItemDTO ->
+                        CartMapper.mapToCartItemEntity(
+                            cartItemDTO,
+                            cartDTO.cartId!!
+                        )
+                    })
                 }
-
-                Log.e("Cartentity", "load: cart entity $listCartEntity")
-
-                listCartEntity?.let { cartDao.insert(it) }
 
                 remoteKeyDAO.insert(
                     RemoteKeyEntity(

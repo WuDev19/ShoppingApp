@@ -3,7 +3,7 @@ package com.example.shoppingapp.data.source.paging_source
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
 import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 import com.example.shoppingapp.domain.model.product.ProductDisplay

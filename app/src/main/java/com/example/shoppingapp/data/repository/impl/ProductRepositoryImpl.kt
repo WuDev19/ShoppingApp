@@ -6,7 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.mapper.ProductEntityMapper
 import com.example.shoppingapp.data.remote.mapper.ProductDTOMapper
@@ -29,12 +29,10 @@ import com.example.shoppingapp.domain.model.product.ProductDetail
 import com.example.shoppingapp.domain.repository.product.ProductRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 

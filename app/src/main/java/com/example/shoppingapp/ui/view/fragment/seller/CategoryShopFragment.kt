@@ -2,7 +2,6 @@ package com.example.shoppingapp.ui.view.fragment.seller
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,9 +14,9 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.CheckNavigation
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.utils.CheckNavigation
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.databinding.FragmentCategoryShopBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.CategoryQuantityAdapter

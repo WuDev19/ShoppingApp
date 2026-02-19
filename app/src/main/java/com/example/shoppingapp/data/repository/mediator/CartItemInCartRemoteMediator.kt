@@ -5,7 +5,7 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.entity.CartItemEntity
 import com.example.shoppingapp.data.local.entity.RemoteKeyEntity
@@ -61,11 +61,12 @@ class CartItemInCartRemoteMediator(
                         it.detailProduct?.kichco ?: "",
                         it.detailProduct?.maSp ?: 0,
                         it.soLuong ?: 0,
-                        it.giamGia ?: 0
+                        it.giamGia ?: 0,
+                        1
                     )
                 }
 
-                listCartItemEntity?.let { cartItemDAO.insert(it) }
+                listCartItemEntity?.let { cartItemDAO.insertAll(it) }
 
                 remoteKeyDAO.insert(
                     RemoteKeyEntity(

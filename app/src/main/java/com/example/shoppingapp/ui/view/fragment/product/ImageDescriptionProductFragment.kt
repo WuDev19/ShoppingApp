@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import com.denzcoskun.imageslider.constants.AnimationTypes
 import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.models.SlideModel
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.databinding.FragmentImageDescriptionProductBinding
 
 class ImageDescriptionProductFragment : Fragment() {

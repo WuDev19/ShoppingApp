@@ -6,8 +6,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.databinding.ActivityConfirmResetPasswordBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.viewmodel.auth.ResetPasswordViewModel

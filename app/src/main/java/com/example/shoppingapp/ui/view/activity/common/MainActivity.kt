@@ -14,11 +14,10 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.BottomNavigationUtils
-import com.example.shoppingapp.constants.SessionManager
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.constants.ViewPagerUtils
+import com.example.shoppingapp.utils.BottomNavigationUtils
+import com.example.shoppingapp.utils.SessionManager
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ViewPagerUtils
 import com.example.shoppingapp.databinding.ActivityMainBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.activity.auth.LoginActivity

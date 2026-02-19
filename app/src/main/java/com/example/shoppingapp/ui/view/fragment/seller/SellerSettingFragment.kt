@@ -21,11 +21,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.databinding.CustomDialogImageAvatarCircleBinding
 import com.example.shoppingapp.databinding.FragmentSellerSettingBinding
-import com.example.shoppingapp.domain.model.SellerInStore
+import com.example.shoppingapp.domain.model.SellerSetting
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.SettingSellerAdapter
 import com.example.shoppingapp.ui.viewmodel.seller.SellerSettingViewModel
@@ -109,13 +109,13 @@ class SellerSettingFragment : Fragment() {
                                 Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
                             }
 
-                            is StateListener.Success<SellerInStore> -> {
+                            is StateListener.Success<SellerSetting> -> {
                                 val sellerInfo = it.result
                                 Log.e(
                                     StringConstants.DEBUG,
                                     "onViewCreated: 2 ${sellerInfo.avtShop}"
                                 )
-                                settingSellerAdapter.setAvatar(url = sellerInfo.avtShop)
+                                settingSellerAdapter.setAvatar(seller = sellerInfo)
                             }
                         }
                     }
@@ -143,12 +143,12 @@ class SellerSettingFragment : Fragment() {
                                 )
                             }
 
-                            is StateListener.Success<Unit> -> {
+                            is StateListener.Success<SellerSetting> -> {
                                 binding.apply {
                                     shimmer.isVisible = false
                                     progressBar.isVisible = false
                                 }
-                                settingSellerAdapter.refresh()
+                                settingSellerAdapter.refresh(it.result)
                                 ToastUtils.showToast(
                                     requireContext(),
                                     StringConstants.UPDATE_SUCCESS

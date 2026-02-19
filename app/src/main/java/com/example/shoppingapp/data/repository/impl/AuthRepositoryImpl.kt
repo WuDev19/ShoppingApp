@@ -1,19 +1,16 @@
 package com.example.shoppingapp.data.repository.impl
 
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
 import androidx.credentials.exceptions.ClearCredentialException
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.TokenManager
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.TokenManager
 import com.example.shoppingapp.data.remote.api.AuthAPI
-import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
 import com.example.shoppingapp.data.remote.dto.request.GenerateTokenRequest
 import com.example.shoppingapp.data.remote.dto.request.LogoutRequest
-import com.example.shoppingapp.data.remote.dto.request.RefreshRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOCreate
 import com.example.shoppingapp.di.qualifier.DeviceId
 import com.example.shoppingapp.di.qualifier.IpAddress

@@ -7,13 +7,11 @@ import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.databinding.ActivityCreateAccountBinding
 import com.example.shoppingapp.ui.state.StateListener
-import com.example.shoppingapp.ui.view.activity.common.MainActivity
 import com.example.shoppingapp.ui.viewmodel.auth.CreateAccountViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest

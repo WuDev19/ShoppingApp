@@ -17,6 +17,6 @@ interface CartItemDAO {
     suspend fun clearCartItemInCartOfUser(idCart: Int)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(cartItems: List<CartItemEntity>)
+    suspend fun insertAll(cartItems: List<CartItemEntity>)
 
 }

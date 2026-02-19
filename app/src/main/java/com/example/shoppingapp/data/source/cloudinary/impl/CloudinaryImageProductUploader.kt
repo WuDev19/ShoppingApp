@@ -4,10 +4,9 @@ import android.net.Uri
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
-import com.example.shoppingapp.constants.UploadingManager
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.UploadingManager
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 import kotlin.collections.get

@@ -3,6 +3,8 @@ package com.example.shoppingapp.ui.viewmodel.product
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
+import com.example.shoppingapp.data.remote.dto.request.CartItemRequest
+import com.example.shoppingapp.data.remote.dto.request.CartRequest
 import com.example.shoppingapp.domain.model.product.ProductChiTiet
 import com.example.shoppingapp.domain.usecase.cartusecase.CreateCartUseCase
 import com.example.shoppingapp.domain.usecase.productusecase.get.GetProductChiTietUseCase
@@ -52,16 +54,17 @@ class AddToCartViewModel @Inject constructor(
         }
     }
 
-    fun createCart(cartAndCartItemRequest: CartAndCartItemRequest) {
+    fun createCart(sellerId: Int, productDetailId: Int, number: Int, discount: Int) {
         viewModelScope.launch {
-            createCartUseCase(cartAndCartItemRequest).collectLatest {
-                _createCart.value = it
+            auth.currentUser?.uid?.let { currentId ->
+                val cartRequest = CartRequest(sellerId, currentId)
+                val cartItemRequest = CartItemRequest(productDetailId, number, discount)
+                val cartAndCartItemRequest = CartAndCartItemRequest(cartRequest, cartItemRequest)
+                createCartUseCase(cartAndCartItemRequest).collectLatest {
+                    _createCart.value = it
+                }
             }
         }
-    }
-
-    fun getCurrentUserId(): String {
-        return auth.currentUser?.uid ?: ""
     }
 
 }

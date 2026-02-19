@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
-    tools:context=".ui.view.fragment.edit_profile.EditProfileFragment">
+    tools:context=".ui.view.fragment.user.edit_profile.EditProfileFragment">
 
     <LinearLayout
         android:layout_width="wrap_content"

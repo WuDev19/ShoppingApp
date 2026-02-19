@@ -112,7 +112,8 @@
                         android:layout_height="30dp"
                         android:importantForAccessibility="no"
                         android:src="@drawable/icon_send_comment"
-                        android:layout_gravity="bottom|start"/>
+                        android:layout_gravity="bottom|start"
+                        app:tint="@color/white" />
 
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/tv_number_message"
@@ -122,7 +123,6 @@
                         android:background="@drawable/border_view"
                         android:backgroundTint="@color/white"
                         android:padding="2dp"
-                        android:text="@string/number_cart"
                         android:textColor="@color/black"
                         android:textSize="10sp"
                         tools:ignore="SmallSp" />

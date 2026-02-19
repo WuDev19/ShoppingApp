@@ -24,9 +24,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.SessionManager
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.databinding.FragmentSendOtpBinding
 import com.example.shoppingapp.domain.model.OtpModel
 import com.example.shoppingapp.ui.state.StateListener
@@ -34,7 +33,6 @@ import com.example.shoppingapp.ui.viewmodel.seller.SendOtpViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SendOtpFragment : Fragment() {

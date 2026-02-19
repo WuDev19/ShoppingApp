@@ -20,7 +20,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,9 +28,9 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.BottomNavigationUtils
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ViewPagerUtils
+import com.example.shoppingapp.utils.BottomNavigationUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentStoreBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
@@ -44,7 +43,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class StoreFragment : Fragment() {

@@ -7,14 +7,13 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
-import com.example.shoppingapp.data.local.mapper.CartEntityMapper
+import com.example.shoppingapp.data.local.mapper.CartMapper
 import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
 import com.example.shoppingapp.data.remote.api.CartAPI
 import com.example.shoppingapp.data.repository.mediator.CartItemInCartRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.CartUserRemoteMediator
-import com.example.shoppingapp.domain.model.Cart
 import com.example.shoppingapp.domain.model.CartItem
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.ui.state.StateListener
@@ -25,6 +24,9 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import androidx.core.content.edit
+import androidx.paging.flatMap
+import com.example.shoppingapp.domain.model.CartUiModel
 
 class CartRepositoryImpl @Inject constructor(
     private val cartAPI: CartAPI,
@@ -56,7 +58,7 @@ class CartRepositoryImpl @Inject constructor(
     }
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun getCartUser(idUser: String): Flow<PagingData<Cart>> {
+    override fun getCartUser(idUser: String): Flow<PagingData<CartUiModel>> {
         val queryKey = "Cart_$idUser"
         return Pager(
             config = PagingConfig(
@@ -69,13 +71,19 @@ class CartRepositoryImpl @Inject constructor(
             }
         ).flow.map { pagingData ->
             pagingData.map {
-                CartEntityMapper.mapToCartDomain(it)
-            }
+                val listUiModel = mutableListOf<CartUiModel>()
+                listUiModel.add(CartMapper.mapToCartDomain(it.cartEntity))
+                it.cartItems.forEach { cartItemEntity ->
+                    listUiModel.add(CartMapper.mapCartItemEntityToCartItem(cartItemEntity))
+                }
+                listUiModel
+            }.flatMap { it }
         }
     }
 
     @OptIn(ExperimentalPagingApi::class)
     override fun getCartItemInCart(idCart: Int): Flow<PagingData<CartItem>> {
+
         val queryKey = "cart_item_$idCart"
         return Pager(
             config = PagingConfig(
@@ -89,7 +97,7 @@ class CartRepositoryImpl @Inject constructor(
             }
         ).flow.map { pagingData ->
             pagingData.map {
-                CartEntityMapper.mapCartItemEntityToCartItem(it)
+                CartMapper.mapCartItemEntityToCartItem(it)
             }
         }
     }
@@ -101,8 +109,9 @@ class CartRepositoryImpl @Inject constructor(
             val numberRemote = response.body() ?: 0
             emit(StateListener.Success(numberRemote))
             if (numberLocal != numberRemote) {
-                sharedPreferences.edit().putInt(StringConstants.NUMBER_CART_ITEM, numberRemote)
-                    .apply()
+                sharedPreferences.edit {
+                    putInt(StringConstants.NUMBER_CART_ITEM, numberRemote)
+                }
             }
         } else {
             emit(StateListener.Success(numberLocal))

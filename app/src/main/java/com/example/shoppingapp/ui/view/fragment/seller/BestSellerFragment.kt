@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.databinding.FragmentBestSellerBinding
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration

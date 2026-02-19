@@ -15,10 +15,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.BottomNavigationUtils
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.constants.ViewPagerUtils
+import com.example.shoppingapp.utils.BottomNavigationUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
+import com.example.shoppingapp.utils.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentSellerBinding
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.viewmodel.seller.SellerViewModel
@@ -52,7 +52,7 @@ class SellerFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         idSeller?.let {
-            viewModel.getSellerDetail(it)
+            viewModel.getSellerInStore(it)
         } ?: ToastUtils.showToast(requireContext(), "Something went wrong")
 
     }

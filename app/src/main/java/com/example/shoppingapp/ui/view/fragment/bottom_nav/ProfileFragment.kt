@@ -11,7 +11,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -19,11 +18,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.BottomNavigationUtils
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.constants.TokenManager
-import com.example.shoppingapp.constants.ViewPagerUtils
+import com.example.shoppingapp.utils.BottomNavigationUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
+import com.example.shoppingapp.utils.ViewPagerUtils
 import com.example.shoppingapp.databinding.CustomDialogImageAvatarCircleBinding
 import com.example.shoppingapp.databinding.FragmentProfileBinding
 import com.example.shoppingapp.domain.model.user.BaseUser
@@ -34,7 +32,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {

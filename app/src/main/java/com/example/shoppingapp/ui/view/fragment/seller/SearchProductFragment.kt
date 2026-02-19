@@ -17,7 +17,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.databinding.FragmentSearchProductBinding
 import com.example.shoppingapp.domain.model.SearchProductShop
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter

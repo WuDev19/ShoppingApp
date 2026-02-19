@@ -12,7 +12,7 @@ import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.databinding.HeaderDetailItemLayoutBinding
 import com.example.shoppingapp.domain.model.product.ProductDetail
 import java.util.stream.Collectors

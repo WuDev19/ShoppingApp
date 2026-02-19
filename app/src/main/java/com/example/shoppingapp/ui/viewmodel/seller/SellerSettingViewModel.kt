@@ -3,10 +3,11 @@ package com.example.shoppingapp.ui.viewmodel.seller
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.constants.TokenManager
+import com.example.shoppingapp.utils.TokenManager
+import com.example.shoppingapp.domain.model.SellerSetting
 import com.example.shoppingapp.domain.usecase.profileusecase.UploadAvatarUseCase
 import com.example.shoppingapp.domain.usecase.sellerusecase.EditProfileSellerUseCase
-import com.example.shoppingapp.domain.usecase.sellerusecase.GetSellerDetailInfoUseCase
+import com.example.shoppingapp.domain.usecase.sellerusecase.GetSellerSettingInfoUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -23,16 +23,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SellerSettingViewModel @Inject constructor(
-    private val getSellerDetailInfoUseCase: GetSellerDetailInfoUseCase,
+    private val getSellerSettingInfoUseCase: GetSellerSettingInfoUseCase,
     private val editProfileSellerUseCase: EditProfileSellerUseCase,
     private val uploadAvatarUseCase: UploadAvatarUseCase,
     private val tokenManager: TokenManager,
 ) : ViewModel() {
 
-    private val _editState = MutableSharedFlow<StateListener<Unit>>()
+    private val _editState = MutableSharedFlow<StateListener<SellerSetting>>()
     val editState = _editState.asSharedFlow()
 
-    val getSellerDetail = getSellerDetailInfoUseCase(tokenManager.getSellerId()).stateIn(
+    val getSellerDetail = getSellerSettingInfoUseCase(tokenManager.getSellerId()).stateIn(
         viewModelScope,
         SharingStarted.Lazily,
         StateListener.Idle

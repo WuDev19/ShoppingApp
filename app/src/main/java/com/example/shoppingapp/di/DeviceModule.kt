@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import androidx.core.content.edit
-import com.example.shoppingapp.constants.UploadingManager
-import com.example.shoppingapp.constants.SessionManager
-import com.example.shoppingapp.constants.TokenManager
+import com.example.shoppingapp.utils.UploadingManager
+import com.example.shoppingapp.utils.SessionManager
+import com.example.shoppingapp.utils.TokenManager
 import com.example.shoppingapp.di.qualifier.DeviceId
 import com.example.shoppingapp.di.qualifier.IpAddress
 import dagger.Module

@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.domain.model.SellerInStore
-import com.example.shoppingapp.domain.usecase.sellerusecase.GetSellerDetailInfoUseCase
+import com.example.shoppingapp.domain.usecase.sellerusecase.GetSellerInStoreInfoUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SellerViewModel @Inject constructor(
-    private val getSellerDetailInfoUseCase: GetSellerDetailInfoUseCase,
+    private val getSellerInStoreInfoUseCase: GetSellerInStoreInfoUseCase,
 ) : ViewModel() {
 
     private val _sellerDetailState =
@@ -25,9 +25,9 @@ class SellerViewModel @Inject constructor(
     var positionTabState: Int = 0
     var fragment: Fragment? = null
 
-    fun getSellerDetail(idSeller: Int) {
+    fun getSellerInStore(idSeller: Int) {
         viewModelScope.launch {
-            getSellerDetailInfoUseCase(idSeller).collectLatest {
+            getSellerInStoreInfoUseCase(idSeller).collectLatest {
                 _sellerDetailState.value = it
             }
         }

@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.LayoutSellerSettingBinding
+import com.example.shoppingapp.domain.model.SellerSetting
 
 class SettingSellerAdapter(
     private val onChangeName: (String) -> Unit,
@@ -25,16 +26,19 @@ class SettingSellerAdapter(
     private var isRefresh = false
     private var uri: Uri? = null
     private var url: String? = null
+    private var seller: SellerSetting? = null
 
     @SuppressLint("NotifyDataSetChanged")
-    fun setAvatar(uri: Uri? = null, url: String? = null) {
+    fun setAvatar(uri: Uri? = null, seller: SellerSetting? = null) {
         this.uri = uri
-        this.url = url
+        this.url = seller?.avtShop
+        this.seller = seller
         notifyDataSetChanged()
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun refresh(){
+    fun refresh(sellerSetting: SellerSetting) {
+        seller = sellerSetting
         isRefresh = true
         notifyDataSetChanged()
     }
@@ -53,7 +57,7 @@ class SettingSellerAdapter(
         position: Int
     ) {
         holder.binding.apply {
-            if(isRefresh) {
+            if (isRefresh) {
                 isRefresh = false
                 edtAddress.setText("")
                 edtPhone.setText("")
@@ -63,6 +67,7 @@ class SettingSellerAdapter(
             handleChangeName(this)
             handleChangeAddress(this)
             loadAvatar(holder)
+            loadInfo(holder)
             imgGallery.setOnClickListener {
                 onShowGallery()
             }
@@ -204,6 +209,22 @@ class SettingSellerAdapter(
                         .error(R.drawable.icon_seller)
                         .into(imgAvatar)
                 }
+            }
+        }
+    }
+
+    private fun loadInfo(holder: SettingSellerViewHolder) {
+        holder.binding.apply {
+            seller?.let {
+                it.tenShop?.let { name ->
+                    tvShopName.text = name
+                } ?: run { tvShopName.isVisible = false }
+                it.phoneShop?.let { phone ->
+                    tvShopPhone.text = phone
+                } ?: run { tvShopPhone.isVisible = false }
+                it.addressShop?.let { address ->
+                    tvShopAddress.text = address
+                } ?: run { tvShopAddress.isVisible = false }
             }
         }
     }

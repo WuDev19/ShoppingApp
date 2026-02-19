@@ -8,4 +8,4 @@ data class CartItem (
     val detailProduct: ProductChiTiet? = null,
     val soLuong: Int? = 0,
     val giamGia: Int? = 0
-)
+) : CartUiModel()

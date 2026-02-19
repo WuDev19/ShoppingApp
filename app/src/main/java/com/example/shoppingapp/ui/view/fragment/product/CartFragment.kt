@@ -6,14 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.BottomNavigationUtils
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ViewPagerUtils
+import com.example.shoppingapp.utils.BottomNavigationUtils
+import com.example.shoppingapp.utils.CheckNavigation
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentCartBinding
 import com.example.shoppingapp.ui.view.adapter.CartAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
@@ -37,21 +40,10 @@ class CartFragment : Fragment() {
         )
     }
     private val cartAdapter by lazy {
-        CartAdapter(viewModel, lifecycleScope)
+        CartAdapter()
     }
     private val currentUserId by lazy {
         arguments?.getString(StringConstants.CURRENT_USER_ID) ?: ""
-    } // TODO: ve sau chay id nay 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        lifecycleScope.launch {
-            viewModel.getCartUser("u16").collectLatest {
-                cartAdapter.submitData(it)
-            }
-        }
-
     }
 
     override fun onCreateView(
@@ -65,16 +57,36 @@ class CartFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerViewCart.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = cartAdapter
-            addItemDecoration(MarginItemDecoration(10))
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.getCartUser(currentUserId).collectLatest {
+                        cartAdapter.submitData(it)
+                    }
+                }
+            }
         }
 
-        binding.imgBack.setOnClickListener {
-            controller.popBackStack()
-            BottomNavigationUtils.showBottomNavigation(bottomNavigationView, controller)
-            ViewPagerUtils.enableViewPager(viewPager2, controller)
+        binding.apply {
+            recyclerViewCart.apply {
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = cartAdapter
+                addItemDecoration(MarginItemDecoration(10))
+            }
+
+            imgBack.setOnClickListener {
+                controller.popBackStack()
+                BottomNavigationUtils.showBottomNavigation(bottomNavigationView, controller)
+                ViewPagerUtils.enableViewPager(viewPager2, controller)
+            }
+
+            btnBuy.setOnClickListener {
+                CheckNavigation.navigateTo(
+                    controller,
+                    R.id.action_cartFragment_to_purchaseProductFragment,
+                    R.id.action_cartFragment2_to_purchaseProductFragment2
+                )
+            }
         }
 
     }

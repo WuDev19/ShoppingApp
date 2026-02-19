@@ -14,10 +14,9 @@ import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
-import com.example.shoppingapp.data.remote.dto.get.SellerDTO
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
 import com.example.shoppingapp.databinding.FragmentVerifyOtpBinding
 import com.example.shoppingapp.domain.model.OtpModel

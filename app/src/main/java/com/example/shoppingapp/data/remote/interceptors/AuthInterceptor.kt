@@ -1,6 +1,6 @@
 package com.example.shoppingapp.data.remote.interceptors
 
-import com.example.shoppingapp.constants.TokenManager
+import com.example.shoppingapp.utils.TokenManager
 import okhttp3.Interceptor
 import okhttp3.Response
 

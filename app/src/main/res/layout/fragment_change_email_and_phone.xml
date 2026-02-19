@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.view.fragment.edit_profile.ChangeEmailAndPhoneFragment"
+    tools:context=".ui.view.fragment.user.edit_profile.ChangeEmailAndPhoneFragment"
     android:orientation="vertical"
     android:fitsSystemWindows="true">
 

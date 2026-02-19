@@ -15,11 +15,17 @@ interface CartAPI {
     @POST("cart/create")
     suspend fun createCart(@Body cartAndCartItemRequest: CartAndCartItemRequest): Response<Any>
 
-    @GET("cart/get/{id}")
-    suspend fun getCartUser(@Path("id") id: String, @Query("pageNumber") pageNumber: Int): Response<ListCartDTO>
+    @GET("cart/get/{userId}")
+    suspend fun getCartUser(
+        @Path("userId") userId: String,
+        @Query("pageNumber") pageNumber: Int
+    ): Response<ListCartDTO>
 
-    @GET("cartItem/get/ofCart/{id}")
-    suspend fun getCartItemInCart(@Path("id") id: Int, @Query("pageNumber") pageNumber: Int): Response<ListCartItemDTO>
+    @GET("cartItem/get/ofCart/{cartId}")
+    suspend fun getCartItemInCart(
+        @Path("cartId") cartId: Int,
+        @Query("pageNumber") pageNumber: Int
+    ): Response<ListCartItemDTO>
 
     @GET("cartItem/get/numberOfCart/{id}")
     suspend fun getNumberOfCartItem(@Path("id") id: String): Response<Int>

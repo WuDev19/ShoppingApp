@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.view.fragment.edit_profile.EditAddressFragment">
+    tools:context=".ui.view.fragment.user.edit_profile.EditAddressFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"

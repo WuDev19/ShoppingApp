@@ -3,7 +3,7 @@ package com.example.shoppingapp.ui.viewmodel.common
 import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.domain.usecase.profileusecase.ConfirmChangeEmailUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.LogoutUseCase
 import com.example.shoppingapp.ui.state.StateListener

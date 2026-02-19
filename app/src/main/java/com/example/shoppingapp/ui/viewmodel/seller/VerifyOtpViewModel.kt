@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.example.shoppingapp.constants.TokenManager
+import com.example.shoppingapp.utils.TokenManager
 
 @HiltViewModel
 class VerifyOtpViewModel @Inject constructor(

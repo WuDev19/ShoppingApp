@@ -1,7 +1,7 @@
 package com.example.shoppingapp.data.remote.interceptors
 
-import com.example.shoppingapp.constants.SessionManager
-import com.example.shoppingapp.constants.TokenManager
+import com.example.shoppingapp.utils.SessionManager
+import com.example.shoppingapp.utils.TokenManager
 import com.example.shoppingapp.data.remote.api.AuthAPI
 import com.example.shoppingapp.data.remote.dto.request.RefreshRequest
 import okhttp3.Interceptor

@@ -1,9 +1,8 @@
 package com.example.shoppingapp.ui.viewmodel.auth
 
-import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.constants.TokenManager
+import com.example.shoppingapp.utils.TokenManager
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.domain.usecase.authusecase.LoginEmailUseCase
 import com.example.shoppingapp.domain.usecase.authusecase.LoginGoogleUseCase

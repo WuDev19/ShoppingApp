@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
-        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.EditProfileFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.EditProfileFragment"
         android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile">
         <action
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/changeNameFragment"
-        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.ChangeNameAndGenderFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.ChangeNameAndGenderFragment"
         android:label="fragment_change_name"
         tools:layout="@layout/fragment_change_name_gender" />
     <fragment
@@ -50,12 +50,12 @@
         tools:layout="@layout/fragment_cart" />
     <fragment
         android:id="@+id/changeEmailAndPhoneFragment"
-        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.ChangeEmailAndPhoneFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.ChangeEmailAndPhoneFragment"
         android:label="fragment_change_email_and_phone"
         tools:layout="@layout/fragment_change_email_and_phone" />
     <fragment
         android:id="@+id/addressFragment"
-        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.AddressFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.AddressFragment"
         android:label="fragment_address"
         tools:layout="@layout/fragment_address">
         <action
@@ -64,7 +64,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.MapFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map">
         <action
@@ -74,7 +74,7 @@
 
     <fragment
         android:id="@+id/editAddressFragment"
-        android:name="com.example.shoppingapp.ui.view.fragment.edit_profile.EditAddressFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.EditAddressFragment"
         android:label="fragment_edit_address"
         tools:layout="@layout/fragment_edit_address">
         <action

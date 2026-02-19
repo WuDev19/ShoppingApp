@@ -25,8 +25,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.data.remote.dto.request.PostProductDetailRequest
 import com.example.shoppingapp.data.remote.dto.request.PostProductRequest
 import com.example.shoppingapp.domain.model.UploadingModel

@@ -18,11 +18,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
-import com.example.shoppingapp.data.remote.dto.request.CartItemRequest
-import com.example.shoppingapp.data.remote.dto.request.CartRequest
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.databinding.CustomDialogImageDetailBinding
 import com.example.shoppingapp.databinding.FragmentAddToCartBinding
 import com.example.shoppingapp.domain.model.product.ProductChiTiet
@@ -54,7 +51,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
     private val giamGia by lazy {
         arguments?.getInt(StringConstants.DISCOUNT) ?: 0
     }
-    private val isdSeller by lazy {
+    private val idSeller by lazy {
         arguments?.getInt(StringConstants.ID_SELLER)
     }
     private lateinit var productChiTiet: ProductChiTiet
@@ -214,9 +211,12 @@ class AddToCartFragment : BottomSheetDialogFragment() {
                 ToastUtils.showToast(requireContext(), "Exceed the quantity in stock")
                 return@setOnClickListener
             }
-            val cartRequest = CartRequest(isdSeller!!, "u16")
-            val cartItemRequest = CartItemRequest(productChiTiet.maSanPhamDeTail!!, number, giamGia)
-            viewModel.createCart(CartAndCartItemRequest(cartRequest, cartItemRequest))
+            idSeller?.let { sellerId ->
+                productChiTiet.maSanPhamDeTail?.let { productDetailId ->
+                    viewModel.createCart(sellerId, productDetailId, number, giamGia)
+
+                }
+            }
         }
 
         binding.imgCancel.setOnClickListener {

@@ -4,10 +4,9 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.constants.SessionManager
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.TokenManager
-import com.example.shoppingapp.constants.UploadingManager
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.TokenManager
+import com.example.shoppingapp.utils.UploadingManager
 import com.example.shoppingapp.data.remote.dto.request.ImageDescriptionProduct
 import com.example.shoppingapp.data.remote.dto.request.PostProductDetailRequest
 import com.example.shoppingapp.data.remote.dto.request.PostProductRequest
@@ -19,7 +18,6 @@ import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asFlow

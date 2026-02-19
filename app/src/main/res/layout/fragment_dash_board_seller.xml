@@ -1,124 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.view.fragment.seller.DashBoardSellerFragment">
 
     <LinearLayout
+        android:id="@+id/linear_app_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:background="@drawable/border_under"
+        android:backgroundTint="@color/button_color"
+        android:fitsSystemWindows="true"
+        android:orientation="horizontal"
+        android:padding="10dp">
 
-        <LinearLayout
-            android:id="@+id/linear_app_bar"
-            android:layout_width="match_parent"
+        <ImageView
+            android:id="@+id/img_back"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/border_under"
-            android:backgroundTint="@color/button_color"
-            android:fitsSystemWindows="true"
-            android:orientation="horizontal"
-            android:padding="10dp">
-
-            <ImageView
-                android:id="@+id/img_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/icon_back"
-                app:tint="@color/white" />
-
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="20dp"
-                android:layout_weight="1"
-                android:text="@string/seller_dashboard"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/img_setting"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="10dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/icon_setting"
-                app:tint="@color/white" />
-
-        </LinearLayout>
-
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/chart_category"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:text="@string/statistical"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
-
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chart_revenue"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="10dp" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:text="@string/doanh_thu"
-            android:textColor="@color/black"
-            android:textStyle="bold" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_my_product"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
-            android:text="@string/my_product"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/button_color"
-            app:cornerRadius="10dp" />
-
-        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-            android:id="@+id/btn_new_product"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:importantForAccessibility="no"
-            android:text="@string/new_product"
-            app:backgroundTint="@color/white"
-            app:extendStrategy="wrap_content"
-            app:icon="@drawable/icon_add"
-            app:iconTint="@null"
-            app:strokeColor="@color/button_color"
-            app:strokeWidth="1dp"
-            android:layout_gravity="bottom|end"
+            android:src="@drawable/icon_back"
+            app:tint="@color/white" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="20dp"
+            android:layout_weight="1"
+            android:text="@string/seller_dashboard"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/img_setting"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center_vertical"
             android:layout_marginEnd="10dp"
-            android:layout_marginBottom="10dp"
-            app:elevation="10dp"
-            app:cornerRadius="10dp"/>
+            android:importantForAccessibility="no"
+            android:src="@drawable/icon_setting"
+            app:tint="@color/white" />
 
     </LinearLayout>
 
-</androidx.core.widget.NestedScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_dash_board"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/linear_app_bar"
+        android:layout_margin="10dp" />
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/btn_new_product"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="10dp"
+        android:importantForAccessibility="no"
+        android:text="@string/new_product"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="10dp"
+        app:elevation="10dp"
+        app:extendStrategy="wrap_content"
+        app:icon="@drawable/icon_add"
+        app:iconTint="@null"
+        app:strokeColor="@color/button_color"
+        app:strokeWidth="1dp" />
+
+</RelativeLayout>

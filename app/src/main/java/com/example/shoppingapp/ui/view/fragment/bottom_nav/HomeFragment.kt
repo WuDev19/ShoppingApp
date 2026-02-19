@@ -30,10 +30,10 @@ import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.BottomNavigationUtils
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
-import com.example.shoppingapp.constants.ViewPagerUtils
+import com.example.shoppingapp.utils.BottomNavigationUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
+import com.example.shoppingapp.utils.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentHomeBinding
 import com.example.shoppingapp.domain.model.PopularCategories
 import com.example.shoppingapp.ui.state.StateListener
@@ -125,6 +125,7 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    // TODO: refractor lai logic
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -170,6 +171,15 @@ class HomeFragment : Fragment() {
                     StringConstants.CURRENT_USER_ID to viewModel.getCurrentUserId()
                 )
                 controller.navigate(R.id.action_homeFragment_to_cartFragment, bundle)
+            }
+
+            imgChat.setOnClickListener {
+                ViewPagerUtils.disableViewPager(viewPager2)
+                BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
+                val bundle = bundleOf(
+                    StringConstants.CURRENT_USER_ID to viewModel.getCurrentUserId()
+                )
+                controller.navigate(R.id.action_homeFragment_to_recentChatFragment, bundle)
             }
 
             edtSearch.addTextChangedListener {

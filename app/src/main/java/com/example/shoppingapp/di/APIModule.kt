@@ -1,8 +1,8 @@
 package com.example.shoppingapp.di
 
-import com.example.shoppingapp.constants.SessionManager
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.TokenManager
+import com.example.shoppingapp.utils.SessionManager
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.TokenManager
 import com.example.shoppingapp.data.remote.api.AuthAPI
 import com.example.shoppingapp.data.remote.api.CartAPI
 import com.example.shoppingapp.data.remote.api.CategoryAPI
@@ -26,7 +26,6 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
 import javax.inject.Singleton
-import kotlin.time.Duration
 
 @Module
 @InstallIn(SingletonComponent::class)

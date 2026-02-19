@@ -1,6 +1,6 @@
 package com.example.shoppingapp.domain.usecase.profileusecase
 
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow

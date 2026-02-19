@@ -2,7 +2,7 @@ package com.example.shoppingapp.data.repository.impl
 
 import android.net.Uri
 import android.util.Log
-import com.example.shoppingapp.constants.StringConstants
+import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
 import com.example.shoppingapp.data.local.mapper.UserAddressMapper
 import com.example.shoppingapp.data.local.mapper.UserMapper

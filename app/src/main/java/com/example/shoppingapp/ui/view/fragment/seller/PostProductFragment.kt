@@ -2,7 +2,6 @@ package com.example.shoppingapp.ui.view.fragment.seller
 
 import android.content.ContentValues
 import android.net.Uri
-import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -19,8 +18,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppingapp.R
-import com.example.shoppingapp.constants.StringConstants
-import com.example.shoppingapp.constants.ToastUtils
+import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.databinding.FragmentPostProductBinding
 import com.example.shoppingapp.ui.view.adapter.ImageDescriptionAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration

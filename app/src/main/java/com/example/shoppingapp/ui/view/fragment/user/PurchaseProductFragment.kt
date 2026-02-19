@@ -1,0 +1,48 @@
+package com.example.shoppingapp.ui.view.fragment.user
+
+import androidx.fragment.app.viewModels
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import com.example.shoppingapp.R
+import com.example.shoppingapp.databinding.FragmentPurchaseProductBinding
+import com.example.shoppingapp.ui.view.adapter.MainPurchaseAdapter
+import com.example.shoppingapp.ui.view.adapter.OrderProductAdapter
+import com.example.shoppingapp.ui.view.adapter.OrderProductSameShopAdapter
+import com.example.shoppingapp.ui.viewmodel.user.PurchaseProductViewModel
+
+class PurchaseProductFragment : Fragment() {
+
+    private val viewModel: PurchaseProductViewModel by viewModels()
+    private var _binding: FragmentPurchaseProductBinding? = null
+    private val binding
+        get() = _binding!!
+
+    private lateinit var mainPurchaseAdapter: MainPurchaseAdapter
+    private lateinit var orderProductAdapter: OrderProductAdapter
+    private lateinit var orderProductSameShopAdapter: OrderProductSameShopAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentPurchaseProductBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+}
