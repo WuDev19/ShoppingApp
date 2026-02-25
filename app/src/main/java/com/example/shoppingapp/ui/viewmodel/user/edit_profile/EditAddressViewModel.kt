@@ -3,8 +3,12 @@ package com.example.shoppingapp.ui.viewmodel.user.edit_profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
+import com.example.shoppingapp.domain.model.ghn.DistrictGhn
 import com.example.shoppingapp.domain.model.ghn.ProvinceGhn
+import com.example.shoppingapp.domain.model.ghn.WardGhn
+import com.example.shoppingapp.domain.usecase.ghn_usecase.GetDistrictOfProvinceUseCase
 import com.example.shoppingapp.domain.usecase.ghn_usecase.GetProvinceUseCase
+import com.example.shoppingapp.domain.usecase.ghn_usecase.GetWardOfDistrictUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.AddUserAddressUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.DeleteUserAddressUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.EditUserAddressUseCase
@@ -23,6 +27,8 @@ class EditAddressViewModel @Inject constructor(
     private val addUserAddressUseCase: AddUserAddressUseCase,
     private val deleteUserAddressUseCase: DeleteUserAddressUseCase,
     private val getProvinceUseCase: GetProvinceUseCase,
+    private val getDistrictOfProvinceUseCase: GetDistrictOfProvinceUseCase,
+    private val getWardOfDistrictUseCase: GetWardOfDistrictUseCase,
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
@@ -36,6 +42,12 @@ class EditAddressViewModel @Inject constructor(
     private val _provincesState: MutableStateFlow<StateListener<List<ProvinceGhn>>> =
         MutableStateFlow(StateListener.Idle)
     val provincesState = _provincesState.asStateFlow()
+    private val _districtState: MutableStateFlow<StateListener<List<DistrictGhn>>> =
+        MutableStateFlow(StateListener.Idle)
+    val districtState = _districtState.asStateFlow()
+    private val _wardState: MutableStateFlow<StateListener<List<WardGhn>>> =
+        MutableStateFlow(StateListener.Idle)
+    val wardState = _wardState.asStateFlow()
     fun updateAddress(idAddress: Int, userAddressRequest: UserAddressRequest) {
         viewModelScope.launch {
             editUserAddressUseCase(idAddress, userAddressRequest).collectLatest {
@@ -71,10 +83,26 @@ class EditAddressViewModel @Inject constructor(
         }
     }
 
-    fun getProvinces(){
+    fun getProvinces() {
         viewModelScope.launch {
             getProvinceUseCase().collectLatest {
                 _provincesState.value = it
+            }
+        }
+    }
+
+    fun getDistrictOfProvince(provinceId: Int) {
+        viewModelScope.launch {
+            getDistrictOfProvinceUseCase(provinceId).collectLatest {
+                _districtState.value = it
+            }
+        }
+    }
+
+    fun getWardOfDistrict(districtId: Int) {
+        viewModelScope.launch {
+            getWardOfDistrictUseCase(districtId).collectLatest {
+                _wardState.value = it
             }
         }
     }

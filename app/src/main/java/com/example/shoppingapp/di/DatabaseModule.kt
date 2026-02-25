@@ -5,11 +5,13 @@ import androidx.room.Room
 import com.example.shoppingapp.data.local.dao.CartDAO
 import com.example.shoppingapp.data.local.dao.CartItemDAO
 import com.example.shoppingapp.data.local.dao.CategoryAndProductDAO
+import com.example.shoppingapp.data.local.dao.DistrictGhnDAO
 import com.example.shoppingapp.data.local.dao.ProductDAO
 import com.example.shoppingapp.data.local.dao.ProvinceGhnDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyProductDAO
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
+import com.example.shoppingapp.data.local.dao.WardGhnDAO
 import com.example.shoppingapp.data.local.db.AppDatabase
 import dagger.Module
 import dagger.Provides
@@ -67,6 +69,16 @@ object DatabaseModule {
     @Provides
     fun provideProvinceGhnDao(appDatabase: AppDatabase): ProvinceGhnDAO =
         appDatabase.provinceGhnDao()
+
+    @Singleton
+    @Provides
+    fun provideDistrictGhnDAO(appDatabase: AppDatabase): DistrictGhnDAO =
+        appDatabase.districtGhnDao()
+
+    @Singleton
+    @Provides
+    fun provideWardGhnDAO(appDatabase: AppDatabase): WardGhnDAO =
+        appDatabase.wardGhnDao()
 
 }
 

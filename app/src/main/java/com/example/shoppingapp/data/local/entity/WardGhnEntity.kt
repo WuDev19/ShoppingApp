@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
     indices = [Index("districtID")]
 )
 data class WardGhnEntity(
-    @PrimaryKey val wardCode: Int,
+    @PrimaryKey val wardCode: String,
     val districtID: Int,
     val wardName: String
 )

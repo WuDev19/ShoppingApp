@@ -6,11 +6,13 @@ import androidx.room.migration.Migration
 import com.example.shoppingapp.data.local.dao.CartDAO
 import com.example.shoppingapp.data.local.dao.CartItemDAO
 import com.example.shoppingapp.data.local.dao.CategoryAndProductDAO
+import com.example.shoppingapp.data.local.dao.DistrictGhnDAO
 import com.example.shoppingapp.data.local.dao.ProductDAO
 import com.example.shoppingapp.data.local.dao.ProvinceGhnDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyProductDAO
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
+import com.example.shoppingapp.data.local.dao.WardGhnDAO
 import com.example.shoppingapp.data.local.entity.CartEntity
 import com.example.shoppingapp.data.local.entity.CartItemEntity
 import com.example.shoppingapp.data.local.entity.CategoryAndProductEntity
@@ -47,5 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun cartItemDao(): CartItemDAO
     abstract fun userAddressDao(): UserAddressDAO
     abstract fun provinceGhnDao(): ProvinceGhnDAO
+    abstract fun districtGhnDao(): DistrictGhnDAO
+    abstract fun wardGhnDao(): WardGhnDAO
 
 }

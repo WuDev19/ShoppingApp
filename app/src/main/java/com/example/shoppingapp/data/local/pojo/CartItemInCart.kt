@@ -11,5 +11,6 @@ data class CartItemInCart(
         parentColumn = "cartId", //cột khóa chính của bảng cartEntity
         entityColumn = "cartId", //cột khóa ngoại của bảng cartItemEntity
     )
-    val cartItems: List<CartItemEntity>
+    val cartItems: List<CartItemEntity>//nếu trả về projection của CartItemEntity
+    // thì phải chi định rõ tham số entity trong @Relation là CartItemEntity
 )

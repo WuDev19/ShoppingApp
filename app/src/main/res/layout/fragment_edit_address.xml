@@ -149,9 +149,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:hint="@string/select_district"
-                            android:inputType="none"
                             android:padding="10dp"
-                            tools:ignore="LabelFor" />
+                            tools:ignore="LabelFor"
+                            android:enabled="false"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -177,9 +177,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:hint="@string/select_ward"
-                            android:inputType="none"
                             android:padding="10dp"
-                            tools:ignore="LabelFor" />
+                            tools:ignore="LabelFor"
+                            android:enabled="false"/>
 
                     </com.google.android.material.textfield.TextInputLayout>
 

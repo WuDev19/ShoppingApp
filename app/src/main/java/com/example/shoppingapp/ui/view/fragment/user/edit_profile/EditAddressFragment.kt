@@ -24,7 +24,9 @@ import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.databinding.FragmentEditAddressBinding
 import com.example.shoppingapp.domain.model.AddressItem
+import com.example.shoppingapp.domain.model.ghn.DistrictGhn
 import com.example.shoppingapp.domain.model.ghn.ProvinceGhn
+import com.example.shoppingapp.domain.model.ghn.WardGhn
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.viewmodel.user.edit_profile.EditAddressViewModel
 import com.example.shoppingapp.utils.CheckNavigation
@@ -51,7 +53,9 @@ class EditAddressFragment : Fragment() {
         //dữ liệu từ address fragment
         arguments?.getParcelable(StringConstants.ADDRESS_ITEM, AddressItem::class.java)
     }
-    private lateinit var selectAddressAdapter: SelectAddressAdapter
+    private lateinit var selectProvinceAdapter: SelectAddressAdapter
+    private lateinit var selectDistrictAdapter: SelectAddressAdapter
+    private lateinit var selectWardAdapter: SelectAddressAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,7 +67,9 @@ class EditAddressFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        selectAddressAdapter = SelectAddressAdapter(requireContext(), emptyList())
+        selectProvinceAdapter = SelectAddressAdapter(requireContext(), emptyList())
+        selectDistrictAdapter = SelectAddressAdapter(requireContext(), emptyList())
+        selectWardAdapter = SelectAddressAdapter(requireContext(), emptyList())
         viewModel.getProvinces()
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -134,7 +140,37 @@ class EditAddressFragment : Fragment() {
                             }
 
                             is StateListener.Success<List<ProvinceGhn>> -> {
-                                selectAddressAdapter.setData(it.result)
+                                selectProvinceAdapter.setData(it.result)
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.districtState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> {
+                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
+                            }
+
+                            is StateListener.Success<List<DistrictGhn>> -> {
+                                selectDistrictAdapter.setData(it.result)
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.wardState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> {
+                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
+                            }
+
+                            is StateListener.Success<List<WardGhn>> -> {
+                                selectWardAdapter.setData(it.result)
                             }
                         }
                     }
@@ -145,11 +181,37 @@ class EditAddressFragment : Fragment() {
         binding.apply {
 
             tvSelectProvince.apply {
-                setAdapter(selectAddressAdapter)
+                setAdapter(selectProvinceAdapter)
+                onItemClickListener =
+                    AdapterView.OnItemClickListener { parentView, currentView, position, viewId ->
+                        tvSelectDistrict.isEnabled = true
+                        val item = adapter.getItem(position)
+                        if (item is ProvinceGhn) {
+                            viewModel.getDistrictOfProvince(item.provinceID)
+                        }
+                    }
+            }
+
+            tvSelectDistrict.apply {
+                setAdapter(selectDistrictAdapter)
+                onItemClickListener =
+                    AdapterView.OnItemClickListener { parentView, currentView, position, viewId ->
+                        tvSelectWard.isEnabled = true
+                        val item = adapter.getItem(position)
+                        if (item is DistrictGhn) {
+                            viewModel.getWardOfDistrict(item.districtID)
+                        }
+                    }
+            }
+
+            tvSelectWard.apply {
+                setAdapter(selectWardAdapter)
                 onItemClickListener =
                     AdapterView.OnItemClickListener { parentView, currentView, position, viewId ->
                         val item = adapter.getItem(position)
-
+                        if (item is WardGhn) {
+                            Log.e(StringConstants.DEBUG, "onViewCreated: $item")
+                        }
                     }
             }
 
