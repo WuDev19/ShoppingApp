@@ -9,6 +9,7 @@ import com.example.shoppingapp.data.remote.api.CategoryAPI
 import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 import com.example.shoppingapp.data.remote.api.seller.NormalFunctionSellerAPI
 import com.example.shoppingapp.data.remote.api.UserAPI
+import com.example.shoppingapp.data.remote.api.ghn.AddressAPI
 import com.example.shoppingapp.data.remote.api.product.ModifyProductAPI
 import com.example.shoppingapp.data.remote.api.seller.AdvancedFunctionsSellerAPI
 import com.example.shoppingapp.data.remote.interceptors.AuthInterceptor
@@ -149,5 +150,10 @@ object APIModule {
     @Singleton
     fun provideAuthAPI(@Named(StringConstants.NO_AUTH) retrofit: Retrofit): AuthAPI =
         retrofit.create(AuthAPI::class.java) //tách riêng các retrofit như này thì giúp tránh vòng lặp vô hạn
+
+    @Provides
+    @Singleton
+    fun provideAddressAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): AddressAPI =
+        retrofit.create(AddressAPI::class.java)
 
 }

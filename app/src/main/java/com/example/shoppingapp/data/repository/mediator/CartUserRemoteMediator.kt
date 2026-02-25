@@ -10,11 +10,10 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.db.AppDatabase
-import com.example.shoppingapp.data.local.entity.CartEntity
 import com.example.shoppingapp.data.local.entity.RemoteKeyEntity
 import com.example.shoppingapp.data.local.mapper.CartMapper
 import com.example.shoppingapp.data.remote.api.CartAPI
-import com.example.shoppingapp.domain.model.CartItemInCart
+import com.example.shoppingapp.data.local.pojo.CartItemInCart
 
 @OptIn(ExperimentalPagingApi::class)
 class CartUserRemoteMediator(
@@ -44,7 +43,6 @@ class CartUserRemoteMediator(
 
             val response = cartAPI.getCartUser(idUser, page)
             val dataResponse = response.body()
-            Log.e("Cartentity", "load: dto ${dataResponse?.contents}")
             val endOfPagination =
                 dataResponse?.contents?.isEmpty() == true || dataResponse?.contents?.size!! < StringConstants.PAGE_SIZE
 
@@ -58,12 +56,10 @@ class CartUserRemoteMediator(
                 val nextKey = if (endOfPagination) null else page + 1
 
                 dataResponse?.contents?.forEach { cartDTO ->
+                    Log.e(StringConstants.DEBUG, "load: ${cartDTO.avtShop}")
                     cartDao.insert(CartMapper.mapToCartEntity(cartDTO))
                     cartItemDao.insertAll(cartDTO.cartItemDTOS.map { cartItemDTO ->
-                        CartMapper.mapToCartItemEntity(
-                            cartItemDTO,
-                            cartDTO.cartId!!
-                        )
+                        CartMapper.mapToCartItemEntity(cartItemDTO)
                     })
                 }
 

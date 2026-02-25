@@ -149,4 +149,19 @@
     <string name="mb_bank">MB Bank</string>
     <string name="bill_detail">Bill detail</string>
     <string name="payment_method">Payment method</string>
+    <string name="delete">Delete</string>
+    <string name="wait_a_second">Wait a second...</string>
+    <string name="cost">Cost:</string>
+    <string name="total">Total:</string>
+    <string name="voucher">Voucher:</string>
+    <string name="final_price">Final price:</string>
+    <string name="ship_price">Ship price:</string>
+    <string name="shipping_method">Shipping method</string>
+    <string name="width">Width: \n(cm)</string>
+    <string name="height">Height: \n(cm)</string>
+    <string name="length">Length: \n(cm)</string>
+    <string name="weight">Weight: \n(g)</string>
+    <string name="select_district">Select district</string>
+    <string name="select_province">Select province</string>
+    <string name="select_ward">Select ward</string>
 </resources>

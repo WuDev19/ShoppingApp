@@ -6,6 +6,7 @@ data class CartDTO(
     var tenND: String? = "",
     var maNB: Int? = 0,
     var tenShop: String? = "",
+    var avtShop: String? = "",
     var updateTime: Long? = null,
     val cartItemDTOS: List<CartItemDTO> = emptyList()
 )

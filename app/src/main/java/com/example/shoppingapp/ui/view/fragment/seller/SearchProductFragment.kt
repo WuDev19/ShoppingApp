@@ -23,6 +23,7 @@ import com.example.shoppingapp.domain.model.SearchProductShop
 import com.example.shoppingapp.ui.view.adapter.ProductAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.seller.SearchProductViewModel
+import com.example.shoppingapp.utils.CheckNavigation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -39,8 +40,10 @@ class SearchProductFragment : Fragment() {
                 StringConstants.ID_PRODUCT to productId,
                 StringConstants.ID_SELLER to sellerId
             )
-            findNavController().navigate(
-                R.id.action_sellerFragment_to_detailProductFragment,
+            CheckNavigation.navigateTo(
+                findNavController(),
+                R.id.action_searchProductFragment_to_detailProductFragment,
+                R.id.action_searchProductFragment2_to_detailProductFragment2,
                 bundle
             )
         }

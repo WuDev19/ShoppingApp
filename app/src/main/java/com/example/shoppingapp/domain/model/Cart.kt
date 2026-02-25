@@ -6,5 +6,6 @@ data class Cart(
     var tenND: String? = "",
     var maNB: Int? = 0,
     var tenShop: String? = "",
-    var updateTime: Long? = 0
+    var avtShop: String? = "",
+    var updateTime: Long? = 0,
 ) : CartUiModel()

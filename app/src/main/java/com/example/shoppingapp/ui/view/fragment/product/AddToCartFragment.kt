@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.fragment.product
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.res.ColorStateList
@@ -40,7 +41,8 @@ import kotlinx.coroutines.withContext
 import kotlin.math.max
 
 @AndroidEntryPoint
-class AddToCartFragment : BottomSheetDialogFragment() {
+class AddToCartFragment(private val onNavigate: (ProductChiTiet, Int) -> Unit) :
+    BottomSheetDialogFragment() {
 
     private val viewModel: AddToCartViewModel by viewModels()
     private var _binding: FragmentAddToCartBinding? = null
@@ -53,6 +55,9 @@ class AddToCartFragment : BottomSheetDialogFragment() {
     }
     private val idSeller by lazy {
         arguments?.getInt(StringConstants.ID_SELLER)
+    }
+    private val isBuy by lazy {
+        arguments?.getBoolean(StringConstants.IS_BUY, false)
     }
     private lateinit var productChiTiet: ProductChiTiet
 
@@ -72,99 +77,120 @@ class AddToCartFragment : BottomSheetDialogFragment() {
     }
 
     // TODO: case neu chi co color hoac size cung phai xu ly
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.sanPhamChiTietState.collectLatest {
-                    when (it) {
-                        is StateListener.Idle -> Unit
-                        is StateListener.Loading -> Unit
-                        is StateListener.Error -> {
-                            ToastUtils.showToast(requireContext(), it.e.toString())
-                        }
+                launch {
+                    viewModel.sanPhamChiTietState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> {
+                                ToastUtils.showToast(requireContext(), it.e.toString())
+                            }
 
-                        is StateListener.Success -> {
-                            val data = it.result //danh sach san pham chi tiet trong 1 san pham
-                            withContext(Dispatchers.Default) {
-                                val listColor = data.map { it1 ->
-                                    SizeColorModel(it1.color, false)
-                                }.distinct()
-                                withContext(Dispatchers.Main) {
-                                    if (listColor.map { it3 -> it3.data }.contains(null)) {
-                                        binding.recyclerViewColor.visibility = View.GONE
-                                        binding.tvColor.visibility = View.GONE
-                                    } else {
-                                        binding.recyclerViewColor.apply {
-                                            layoutManager = FlexboxLayoutManager(
-                                                requireContext(),
-                                                FlexDirection.ROW,
-                                                FlexWrap.WRAP,
-                                            )
-                                            adapter =
-                                                SizeAndColorAdapter(listColor) { data, selected ->
-                                                    if (selected) {
-                                                        viewModel.selectedColor.value = data
-                                                    } else {
-                                                        viewModel.selectedColor.value = ""
+                            is StateListener.Success -> {
+                                val data = it.result //danh sach san pham chi tiet trong 1 san pham
+                                withContext(Dispatchers.Default) {
+                                    val listColor = data.map { it1 ->
+                                        SizeColorModel(it1.color, false)
+                                    }.distinct()
+                                    withContext(Dispatchers.Main) {
+                                        if (listColor.map { it3 -> it3.data }.contains(null)) {
+                                            binding.recyclerViewColor.visibility = View.GONE
+                                            binding.tvColor.visibility = View.GONE
+                                        } else {
+                                            binding.recyclerViewColor.apply {
+                                                layoutManager = FlexboxLayoutManager(
+                                                    requireContext(),
+                                                    FlexDirection.ROW,
+                                                    FlexWrap.WRAP,
+                                                )
+                                                adapter =
+                                                    SizeAndColorAdapter(listColor) { data, selected ->
+                                                        if (selected) {
+                                                            viewModel.selectedColor.value = data
+                                                        } else {
+                                                            viewModel.selectedColor.value = ""
+                                                        }
                                                     }
-                                                }
-                                            addItemDecoration(MarginItemDecoration(5))
+                                                addItemDecoration(MarginItemDecoration(5))
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            withContext(Dispatchers.Default) {
-                                val listSize = data.map { it1 ->
-                                    SizeColorModel(it1.kichco, false)
-                                }.distinct()
-                                withContext(Dispatchers.Main) {
-                                    if (listSize.map { it3 -> it3.data }.contains(null)) {
-                                        binding.recyclerViewSize.visibility = View.GONE
-                                        binding.tvSize.visibility = View.GONE
-                                    } else {
-                                        binding.recyclerViewSize.apply {
-                                            layoutManager = FlexboxLayoutManager(
-                                                requireContext(),
-                                                FlexDirection.ROW,
-                                                FlexWrap.WRAP
-                                            )
-                                            adapter =
-                                                SizeAndColorAdapter(listSize) { data, selected ->
-                                                    if (selected) {
-                                                        viewModel.selectedSize.value = data
-                                                    } else {
-                                                        viewModel.selectedSize.value = ""
+                                withContext(Dispatchers.Default) {
+                                    val listSize = data.map { it1 ->
+                                        SizeColorModel(it1.kichco, false)
+                                    }.distinct()
+                                    withContext(Dispatchers.Main) {
+                                        if (listSize.map { it3 -> it3.data }.contains(null)) {
+                                            binding.recyclerViewSize.visibility = View.GONE
+                                            binding.tvSize.visibility = View.GONE
+                                        } else {
+                                            binding.recyclerViewSize.apply {
+                                                layoutManager = FlexboxLayoutManager(
+                                                    requireContext(),
+                                                    FlexDirection.ROW,
+                                                    FlexWrap.WRAP
+                                                )
+                                                adapter =
+                                                    SizeAndColorAdapter(listSize) { data, selected ->
+                                                        if (selected) {
+                                                            viewModel.selectedSize.value = data
+                                                        } else {
+                                                            viewModel.selectedSize.value = ""
+                                                        }
                                                     }
-                                                }
-                                            addItemDecoration(MarginItemDecoration(5))
+                                                addItemDecoration(MarginItemDecoration(5))
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            viewModel.displayCorrespondingProduct.collectLatest { it1 ->
-                                val list = it1.split("_")
-                                if (list[0].isEmpty() || list[1].isEmpty()) { //dau tien khi bam vao se hien item dau
-                                    bindingProduct(data[0])
-                                    disableBtnAddCart()
-                                } else {
-                                    //tim kiem trong data xem cai nao dau tien co color voi kich co = cai minh chon tren view
-                                    val kq = data.firstOrNull { it2 ->
-                                        it2.color == list[1] && it2.kichco == list[0]
-                                    }
-                                    if (kq != null) {
-                                        productChiTiet = kq
-                                        bindingProduct(kq)
-                                        enableAddCart()
-                                    } else {
+                                viewModel.displayCorrespondingProduct.collectLatest { it1 ->
+                                    val list = it1.split("_")
+                                    if (list[0].isEmpty() || list[1].isEmpty()) { //dau tien khi bam vao se hien item dau
+                                        bindingProduct(data[0])
                                         disableBtnAddCart()
-                                        Glide.with(binding.root)
-                                            .load(R.drawable.icon_not_found)
-                                            .error(R.drawable.icon_not_found)
-                                            .into(binding.imgAnhDetail)
+                                    } else {
+                                        //tim kiem trong data xem cai nao dau tien co color voi kich co = cai minh chon tren view
+                                        val kq = data.firstOrNull { it2 ->
+                                            it2.color == list[1] && it2.kichco == list[0]
+                                        }
+                                        if (kq != null) {
+                                            productChiTiet = kq
+                                            bindingProduct(kq)
+                                            enableAddCart()
+                                        } else {
+                                            disableBtnAddCart()
+                                            Glide.with(binding.root)
+                                                .load(R.drawable.icon_not_found)
+                                                .error(R.drawable.icon_not_found)
+                                                .into(binding.imgAnhDetail)
+                                        }
                                     }
                                 }
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.createCart.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> {
+                                ToastUtils.showToast(requireContext(), it.e.toString())
+                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e.toString()}")
+                            }
+
+                            is StateListener.Success -> {
+                                val response = it.result
+                                Log.e(StringConstants.DEBUG, "onViewCreated: $response")
+                                this@AddToCartFragment.dismiss()
                             }
                         }
                     }
@@ -172,77 +198,49 @@ class AddToCartFragment : BottomSheetDialogFragment() {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.createCart.collectLatest {
-                    when (it) {
-                        is StateListener.Idle -> Unit
-                        is StateListener.Loading -> Unit
-                        is StateListener.Error -> {
-                            ToastUtils.showToast(requireContext(), it.e.toString())
-                            Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e.toString()}")
-                        }
+        binding.apply {
+            if (isBuy == true) {
+                btnAddToCart.text = "Buy now"
+            } else {
+                btnAddToCart.text = "Add to cart"
+            }
+            imgMinus.setOnClickListener {
+                var number = edtNumber.text.toString().toInt()
+                number = max(1, --number)
+                edtNumber.setText(number.toString())
+            }
 
-                        is StateListener.Success -> {
-                            val response = it.result
-                            Log.e(StringConstants.DEBUG, "onViewCreated: $response")
-                            this@AddToCartFragment.dismiss()
+            imgPlus.setOnClickListener {
+                var number = edtNumber.text.toString().toInt()
+                number++
+                edtNumber.setText(number.toString())
+            }
+
+            btnAddToCart.setOnClickListener {
+                val number = edtNumber.text.toString().toInt()
+                if (isBuy == true) {
+                    onNavigate(productChiTiet, number)
+                    dismiss()
+                } else {
+                    if (number > productChiTiet.inStock!!) {
+                        ToastUtils.showToast(requireContext(), "Exceed the quantity in stock")
+                        return@setOnClickListener
+                    }
+                    idSeller?.let { sellerId ->
+                        productChiTiet.maSanPhamDeTail?.let { productDetailId ->
+                            viewModel.createCart(sellerId, productDetailId, number, giamGia)
                         }
                     }
                 }
+
             }
-        }
 
-        binding.imgMinus.setOnClickListener {
-            var number = binding.edtNumber.text.toString().toInt()
-            number = max(1, --number)
-            binding.edtNumber.setText(number.toString())
-        }
-
-        binding.imgPlus.setOnClickListener {
-            var number = binding.edtNumber.text.toString().toInt()
-            number++
-            binding.edtNumber.setText(number.toString())
-        }
-
-        binding.btnAddToCart.setOnClickListener {
-            val number = binding.edtNumber.text.toString().toInt()
-            if (number > productChiTiet.inStock!!) {
-                ToastUtils.showToast(requireContext(), "Exceed the quantity in stock")
-                return@setOnClickListener
+            imgCancel.setOnClickListener {
+                dismiss()
             }
-            idSeller?.let { sellerId ->
-                productChiTiet.maSanPhamDeTail?.let { productDetailId ->
-                    viewModel.createCart(sellerId, productDetailId, number, giamGia)
 
-                }
-            }
-        }
-
-        binding.imgCancel.setOnClickListener {
-            dismiss()
-        }
-
-        binding.imgAnhDetail.setOnClickListener {
-            Log.e("ANHDETAIL", "onViewCreated: ${productChiTiet.anhDetail}")
-            val dialogView = CustomDialogImageDetailBinding.inflate(layoutInflater)
-            Glide.with(requireContext())
-                .load(productChiTiet.anhDetail ?: R.drawable.icon_avatar)
-                .error(R.drawable.place_holder)
-                .into(dialogView.imgAnh)
-            val dialog = AlertDialog.Builder(requireContext())
-                .setView(dialogView.root)
-                .create()
-            //phai show dialog truoc roi chinh window thi moi co hieu luc
-            dialog.show()
-            dialog.window?.apply {
-                setDimAmount(0.5f)
-                setLayout(
-                    (resources.displayMetrics.widthPixels * 0.8).toInt(),
-                    (resources.displayMetrics.heightPixels * 0.6).toInt()
-                )
-                setGravity(Gravity.CENTER)
-                setBackgroundDrawableResource(R.drawable.custom_dialog)
+            imgAnhDetail.setOnClickListener {
+                showAnhChiTiet()
             }
         }
 
@@ -277,7 +275,7 @@ class AddToCartFragment : BottomSheetDialogFragment() {
         Glide.with(binding.root)
             .load(productChiTiet.anhDetail)
             .placeholder(R.drawable.place_holder)
-            .error(R.drawable.icon_mobile)
+            .error(R.drawable.icon_not_found)
             .into(binding.imgAnhDetail)
     }
 
@@ -301,6 +299,28 @@ class AddToCartFragment : BottomSheetDialogFragment() {
                 R.color.button_color
             )
         )
+    }
+
+    private fun showAnhChiTiet() {
+        val dialogView = CustomDialogImageDetailBinding.inflate(layoutInflater)
+        Glide.with(requireContext())
+            .load(productChiTiet.anhDetail ?: R.drawable.icon_avatar)
+            .error(R.drawable.place_holder)
+            .into(dialogView.imgAnh)
+        val dialog = AlertDialog.Builder(requireContext())
+            .setView(dialogView.root)
+            .create()
+        //phai show dialog truoc roi chinh window thi moi co hieu luc
+        dialog.show()
+        dialog.window?.apply {
+            setDimAmount(0.5f)
+            setLayout(
+                (resources.displayMetrics.widthPixels * 0.8).toInt(),
+                (resources.displayMetrics.heightPixels * 0.6).toInt()
+            )
+            setGravity(Gravity.CENTER)
+            setBackgroundDrawableResource(R.drawable.custom_dialog)
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

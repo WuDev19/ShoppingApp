@@ -5,5 +5,6 @@ data class CartItemDTO (
     val maGioHang: Int? = 0,
     val detailProduct: ProductChiTietDTO? = null,
     val soLuong: Int? = 0,
-    val giamGia: Int? = 0
+    val giamGia: Int? = 0,
+    val cartId: Int? = 0
 )

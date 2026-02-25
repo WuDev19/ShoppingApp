@@ -4,5 +4,6 @@ data class UserAddressRequest(
     val tenDiaChi: String?,
     val diaChiMacDinh: Boolean?,
     val tenND: String?,
-    val sdtND: String?
+    val sdtND: String?,
+    val maND: String?
 )

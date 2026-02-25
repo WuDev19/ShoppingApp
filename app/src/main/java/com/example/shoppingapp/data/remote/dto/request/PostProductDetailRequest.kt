@@ -6,5 +6,9 @@ data class PostProductDetailRequest(
     var imageDetail: String?,
     val unitPrice: Int,
     val color: String?,
-    val size: String?
+    val size: String?,
+    val width: Int,
+    val height: Int,
+    val length: Int,
+    val weight: Int
 )

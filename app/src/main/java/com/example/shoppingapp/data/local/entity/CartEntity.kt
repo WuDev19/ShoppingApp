@@ -10,5 +10,6 @@ data class CartEntity (
     val tenND: String,
     val maNB: Int,
     val tenShop: String,
+    val avtShop: String,
     val updateTime: Long
 )

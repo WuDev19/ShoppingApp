@@ -3,12 +3,14 @@ package com.example.shoppingapp.di
 import com.example.shoppingapp.data.repository.impl.AuthRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.CartRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.CategoryRepositoryImpl
+import com.example.shoppingapp.data.repository.impl.GhnRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.ProductRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.SellerRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.UserRepositoryImpl
 import com.example.shoppingapp.domain.repository.auth.AuthRepository
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.domain.repository.category.CategoryRepository
+import com.example.shoppingapp.domain.repository.ghn.GhnRepository
 import com.example.shoppingapp.domain.repository.product.ProductRepository
 import com.example.shoppingapp.domain.repository.seller.SellerRepository
 import com.example.shoppingapp.domain.repository.user.UserRepository
@@ -56,5 +58,11 @@ abstract class RepositoryBindModule {
     abstract fun bindCategoryRepository(
         impl: CategoryRepositoryImpl
     ): CategoryRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindGhnRepository(
+        impl: GhnRepositoryImpl
+    ): GhnRepository
 
 }

@@ -192,6 +192,10 @@ class PostProductDetailFragment : Fragment() {
                 val unitPrice = edtUnitPrice.text.toString().trim()
                 val color = edtColor.text.toString().trim()
                 val size = edtSize.text.toString().trim()
+                val width = edtWidth.text.toString().trim()
+                val height = edtHeight.text.toString().trim()
+                val length = edtLength.text.toString().trim()
+                val weight = edtWeight.text.toString().trim()
                 if (productNameDetail.isEmpty() ||
                     inStock.isEmpty() ||
                     unitPrice.isEmpty() ||
@@ -218,7 +222,11 @@ class PostProductDetailFragment : Fragment() {
                     null,
                     unitPrice.toInt(),
                     color.ifEmpty { null },
-                    size.ifEmpty { null }
+                    size.ifEmpty { null },
+                    if (width.isEmpty()) 1 else width.toInt(),
+                    if (height.isEmpty()) 1 else height.toInt(),
+                    if (length.isEmpty()) 1 else length.toInt(),
+                    if (weight.isEmpty()) 1 else weight.toInt()
                 )
                 count++
                 val uploadingModel = UploadingModel(listUploadModel.size - 1 + 1, null, null, uri!!)
@@ -270,7 +278,7 @@ class PostProductDetailFragment : Fragment() {
             imgBack.setOnClickListener {
                 controller.popBackStack()
             }
-            
+
         }
     }
 

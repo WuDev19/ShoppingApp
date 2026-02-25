@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
     tableName = "cart_items",
     foreignKeys = [
         ForeignKey(
-            entity = CartEntity::class,
+            entity = CartEntity::class, //bangr
             parentColumns = ["cartId"],
             childColumns = ["cartId"],
             onDelete = ForeignKey.CASCADE

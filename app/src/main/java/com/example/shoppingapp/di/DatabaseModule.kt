@@ -6,6 +6,7 @@ import com.example.shoppingapp.data.local.dao.CartDAO
 import com.example.shoppingapp.data.local.dao.CartItemDAO
 import com.example.shoppingapp.data.local.dao.CategoryAndProductDAO
 import com.example.shoppingapp.data.local.dao.ProductDAO
+import com.example.shoppingapp.data.local.dao.ProvinceGhnDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyProductDAO
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
@@ -37,7 +38,8 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideRemoteKeyProductDao(appDatabase: AppDatabase): RemoteKeyProductDAO = appDatabase.remoteKeyProductDao()
+    fun provideRemoteKeyProductDao(appDatabase: AppDatabase): RemoteKeyProductDAO =
+        appDatabase.remoteKeyProductDao()
 
     @Singleton
     @Provides
@@ -45,7 +47,8 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideCategoryAndProductDao(appDatabase: AppDatabase): CategoryAndProductDAO = appDatabase.categoryAndProductDao()
+    fun provideCategoryAndProductDao(appDatabase: AppDatabase): CategoryAndProductDAO =
+        appDatabase.categoryAndProductDao()
 
     @Singleton
     @Provides
@@ -57,6 +60,13 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideUserAddressDao(appDatabase: AppDatabase): UserAddressDAO = appDatabase.userAddressDao()
+    fun provideUserAddressDao(appDatabase: AppDatabase): UserAddressDAO =
+        appDatabase.userAddressDao()
+
+    @Singleton
+    @Provides
+    fun provideProvinceGhnDao(appDatabase: AppDatabase): ProvinceGhnDAO =
+        appDatabase.provinceGhnDao()
 
 }
+

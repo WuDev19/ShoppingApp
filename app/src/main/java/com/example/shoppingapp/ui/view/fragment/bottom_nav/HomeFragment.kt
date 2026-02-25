@@ -167,10 +167,7 @@ class HomeFragment : Fragment() {
             imgCart.setOnClickListener {
                 ViewPagerUtils.disableViewPager(viewPager2)
                 BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
-                val bundle = bundleOf(
-                    StringConstants.CURRENT_USER_ID to viewModel.getCurrentUserId()
-                )
-                controller.navigate(R.id.action_homeFragment_to_cartFragment, bundle)
+                controller.navigate(R.id.action_homeFragment_to_cartFragment)
             }
 
             imgChat.setOnClickListener {

@@ -15,6 +15,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -44,7 +45,7 @@ object FirebaseModule {
 
     @Provides
     @Singleton
-    fun provideCredentialManager(@ApplicationContext context: Context): CredentialManager{
+    fun provideCredentialManager(@ApplicationContext context: Context): CredentialManager {
         return CredentialManager.create(context)
     }
 
@@ -55,6 +56,11 @@ object FirebaseModule {
             .addCredentialOption(googleIdOption)
             .build()
     }
+
+    @Provides
+    @Singleton
+    @Named("userId")
+    fun provideUserId(auth: FirebaseAuth): String = auth.currentUser?.uid ?: ""
 
 }
 

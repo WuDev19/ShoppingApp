@@ -1,5 +1,9 @@
 package com.example.shoppingapp.domain.model.product
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class ProductChiTiet (
     var maSanPhamDeTail: Int? = null,
     var tenDetail: String? = "",
@@ -9,4 +13,4 @@ data class ProductChiTiet (
     var color: String? = "",
     var kichco: String? = "",
     var maSp: Int? = null
-)
+) : Parcelable

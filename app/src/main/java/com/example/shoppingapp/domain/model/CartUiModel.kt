@@ -1,3 +1,7 @@
 package com.example.shoppingapp.domain.model
 
-sealed class CartUiModel
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+sealed class CartUiModel : Parcelable

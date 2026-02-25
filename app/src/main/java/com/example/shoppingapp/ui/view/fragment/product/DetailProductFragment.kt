@@ -22,6 +22,7 @@ import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.utils.ViewPagerUtils
 import com.example.shoppingapp.databinding.FragmentDetailProductBinding
+import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.product.ProductDetail
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.GridAdapterInsideConcatAdapter
@@ -35,6 +36,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Named
 
 @AndroidEntryPoint
 class DetailProductFragment : Fragment() {
@@ -85,22 +88,25 @@ class DetailProductFragment : Fragment() {
     }
     private lateinit var productDetail: ProductDetail
 
+    @Inject
+    @Named("userId")
+    lateinit var userId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            viewModel.getProductDetail(idProduct)
-        }
+        viewModel.getProductDetail(idProduct)
 
         lifecycleScope.launch {
-            viewModel.getOtherProductsOfShop(idSeller).collectLatest {
-                otherProductOfShopAdapter.submitData(it)
+            launch {
+                viewModel.getOtherProductsOfShop(idSeller).collectLatest {
+                    otherProductOfShopAdapter.submitData(it)
+                }
             }
-        }
-
-        lifecycleScope.launch {
-            viewModel.getSanPhamRelated(idProduct).collectLatest {
-                productAdapter.submitData(it)
+            launch {
+                viewModel.getSanPhamRelated(idProduct).collectLatest {
+                    productAdapter.submitData(it)
+                }
             }
         }
 
@@ -170,11 +176,6 @@ class DetailProductFragment : Fragment() {
             GridAdapterInsideConcatAdapter(productAdapter)
         )
 
-        binding.recyclerViewConcat.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = concatAdapter
-        }
-
         // TODO: toi uu lai concat adapter thoi
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -196,26 +197,64 @@ class DetailProductFragment : Fragment() {
 
         }
 
-        binding.imgBack.setOnClickListener {
-            controller.popBackStack()
-            BottomNavigationUtils.showBottomNavigation(
-                bottomNavigationView,
-                controller
-            ) // goi o day tai vi fragment nay chi dung sau moi home hoac store
-            ViewPagerUtils.enableViewPager(viewPager2, controller)
+        binding.apply {
+            recyclerViewConcat.apply {
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = concatAdapter
+            }
+
+            imgBack.setOnClickListener {
+                controller.popBackStack()
+                BottomNavigationUtils.showBottomNavigation(
+                    bottomNavigationView,
+                    controller
+                ) // goi o day tai vi fragment nay chi dung sau moi home hoac store
+                ViewPagerUtils.enableViewPager(viewPager2, controller)
+            }
+
+            imgAddToCart.setOnClickListener {
+                showProductDetail(false)
+            }
+
+            imgBuy.setOnClickListener {
+                showProductDetail(true)
+            }
         }
 
-        binding.imgAddToCart.setOnClickListener {
-            val addToCartFragment = AddToCartFragment()
+    }
+
+    private fun showProductDetail(isBuy: Boolean) {
+        val addToCartFragment = AddToCartFragment { productChiTiet, number ->
+            val orderFromBuyNow =
+                OrderFromBuyNow(
+                    userId,
+                    productDetail.maNguoiBan!!,
+                    productDetail.tenNguoiBan!!,
+                    number,
+                    productDetail.giamgia ?: 0,
+                    productChiTiet
+                )
             val bundle = bundleOf(
-                StringConstants.ID_PRODUCT to idProduct,
-                StringConstants.DISCOUNT to productDetail.giamgia,
-                StringConstants.ID_SELLER to idSeller
+                StringConstants.ORDER_BUY_NOW to orderFromBuyNow
             )
-            addToCartFragment.arguments = bundle
-            addToCartFragment.show(requireActivity().supportFragmentManager, addToCartFragment.tag)
+            CheckNavigation.navigateTo(
+                controller,
+                R.id.action_detailProductFragment_to_purchaseProductFragment,
+                R.id.action_detailProductFragment2_to_purchaseProductFragment2,
+                bundle
+            )
         }
-
+        val bundle = bundleOf(
+            StringConstants.ID_PRODUCT to idProduct,
+            StringConstants.DISCOUNT to productDetail.giamgia,
+            StringConstants.ID_SELLER to idSeller,
+            StringConstants.IS_BUY to isBuy
+        )
+        addToCartFragment.arguments = bundle
+        addToCartFragment.show(
+            requireActivity().supportFragmentManager,
+            addToCartFragment.tag
+        )
     }
 
     override fun onDestroyView() {

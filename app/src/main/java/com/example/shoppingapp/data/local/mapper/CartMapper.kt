@@ -17,7 +17,8 @@ object CartMapper {
             cartEntity.tenND,
             cartEntity.maNB,
             cartEntity.tenShop,
-            cartEntity.updateTime
+            cartEntity.avtShop,
+            cartEntity.updateTime,
         )
     }
 
@@ -36,22 +37,24 @@ object CartMapper {
                 cartItemEntity.maGioHang
             ),
             cartItemEntity.soLuong,
-            cartItemEntity.giamGia
+            cartItemEntity.giamGia,
+            cartItemEntity.cartId,
         )
     }
 
-    fun mapToCartEntity(cartDTO: CartDTO) : CartEntity{
+    fun mapToCartEntity(cartDTO: CartDTO): CartEntity {
         return CartEntity(
             cartDTO.cartId!!,
             cartDTO.maND!!,
             cartDTO.tenND!!,
             cartDTO.maNB!!,
             cartDTO.tenShop!!,
-            cartDTO.updateTime!!
+            cartDTO.avtShop!!,
+            cartDTO.updateTime!!,
         )
     }
 
-    fun mapToCartItemEntity(cartItemDTO: CartItemDTO, cartId: Int): CartItemEntity{
+    fun mapToCartItemEntity(cartItemDTO: CartItemDTO): CartItemEntity {
         return CartItemEntity(
             cartItemDTO.cartItemId!!,
             cartItemDTO.maGioHang!!,
@@ -65,7 +68,7 @@ object CartMapper {
             cartItemDTO.detailProduct.maSp!!,
             cartItemDTO.soLuong!!,
             cartItemDTO.giamGia!!,
-            cartId
+            cartItemDTO.cartId!!
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.fragment.user.edit_profile
 
+import SelectAddressAdapter
 import android.os.Build
 import androidx.fragment.app.viewModels
 import android.os.Bundle
@@ -8,6 +9,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -21,12 +24,16 @@ import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.databinding.FragmentEditAddressBinding
 import com.example.shoppingapp.domain.model.AddressItem
+import com.example.shoppingapp.domain.model.ghn.ProvinceGhn
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.viewmodel.user.edit_profile.EditAddressViewModel
+import com.example.shoppingapp.utils.CheckNavigation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+import javax.inject.Named
 
 @AndroidEntryPoint
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
@@ -37,14 +44,14 @@ class EditAddressFragment : Fragment() {
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
 
+    @Inject
+    @Named("userId")
+    lateinit var userId: String
     private val addressItem by lazy {
         //dữ liệu từ address fragment
         arguments?.getParcelable(StringConstants.ADDRESS_ITEM, AddressItem::class.java)
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private lateinit var selectAddressAdapter: SelectAddressAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,19 +63,94 @@ class EditAddressFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.apply {
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
+        selectAddressAdapter = SelectAddressAdapter(requireContext(), emptyList())
+        viewModel.getProvinces()
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
                     controller.currentBackStackEntry?.savedStateHandle?.getStateFlow(
                         StringConstants.ADDRESS_DETAIL,
                         addressItem?.addressName
                     )
                         ?.collectLatest {
-                            tvDetailAddress.setText(it)
+                            binding.tvDetailAddress.setText(it)
                         }
                 }
+                launch {
+                    viewModel.addressState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> {
+                                Log.e(StringConstants.DEBUG, "onViewCreated: loading")
+                                binding.progressBar.isVisible = true
+                            }
+
+                            is StateListener.Error -> {
+                                if (it.e !is IllegalArgumentException) {
+                                    delay(2000)
+                                    binding.progressBar.isVisible = false
+                                }
+                                ToastUtils.showToast(requireContext(), it.e?.message.toString())
+                            }
+
+                            is StateListener.Success<Unit> -> {
+                                delay(2000)
+                                binding.progressBar.isVisible = false
+                                ToastUtils.showToast(
+                                    requireContext(),
+                                    StringConstants.SAVE_SUCCESSFULLY
+                                )
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.deleteState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> binding.progressBar.isVisible = true
+                            is StateListener.Error -> {
+                                delay(2000)
+                                ToastUtils.showToast(requireContext(), it.e?.message.toString())
+                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
+                                binding.progressBar.isVisible = false
+                            }
+
+                            is StateListener.Success<Int> -> {
+                                delay(2000)
+                                binding.progressBar.isVisible = false
+                                controller.popBackStack()
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.provincesState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> {
+                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
+                            }
+
+                            is StateListener.Success<List<ProvinceGhn>> -> {
+                                selectAddressAdapter.setData(it.result)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        binding.apply {
+
+            tvSelectProvince.apply {
+                setAdapter(selectAddressAdapter)
+                onItemClickListener =
+                    AdapterView.OnItemClickListener { parentView, currentView, position, viewId ->
+                        val item = adapter.getItem(position)
+
+                    }
             }
 
             addressItem?.let { item ->
@@ -82,7 +164,13 @@ class EditAddressFragment : Fragment() {
                 val bundle = bundleOf(
                     StringConstants.ADDRESS_DETAIL to tvDetailAddress.text.toString()
                 )
-                controller.navigate(R.id.action_editAddressFragment_to_mapFragment, bundle)
+                CheckNavigation.navigateTo(
+                    controller,
+                    R.id.action_editAddressFragment2_to_mapFragment3,
+                    R.id.action_editAddressFragment3_to_mapFragment2,
+                    bundle,
+                    R.id.action_editAddressFragment_to_mapFragment
+                )
             }
 
             imgBack.setOnClickListener {
@@ -100,7 +188,8 @@ class EditAddressFragment : Fragment() {
                             address,
                             default,
                             username,
-                            phone
+                            phone,
+                            userId
                         )
                     )
                 } else {
@@ -116,7 +205,8 @@ class EditAddressFragment : Fragment() {
                                 address,
                                 default,
                                 username,
-                                phone
+                                phone,
+                                userId
                             )
                         )
                     }
@@ -133,60 +223,6 @@ class EditAddressFragment : Fragment() {
                 controller.popBackStack()
             }
 
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.addressState.collectLatest {
-                    when (it) {
-                        is StateListener.Idle -> Unit
-                        is StateListener.Loading -> {
-                            Log.e(StringConstants.DEBUG, "onViewCreated: loading")
-                            binding.progressBar.isVisible = true
-                        }
-
-                        is StateListener.Error -> {
-                            if (it.e !is IllegalArgumentException) {
-                                delay(2000)
-                                binding.progressBar.isVisible = false
-                            }
-                            ToastUtils.showToast(requireContext(), it.e?.message.toString())
-                        }
-
-                        is StateListener.Success<Unit> -> {
-                            delay(2000)
-                            binding.progressBar.isVisible = false
-                            ToastUtils.showToast(
-                                requireContext(),
-                                StringConstants.SAVE_SUCCESSFULLY
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.deleteState.collectLatest {
-                    when (it) {
-                        is StateListener.Idle -> Unit
-                        is StateListener.Loading -> binding.progressBar.isVisible = true
-                        is StateListener.Error -> {
-                            delay(2000)
-                            ToastUtils.showToast(requireContext(), it.e?.message.toString())
-                            Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
-                            binding.progressBar.isVisible = false
-                        }
-
-                        is StateListener.Success<Int> -> {
-                            delay(2000)
-                            binding.progressBar.isVisible = false
-                            controller.popBackStack()
-                        }
-                    }
-                }
-            }
         }
 
     }

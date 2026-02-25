@@ -21,6 +21,7 @@ import com.example.shoppingapp.databinding.FragmentAddressBinding
 import com.example.shoppingapp.ui.view.adapter.UserAddressAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.user.edit_profile.AddressViewModel
+import com.example.shoppingapp.utils.CheckNavigation
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -37,7 +38,13 @@ class AddressFragment : Fragment() {
             val bundle = bundleOf(
                 StringConstants.ADDRESS_ITEM to addressItem
             )
-            controller.navigate(R.id.action_addressFragment_to_editAddressFragment, bundle)
+            CheckNavigation.navigateTo(
+                controller,
+                R.id.action_addressFragment2_to_editAddressFragment2,
+                R.id.action_addressFragment3_to_editAddressFragment3,
+                bundle,
+                R.id.action_addressFragment_to_editAddressFragment
+            )
         }
     }
     private val controller by lazy { findNavController() }
@@ -71,7 +78,12 @@ class AddressFragment : Fragment() {
                 ViewPagerUtils.enableViewPager(viewPager2, controller)
             }
             btnAddAddress.setOnClickListener {
-                controller.navigate(R.id.action_addressFragment_to_editAddressFragment)
+                CheckNavigation.navigateTo(
+                    controller,
+                    R.id.action_addressFragment2_to_editAddressFragment2,
+                    R.id.action_addressFragment3_to_editAddressFragment3,
+                    R.id.action_addressFragment_to_editAddressFragment
+                )
             }
         }
 

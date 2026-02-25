@@ -12,9 +12,7 @@ import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.mapper.CartMapper
 import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
 import com.example.shoppingapp.data.remote.api.CartAPI
-import com.example.shoppingapp.data.repository.mediator.CartItemInCartRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.CartUserRemoteMediator
-import com.example.shoppingapp.domain.model.CartItem
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.Dispatchers
@@ -78,27 +76,6 @@ class CartRepositoryImpl @Inject constructor(
                 }
                 listUiModel
             }.flatMap { it }
-        }
-    }
-
-    @OptIn(ExperimentalPagingApi::class)
-    override fun getCartItemInCart(idCart: Int): Flow<PagingData<CartItem>> {
-
-        val queryKey = "cart_item_$idCart"
-        return Pager(
-            config = PagingConfig(
-                pageSize = StringConstants.PAGE_SIZE,
-                enablePlaceholders = false,
-                initialLoadSize = StringConstants.PAGE_SIZE
-            ),
-            remoteMediator = CartItemInCartRemoteMediator(cartAPI, appDatabase, idCart, queryKey),
-            pagingSourceFactory = {
-                appDatabase.cartItemDao().pagingSourceCartItemInCartOfUser(idCart)
-            }
-        ).flow.map { pagingData ->
-            pagingData.map {
-                CartMapper.mapCartItemEntityToCartItem(it)
-            }
         }
     }
 

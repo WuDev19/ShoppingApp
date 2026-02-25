@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.shoppingapp.data.local.entity.CartEntity
-import com.example.shoppingapp.domain.model.CartItemInCart
+import com.example.shoppingapp.data.local.pojo.CartItemInCart
 
 @Dao
 interface CartDAO {

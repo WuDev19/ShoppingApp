@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(
     tableName = "products",
     indices = [
-        Index("maNguoiBan, motaSp"),
-        Index("maNguoiBan, numberBought")
+        Index("maNguoiBan", "motaSp"),
+        Index("maNguoiBan", "numberBought")
     ]
 )
 data class ProductEntity(

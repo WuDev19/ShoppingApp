@@ -16,7 +16,9 @@ import com.example.shoppingapp.domain.model.CartItem
 import com.example.shoppingapp.domain.model.CartUiModel
 import com.example.shoppingapp.utils.StringConstants
 
-class CartAdapter :
+class CartAdapter(
+    private val onCheckBoxItem: (CartUiModel, Boolean) -> Unit
+) :
     PagingDataAdapter<CartUiModel, ViewHolder>(diffCallBack) {
     companion object {
         val diffCallBack = object : DiffUtil.ItemCallback<CartUiModel>() {
@@ -42,14 +44,20 @@ class CartAdapter :
         }
     }
 
-
     class CartViewHolder(val binding: CartItemLayoutBinding) : ViewHolder(binding.root) {
         fun bind(cart: Cart) {
-            binding.tvNameShop.text = cart.tenShop
+            binding.apply {
+                tvNameShop.text = cart.tenShop
+                Glide.with(root.context)
+                    .load(cart.avtShop)
+                    .error(R.drawable.icon_avatar)
+                    .into(imgAvatar)
+            }
         }
     }
 
-    class CartItemViewHolder(val binding: ProductInCartItemBinding) : ViewHolder(binding.root) {
+    class CartItemViewHolder(val binding: ProductInCartItemBinding) :
+        ViewHolder(binding.root) {
         fun bind(cartItem: CartItem) {
             cartItem.let {
                 binding.apply {
@@ -99,6 +107,16 @@ class CartAdapter :
             (holder as CartViewHolder).bind(item)
         } else if (item is CartItem) {
             (holder as CartItemViewHolder).bind(item)
+            holder.binding.apply {
+                checkBoxProduct.setOnClickListener {
+                    val isChecked = checkBoxProduct.isChecked
+                    if (isChecked) {
+                        onCheckBoxItem(item, true)
+                    } else {
+                        onCheckBoxItem(item, false)
+                    }
+                }
+            }
         }
     }
 

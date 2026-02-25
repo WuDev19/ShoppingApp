@@ -6,21 +6,42 @@ import com.example.shoppingapp.R
 
 object CheckNavigation {
 
-    fun navigateTo(navController: NavController, idActionHome: Int, idActionStore: Int){
-        if(navController.graph.id == R.id.nav_home){
-            navController.navigate(idActionHome)
-        }
-        else{
-            navController.navigate(idActionStore)
+    fun navigateTo(
+        navController: NavController,
+        idActionHome: Int,
+        idActionStore: Int,
+        idActionProfile: Int? = null
+    ) {
+        when (navController.graph.id) {
+            R.id.nav_home -> {
+                navController.navigate(idActionHome)
+            }
+            R.id.nav_store -> {
+                navController.navigate(idActionStore)
+            }
+            else -> {
+                idActionProfile?.let { navController.navigate(it) }
+            }
         }
     }
 
-    fun navigateTo(navController: NavController, idActionHome: Int, idActionStore: Int, bundle: Bundle){
-        if(navController.graph.id == R.id.nav_home){
-            navController.navigate(idActionHome, bundle)
-        }
-        else{
-            navController.navigate(idActionStore, bundle)
+    fun navigateTo(
+        navController: NavController,
+        idActionHome: Int,
+        idActionStore: Int,
+        bundle: Bundle,
+        idActionProfile: Int? = null
+    ) {
+        when (navController.graph.id) {
+            R.id.nav_home -> {
+                navController.navigate(idActionHome, bundle)
+            }
+            R.id.nav_store -> {
+                navController.navigate(idActionStore, bundle)
+            }
+            else -> {
+                idActionProfile?.let { navController.navigate(it, bundle) }
+            }
         }
     }
 

@@ -10,8 +10,9 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:id="@+id/img_avatar"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             app:srcCompat="@drawable/icon_avatar" />
 
     </com.google.android.material.card.MaterialCardView>
@@ -27,18 +28,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:text="@string/update_your_name_to_keep_your_profile_accurate_and_personalized"
             android:textColor="@color/black"
             android:textStyle="bold" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_color_size"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:ellipsize="end"
-            android:text="@string/color"
-            android:textColor="@color/black" />
 
         <View
             android:layout_width="0dp"
@@ -46,12 +37,42 @@
             android:layout_weight="1" />
 
         <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tv_price"
+            android:id="@+id/tv_color_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:text="Cost: "
-            android:textColor="@color/red" />
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_price_dícount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:textColor="@color/black" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

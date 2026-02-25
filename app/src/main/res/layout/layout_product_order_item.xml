@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="10dp"
-    app:strokeColor="@color/button_color">>
+    android:layout_marginTop="10dp"
+    app:cardCornerRadius="10dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,11 +12,36 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <androidx.recyclerview.widget.RecyclerView
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tv_shop_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_order_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <include
+                android:id="@+id/layout_item"
+                layout="@layout/layout_product_order_same_shop"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:visibility="gone" />
+
+        </FrameLayout>
 
         <LinearLayout
+            android:id="@+id/linear_voucher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -49,6 +74,44 @@
             android:background="@color/light_grey" />
 
         <LinearLayout
+            android:id="@+id/linear_shipping"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/shipping_method"
+                android:textColor="@color/black" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@drawable/icon_next_shop" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_shipping_method"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey" />
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -58,18 +121,17 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Total: "
+                android:text="@string/total"
                 android:textColor="@color/black" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_total_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/_10_00"
                 android:textColor="@color/black"
                 android:textStyle="bold" />
 
         </LinearLayout>
-
 
     </LinearLayout>
 

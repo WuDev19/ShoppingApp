@@ -1,64 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:orientation="vertical"
     tools:context=".ui.view.fragment.product.CartFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal">
+        android:id="@+id/linear_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/img_back"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:importantForAccessibility="no"
-            android:src="@drawable/icon_back" />
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:src="@drawable/icon_back" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="@string/cart"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="10dp"
+                android:text="@string/edit"
+                android:textColor="@color/black" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_cart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_marginStart="10dp"
-            android:text="@string/cart"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/light_grey" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/delete"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:backgroundTint="@color/button_color"
+                app:cornerRadius="10dp" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_buy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text="@string/buy"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:backgroundTint="@color/button_color"
+                app:cornerRadius="10dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_view_cart"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        android:layout_weight="1" />
-
     <View
+        android:id="@+id/shimmer"
         android:layout_width="match_parent"
-        android:layout_height="0.5dp"
-        android:background="@color/light_grey" />
+        android:layout_height="match_parent"
+        android:background="@color/over_lay"
+        android:visibility="gone" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_buy"
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/tv_wait"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:text="@string/buy"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:text="@string/wait_a_second"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:backgroundTint="@color/button_color"
-        app:cornerRadius="10dp"
-        android:layout_gravity="end"/>
+        android:visibility="gone" />
 
-</LinearLayout>
+</FrameLayout>

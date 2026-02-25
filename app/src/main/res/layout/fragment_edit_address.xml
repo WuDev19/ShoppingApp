@@ -12,6 +12,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/linear_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -38,127 +39,219 @@
 
         </LinearLayout>
 
-        <com.google.android.material.card.MaterialCardView
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="10dp"
-            app:cardBackgroundColor="@color/white"
-            app:strokeWidth="1dp">
+            android:layout_below="@id/linear_app_bar"
+            android:layout_above="@id/linear_button">
 
-            <LinearLayout
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="10dp"
+                app:cardBackgroundColor="@color/white"
+                app:strokeWidth="1dp">
 
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/address"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/username"
-                    android:textColor="@color/black" />
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_username"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/phone_number"
-                    android:textColor="@color/black" />
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_sdt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/detail_address"
-                    android:textColor="@color/black" />
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/tv_detail_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <com.google.android.material.textview.MaterialTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="@string/open_map"
-                    android:textColor="@color/black" />
-
-                <ImageView
-                    android:id="@+id/img_map"
-                    android:layout_width="match_parent"
-                    android:layout_height="150dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/icon_map"
-                    android:importantForAccessibility="no"
-                    android:scaleType="fitXY" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@color/grey" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
                     <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:text="@string/set_as_default_address"
-                        tools:ignore="RelativeOverlap" />
+                        android:text="@string/address"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
 
-                    <androidx.appcompat.widget.SwitchCompat
-                        android:id="@+id/sw_default"
+                    <com.google.android.material.textview.MaterialTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        app:thumbTint="@color/button_color"
-                        app:trackTint="@color/light_blue" />
+                        android:layout_marginTop="10dp"
+                        android:text="@string/username"
+                        android:textColor="@color/black" />
 
-                </RelativeLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tv_username"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
-            </LinearLayout>
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/phone_number"
+                        android:textColor="@color/black" />
 
-        </com.google.android.material.card.MaterialCardView>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tv_sdt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/select_province"
+                        android:textColor="@color/black" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:hintEnabled="false"
+                        app:boxCornerRadiusTopStart="10dp"
+                        app:boxCornerRadiusTopEnd="10dp"
+                        app:boxCornerRadiusBottomEnd="10dp"
+                        app:boxCornerRadiusBottomStart="10dp"
+                        app:boxStrokeColor="@color/button_color">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/tv_select_province"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/select_province"
+                            android:padding="10dp"
+                            tools:ignore="LabelFor" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/select_district"
+                        android:textColor="@color/black" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:hintEnabled="false"
+                        app:boxCornerRadiusTopStart="10dp"
+                        app:boxCornerRadiusTopEnd="10dp"
+                        app:boxCornerRadiusBottomEnd="10dp"
+                        app:boxCornerRadiusBottomStart="10dp"
+                        app:boxStrokeColor="@color/button_color">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/tv_select_district"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/select_district"
+                            android:inputType="none"
+                            android:padding="10dp"
+                            tools:ignore="LabelFor" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/select_ward"
+                        android:textColor="@color/black" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:hintEnabled="false"
+                        app:boxCornerRadiusTopStart="10dp"
+                        app:boxCornerRadiusTopEnd="10dp"
+                        app:boxCornerRadiusBottomEnd="10dp"
+                        app:boxCornerRadiusBottomStart="10dp"
+                        app:boxStrokeColor="@color/button_color">
+
+                        <AutoCompleteTextView
+                            android:id="@+id/tv_select_ward"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/select_ward"
+                            android:inputType="none"
+                            android:padding="10dp"
+                            tools:ignore="LabelFor" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/detail_address"
+                        android:textColor="@color/black" />
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/tv_detail_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="@string/open_map"
+                        android:textColor="@color/black" />
+
+                    <ImageView
+                        android:id="@+id/img_map"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/icon_map"
+                        android:importantForAccessibility="no"
+                        android:scaleType="fitXY" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@color/grey" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp">
+
+                        <com.google.android.material.textview.MaterialTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:text="@string/set_as_default_address"
+                            tools:ignore="RelativeOverlap" />
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/sw_default"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            app:thumbTint="@color/button_color"
+                            app:trackTint="@color/light_blue" />
+
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </androidx.core.widget.NestedScrollView>
 
         <LinearLayout
+            android:id="@+id/linear_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -197,7 +290,7 @@
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_gravity="center"/>
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
 </FrameLayout>

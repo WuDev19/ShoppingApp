@@ -3,6 +3,8 @@ package com.example.shoppingapp.ui.viewmodel.user.edit_profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
+import com.example.shoppingapp.domain.model.ghn.ProvinceGhn
+import com.example.shoppingapp.domain.usecase.ghn_usecase.GetProvinceUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.AddUserAddressUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.DeleteUserAddressUseCase
 import com.example.shoppingapp.domain.usecase.profileusecase.EditUserAddressUseCase
@@ -20,6 +22,7 @@ class EditAddressViewModel @Inject constructor(
     private val editUserAddressUseCase: EditUserAddressUseCase,
     private val addUserAddressUseCase: AddUserAddressUseCase,
     private val deleteUserAddressUseCase: DeleteUserAddressUseCase,
+    private val getProvinceUseCase: GetProvinceUseCase,
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
@@ -29,6 +32,10 @@ class EditAddressViewModel @Inject constructor(
     private val _deleteState: MutableStateFlow<StateListener<Int>> =
         MutableStateFlow(StateListener.Idle)
     val deleteState = _deleteState.asStateFlow()
+
+    private val _provincesState: MutableStateFlow<StateListener<List<ProvinceGhn>>> =
+        MutableStateFlow(StateListener.Idle)
+    val provincesState = _provincesState.asStateFlow()
     fun updateAddress(idAddress: Int, userAddressRequest: UserAddressRequest) {
         viewModelScope.launch {
             editUserAddressUseCase(idAddress, userAddressRequest).collectLatest {
@@ -38,7 +45,6 @@ class EditAddressViewModel @Inject constructor(
     }
 
     fun addAddress(userAddressRequest: UserAddressRequest) {
-
         viewModelScope.launch {
             try {
                 addUserAddressUseCase(
@@ -51,11 +57,9 @@ class EditAddressViewModel @Inject constructor(
                 _addressState.value = StateListener.Error(IllegalArgumentException(e.message))
             }
         }
-
     }
 
     fun deleteUserAddress(idUser: String, idAddress: Int) {
-
         viewModelScope.launch {
             try {
                 deleteUserAddressUseCase(idUser, idAddress).collectLatest {
@@ -65,7 +69,14 @@ class EditAddressViewModel @Inject constructor(
                 _deleteState.value = StateListener.Error(IllegalArgumentException(e.message))
             }
         }
+    }
 
+    fun getProvinces(){
+        viewModelScope.launch {
+            getProvinceUseCase().collectLatest {
+                _provincesState.value = it
+            }
+        }
     }
 
 }

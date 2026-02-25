@@ -1,17 +1,14 @@
 package com.example.shoppingapp.data.remote.api
 
-import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.get.UserAddressDTO
 import com.example.shoppingapp.data.remote.dto.get.UserDTOGet
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
-import com.example.shoppingapp.data.remote.dto.request.UserDTOCreate
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
-import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 

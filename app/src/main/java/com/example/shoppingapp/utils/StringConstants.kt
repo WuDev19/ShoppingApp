@@ -91,4 +91,7 @@ object StringConstants {
     const val OKHTTP_NO_INTERCEPTOR = "okhttp_with_no_interceptor"
     const val UPDATE_SUCCESS = "Update successfully"
     const val UPDATE_FAILED = "Update failed, please try again"
+    const val LIST_ORDER = "list_order"
+    const val IS_BUY = "is_buy"
+    const val ORDER_BUY_NOW = "order_from_buy_now"
 }
