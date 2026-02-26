@@ -7,6 +7,6 @@ import javax.inject.Inject
 
 class GetUserAddressUseCase @Inject constructor(private val repo: UserRepository) {
 
-    operator fun invoke(id: String): Flow<List<AddressItem>> = repo.getUserAddress(id)
+    operator fun invoke(userId: String): Flow<List<AddressItem>> = repo.getUserAddress(userId)
 
 }

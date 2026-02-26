@@ -25,7 +25,7 @@ interface UserRepository {
 
     fun uploadAvatarToCloudinary(uri: Uri): Flow<StateListener<String>>
 
-    fun getUserAddress(id: String): Flow<List<AddressItem>>
+    fun getUserAddress(userId: String): Flow<List<AddressItem>>
 
     fun editUserAddress(
         idAddress: Int,

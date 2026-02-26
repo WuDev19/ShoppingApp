@@ -10,15 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import androidx.annotation.RequiresApi
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.shoppingapp.R
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
@@ -29,7 +26,6 @@ import com.example.shoppingapp.domain.model.ghn.ProvinceGhn
 import com.example.shoppingapp.domain.model.ghn.WardGhn
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.viewmodel.user.edit_profile.EditAddressViewModel
-import com.example.shoppingapp.utils.CheckNavigation
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -56,6 +52,9 @@ class EditAddressFragment : Fragment() {
     private lateinit var selectProvinceAdapter: SelectAddressAdapter
     private lateinit var selectDistrictAdapter: SelectAddressAdapter
     private lateinit var selectWardAdapter: SelectAddressAdapter
+    private var lastProvince: ProvinceGhn? = null
+    private var lastDistrict: DistrictGhn? = null
+    private var lastWard: WardGhn? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,20 +73,10 @@ class EditAddressFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    controller.currentBackStackEntry?.savedStateHandle?.getStateFlow(
-                        StringConstants.ADDRESS_DETAIL,
-                        addressItem?.addressName
-                    )
-                        ?.collectLatest {
-                            binding.tvDetailAddress.setText(it)
-                        }
-                }
-                launch {
                     viewModel.addressState.collectLatest {
                         when (it) {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> {
-                                Log.e(StringConstants.DEBUG, "onViewCreated: loading")
                                 binding.progressBar.isVisible = true
                             }
 
@@ -180,13 +169,35 @@ class EditAddressFragment : Fragment() {
 
         binding.apply {
 
+            addressItem?.let { item ->
+                val addresses = item.addressName.split(", ")
+                lastProvince = ProvinceGhn(item.provinceId, addresses[3])
+                lastDistrict = DistrictGhn(item.districtId, item.provinceId, addresses[2])
+                lastWard = WardGhn(item.wardCode, item.districtId, addresses[1])
+                tvUsername.setText(item.name)
+                tvSdt.setText(item.sdt)
+                tvDetailAddress.setText(addresses[0])
+                tvSelectWard.setText(addresses[1])
+                tvSelectDistrict.setText(addresses[2])
+                tvSelectProvince.setText(addresses[3])
+                swDefault.isChecked = item.defaultAddress
+            }
+
             tvSelectProvince.apply {
                 setAdapter(selectProvinceAdapter)
                 onItemClickListener =
-                    AdapterView.OnItemClickListener { parentView, currentView, position, viewId ->
-                        tvSelectDistrict.isEnabled = true
+                    AdapterView.OnItemClickListener { _, _, position, _ ->
                         val item = adapter.getItem(position)
                         if (item is ProvinceGhn) {
+                            if (lastProvince?.provinceName == item.provinceName) {
+                                return@OnItemClickListener
+                            }
+                            lastProvince = item
+                            if (tvSelectDistrict.text.isNotEmpty()) tvSelectDistrict.setText("")
+                            if (tvSelectWard.text.isNotEmpty()) tvSelectWard.setText("")
+                            if (tvDetailAddress.text.toString()
+                                    .isNotEmpty()
+                            ) tvDetailAddress.setText("")
                             viewModel.getDistrictOfProvince(item.provinceID)
                         }
                     }
@@ -195,10 +206,17 @@ class EditAddressFragment : Fragment() {
             tvSelectDistrict.apply {
                 setAdapter(selectDistrictAdapter)
                 onItemClickListener =
-                    AdapterView.OnItemClickListener { parentView, currentView, position, viewId ->
-                        tvSelectWard.isEnabled = true
+                    AdapterView.OnItemClickListener { _, _, position, _ ->
                         val item = adapter.getItem(position)
                         if (item is DistrictGhn) {
+                            if (lastDistrict?.districtName == item.districtName) {
+                                return@OnItemClickListener
+                            }
+                            lastDistrict = item
+                            if (tvSelectWard.text.isNotEmpty()) tvSelectWard.setText("")
+                            if (tvDetailAddress.text.toString()
+                                    .isNotEmpty()
+                            ) tvDetailAddress.setText("")
                             viewModel.getWardOfDistrict(item.districtID)
                         }
                     }
@@ -207,33 +225,32 @@ class EditAddressFragment : Fragment() {
             tvSelectWard.apply {
                 setAdapter(selectWardAdapter)
                 onItemClickListener =
-                    AdapterView.OnItemClickListener { parentView, currentView, position, viewId ->
+                    AdapterView.OnItemClickListener { _, _, position, _ ->
                         val item = adapter.getItem(position)
                         if (item is WardGhn) {
-                            Log.e(StringConstants.DEBUG, "onViewCreated: $item")
+                            if (lastWard?.wardName == item.wardName) {
+                                return@OnItemClickListener
+                            }
+                            lastWard = item
+                            if (tvDetailAddress.text.toString()
+                                    .isNotEmpty()
+                            ) tvDetailAddress.setText("")
                         }
                     }
             }
 
-            addressItem?.let { item ->
-                tvUsername.setText(item.name)
-                tvSdt.setText(item.sdt)
-                tvDetailAddress.setText(item.addressName)
-                swDefault.isChecked = item.defaultAddress
-            }
-
-            imgMap.setOnClickListener {
-                val bundle = bundleOf(
-                    StringConstants.ADDRESS_DETAIL to tvDetailAddress.text.toString()
-                )
-                CheckNavigation.navigateTo(
-                    controller,
-                    R.id.action_editAddressFragment2_to_mapFragment3,
-                    R.id.action_editAddressFragment3_to_mapFragment2,
-                    bundle,
-                    R.id.action_editAddressFragment_to_mapFragment
-                )
-            }
+//            imgMap.setOnClickListener {
+//                val bundle = bundleOf(
+//                    StringConstants.ADDRESS_DETAIL to tvDetailAddress.text.toString()
+//                )
+//                CheckNavigation.navigateTo(
+//                    controller,
+//                    R.id.action_editAddressFragment2_to_mapFragment3,
+//                    R.id.action_editAddressFragment3_to_mapFragment2,
+//                    bundle,
+//                    R.id.action_editAddressFragment_to_mapFragment
+//                )
+//            }
 
             imgBack.setOnClickListener {
                 controller.popBackStack()
@@ -245,33 +262,9 @@ class EditAddressFragment : Fragment() {
                 val username = tvUsername.text.toString()
                 val phone = tvSdt.text.toString()
                 if (addressItem == null) {
-                    viewModel.addAddress(
-                        UserAddressRequest(
-                            address,
-                            default,
-                            username,
-                            phone,
-                            userId
-                        )
-                    )
+                    addAddress(address, default, username, phone)
                 } else {
-                    if (address == addressItem?.addressName &&
-                        default == addressItem?.defaultAddress &&
-                        username == addressItem?.name &&
-                        phone == addressItem?.sdt
-                    ) {
-                        ToastUtils.showToast(requireContext(), StringConstants.CHANGE_ADDRESS)
-                    } else {
-                        viewModel.updateAddress(
-                            addressItem!!.idAddress, UserAddressRequest(
-                                address,
-                                default,
-                                username,
-                                phone,
-                                userId
-                            )
-                        )
-                    }
+                    updateAddress(address, default, username, phone)
                 }
             }
 
@@ -294,4 +287,80 @@ class EditAddressFragment : Fragment() {
         _binding = null
     }
 
+    private fun addAddress(
+        address: String,
+        default: Boolean,
+        username: String,
+        phone: String
+    ) {
+        if (lastProvince == null ||
+            lastDistrict == null ||
+            lastWard == null ||
+            address.isEmpty() ||
+            username.isEmpty() ||
+            phone.isEmpty()
+        ) {
+            ToastUtils.showToast(requireContext(), "Please select full information")
+            return
+        }
+        val addressName = buildString {
+            append(address)
+            append(", ")
+            append(lastWard!!.wardName)
+            append(", ")
+            append(lastDistrict!!.districtName)
+            append(", ")
+            append(lastProvince!!.provinceName)
+        }
+        viewModel.addAddress(
+            UserAddressRequest(
+                addressName,
+                lastProvince!!.provinceID,
+                lastDistrict!!.districtID,
+                lastWard!!.wardCode,
+                default,
+                username,
+                phone,
+                userId
+            )
+        )
+    }
+
+    private fun updateAddress(
+        address: String,
+        default: Boolean,
+        username: String,
+        phone: String
+    ) {
+        val detailAddress = addressItem?.addressName?.split(", ")[0]
+        if (address == detailAddress &&
+            default == addressItem?.defaultAddress &&
+            username == addressItem?.name &&
+            phone == addressItem?.sdt
+        ) {
+            ToastUtils.showToast(requireContext(), StringConstants.CHANGE_ADDRESS)
+        } else {
+            val addressName = buildString {
+                append(address)
+                append(", ")
+                append(lastWard!!.wardName)
+                append(", ")
+                append(lastDistrict!!.districtName)
+                append(", ")
+                append(lastProvince!!.provinceName)
+            }
+            viewModel.updateAddress(
+                addressItem!!.idAddress, UserAddressRequest(
+                    addressName,
+                    lastProvince!!.provinceID,
+                    lastDistrict!!.districtID,
+                    lastWard!!.wardCode,
+                    default,
+                    username,
+                    phone,
+                    userId
+                )
+            )
+        }
+    }
 }

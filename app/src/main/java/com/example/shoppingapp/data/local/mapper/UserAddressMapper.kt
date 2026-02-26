@@ -12,8 +12,11 @@ object UserAddressMapper {
             userAddressEntity.name,
             userAddressEntity.sdt,
             userAddressEntity.addressName,
+            userAddressEntity.provinceId,
+            userAddressEntity.districtId,
+            userAddressEntity.wardCode,
             userAddressEntity.defaultAddress,
-            userAddressEntity.maND
+            userAddressEntity.maND,
         )
     }
 
@@ -23,6 +26,9 @@ object UserAddressMapper {
             userAddressDTO.name!!,
             userAddressDTO.sdt!!,
             userAddressDTO.addressName!!,
+            userAddressDTO.provinceId!!,
+            userAddressDTO.districtId!!,
+            userAddressDTO.wardCode!!,
             userAddressDTO.defaultAddress!!,
             userAddressDTO.maND!!
         )

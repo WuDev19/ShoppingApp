@@ -202,10 +202,10 @@ class UserRepositoryImpl @Inject constructor(
     //implement ssot, pattern về quản lý dữ liệu tại một nơi duy nhất là room, room sẽ trả về Flow<List<Data>>
     //nên tách room riêng ra một method, call api -> insert vào room ra một method, như vậy sẽ chuẩn hơn, như này thì mỗi lần gọi api thì lại truy vấn room ko ổn lắm
     //room chỉ việc lắng nghe dữ liệu khi call api sau đó insert
-    override fun getUserAddress(id: String): Flow<List<AddressItem>> = flow {
+    override fun getUserAddress(userId: String): Flow<List<AddressItem>> = flow {
         //room là nơi phát nguồn dữ liệu chính
         emitAll(
-            userAddressDAO.getUserAddress(id).onEach {
+            userAddressDAO.getUserAddress(userId).onEach {
                 Log.e(
                     StringConstants.DEBUG,
                     "getUserAddress: emit lai sau khi call api"
@@ -216,13 +216,13 @@ class UserRepositoryImpl @Inject constructor(
         )
     }.onStart {
         try {
-            val response = userAPI.getUserAddress(id) //api chỉ để làm mới room
+            val response = userAPI.getUserAddress(userId) //api chỉ để làm mới room
             if (response.isSuccessful) {
                 val data = response.body().orEmpty()
                 val listUserAddressEntity = data.map {
                     UserAddressMapper.mapToUserAddressEntity(it)
                 }
-                userAddressDAO.clearAll(id)
+                userAddressDAO.clearAll(userId)
                 userAddressDAO.insertAll(listUserAddressEntity)
             }
         } catch (e: Exception) {
@@ -239,7 +239,11 @@ class UserRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             emit(StateListener.Success(Unit))
         } else {
-            emit(StateListener.Error(Exception(StringConstants.API_ERROR)))
+            val errorBody = response.errorBody()
+            val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+            errorBody?.string()?.let {
+                emit(StateListener.Error(Exception(adapter.fromJson(it)?.message)))
+            }
         }
     }.catch {
         emit(StateListener.Error(Exception(it.message)))
@@ -254,7 +258,11 @@ class UserRepositoryImpl @Inject constructor(
         if (response.isSuccessful) {
             emit(StateListener.Success(Unit))
         } else {
-            emit(StateListener.Error(Exception(StringConstants.API_ERROR)))
+            val errorBody = response.errorBody()
+            val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+            errorBody?.string()?.let {
+                emit(StateListener.Error(Exception(adapter.fromJson(it)?.message)))
+            }
         }
     }.catch {
         emit(StateListener.Error(Exception(it.message)))

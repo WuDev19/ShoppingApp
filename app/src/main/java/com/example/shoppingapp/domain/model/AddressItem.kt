@@ -8,6 +8,9 @@ data class AddressItem (
     val name: String,
     val sdt: String,
     val addressName: String,
+    val provinceId: Int,
+    val districtId: Int,
+    val wardCode: String,
     val defaultAddress: Boolean,
     val maND: String
 ) : Parcelable

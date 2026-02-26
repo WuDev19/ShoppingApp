@@ -38,8 +38,8 @@ interface UserAPI {
         @Query("url") url: String
     ): Response<UserDTOGet>
 
-    @GET("user/get/address/{id}")
-    suspend fun getUserAddress(@Path("id") id: String): Response<List<UserAddressDTO>>
+    @GET("user/get/address/{userId}")
+    suspend fun getUserAddress(@Path("userId") userId: String): Response<List<UserAddressDTO>>
 
     @PATCH("user/update/address/{id}")
     suspend fun updateAddress(
