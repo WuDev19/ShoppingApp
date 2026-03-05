@@ -57,7 +57,7 @@ class HeaderDetailAdapter(
                         )
                     })?.div(100)!!))
                 holder.binding.tvCost.text = buildString {
-                    append(productDetail.giaSp.toString())
+                    append("${productDetail.giaSp}")
                     append(StringConstants.PRICE)
                 }
                 holder.binding.tvCost.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
@@ -66,7 +66,7 @@ class HeaderDetailAdapter(
                     append(StringConstants.PERCENT)
                 }
                 holder.binding.tvCostWithDiscount.text = buildString {
-                    append(discountCost.toString())
+                    append("$discountCost")
                     append(StringConstants.PRICE)
                 }
             } else {

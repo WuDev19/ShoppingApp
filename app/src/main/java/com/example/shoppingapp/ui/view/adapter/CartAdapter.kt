@@ -18,8 +18,7 @@ import com.example.shoppingapp.utils.StringConstants
 
 class CartAdapter(
     private val onCheckBoxItem: (CartUiModel, Boolean) -> Unit
-) :
-    PagingDataAdapter<CartUiModel, ViewHolder>(diffCallBack) {
+) : PagingDataAdapter<CartUiModel, ViewHolder>(diffCallBack) {
     companion object {
         val diffCallBack = object : DiffUtil.ItemCallback<CartUiModel>() {
             override fun areItemsTheSame(oldItem: CartUiModel, newItem: CartUiModel): Boolean {
@@ -62,35 +61,35 @@ class CartAdapter(
             cartItem.let {
                 binding.apply {
                     Glide.with(root)
-                        .load(it.detailProduct?.anhDetail)
+                        .load(it.detailProduct.anhDetail)
                         .placeholder(R.drawable.place_holder)
                         .error(R.drawable.place_holder)
                         .into(imgProduct)
-                    tvMota.text = it.detailProduct?.tenDetail
+                    tvMota.text = it.detailProduct.tenDetail
                     tvColorSize.text = buildString {
-                        append(it.detailProduct?.color)
+                        append(it.detailProduct.color)
                         append(", ")
-                        append(it.detailProduct?.kichco)
+                        append(it.detailProduct.kichco)
                     }
                     if (it.giamGia == 0) {
                         tvCostDiscount.text = buildString {
-                            append((it.detailProduct?.unitPrice?.times(it.soLuong!!)).toString())
+                            append((it.detailProduct.unitPrice?.times(it.soLuong)).toString())
                             append(StringConstants.PRICE)
                         }
                         tvCost.visibility = View.GONE
                     } else {
                         tvCost.visibility = View.VISIBLE
-                        val discount = (it.detailProduct?.unitPrice)?.minus(
-                            ((it.giamGia?.times(it.detailProduct.unitPrice!!))?.div(
+                        val discount = (it.detailProduct.unitPrice)?.minus(
+                            ((it.giamGia.times(it.detailProduct.unitPrice!!)).div(
                                 100
-                            )!!)
+                            ))
                         )
                         tvCostDiscount.text = buildString {
                             append(discount.toString())
                             append(StringConstants.PRICE)
                         }
                         tvCost.text = buildString {
-                            append(it.detailProduct?.unitPrice.toString())
+                            append(it.detailProduct.unitPrice.toString())
                             append(StringConstants.PRICE)
                         }
                         tvCost.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG

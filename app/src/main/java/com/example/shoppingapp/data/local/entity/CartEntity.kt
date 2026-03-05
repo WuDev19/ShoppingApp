@@ -11,5 +11,9 @@ data class CartEntity (
     val maNB: Int,
     val tenShop: String,
     val avtShop: String,
+    val provinceIdShop: Int,
+    val districtIdShop: Int,
+    val wardCodeShop: String,
+    val shopGhnId: Int,
     val updateTime: Long
 )

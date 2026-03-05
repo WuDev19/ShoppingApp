@@ -6,5 +6,9 @@ data class SellerDTO(
     val sdtNguoiBan: String? = "",
     val avtShop: String? = "",
     val diaChi: String? = null,
-    val sanphams: Set<ProductDTO>? = emptySet()
+    val provinceId: Int? = 0,
+    val districtId: Int? = 0,
+    val wardCode: String? = "",
+    val shopGhnId: Int? = 0,
+    val sanphams: Set<ProductDTO>? = null
 )

@@ -10,6 +10,7 @@ import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 import com.example.shoppingapp.data.remote.api.seller.NormalFunctionSellerAPI
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.api.ghn.AddressAPI
+import com.example.shoppingapp.data.remote.api.ghn.ServiceAPI
 import com.example.shoppingapp.data.remote.api.product.ModifyProductAPI
 import com.example.shoppingapp.data.remote.api.seller.AdvancedFunctionsSellerAPI
 import com.example.shoppingapp.data.remote.interceptors.AuthInterceptor
@@ -155,5 +156,10 @@ object APIModule {
     @Singleton
     fun provideAddressAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): AddressAPI =
         retrofit.create(AddressAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideServiceAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): ServiceAPI =
+        retrofit.create(ServiceAPI::class.java)
 
 }

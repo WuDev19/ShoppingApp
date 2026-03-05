@@ -10,14 +10,29 @@ import com.example.shoppingapp.databinding.LayoutProductOrderItemBinding
 import com.example.shoppingapp.domain.model.CartItem
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
+import com.example.shoppingapp.domain.model.ghn.ShippingMethod
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.utils.CalculateUtils
 
 class OrderProductAdapter(
     private val productOrders: List<OrderFromCart>,
     private val orderFromBuyNow: OrderFromBuyNow?,
-) :
-    RecyclerView.Adapter<OrderProductAdapter.OrderProductViewHolder>() {
+) : RecyclerView.Adapter<OrderProductAdapter.OrderProductViewHolder>() {
+
+    private var isClickToShow = false
+    fun setServices(listService: MutableList<ShippingMethod>) {
+        if (orderFromBuyNow == null) {
+            notifyItemChanged(0, listService)
+        } else {
+            var position = 0
+            productOrders.filterIndexed { index, orderCart ->
+                position = index
+                orderCart.cart.shopGhnId == listService.first().shopId
+            }
+            notifyItemChanged(position, listService)
+        }
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -32,24 +47,56 @@ class OrderProductAdapter(
 
     override fun onBindViewHolder(
         holder: OrderProductViewHolder,
-        position: Int
+        position: Int,
+        payloads: List<Any?>
+    ) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            var totalPriceWithoutShipFee = if (productOrders.isNotEmpty()) {
+                CalculateUtils.calcTotalPrice(productOrders[position].cartItems)
+            } else {
+                CalculateUtils.calcTotalPrice(
+                    orderFromBuyNow!!
+                )
+            }
+            payloads.forEach { payload ->
+                if (payload is MutableList<*>) {
+                    val services = payload.filterIsInstance<ShippingMethod>()
+                    totalPriceWithoutShipFee += services[0].feeServiceGhn.totalFee
+                    holder.binding.apply {
+                        if (orderFromBuyNow == null) {
+                            tvTotalPrice.text = buildString {
+                                append(totalPriceWithoutShipFee)
+                                append("$")
+                            }
+                        } else {
+                            layoutItem.apply {
+                                tvTotalPrice.text = buildString {
+                                    append(totalPriceWithoutShipFee)
+                                    append("$")
+                                }
+                            }
+                        }
+                    }
+                    holder.submitShippingMethod(services)
+                }
+            }
+        }
+    }
+
+    override fun onBindViewHolder(
+        holder: OrderProductViewHolder,
+        position: Int,
     ) {
         holder.binding.apply {
             if (productOrders.isNotEmpty()) {
                 layoutItem.root.isVisible = false
                 recyclerViewOrderItem.isVisible = true
                 val itemOrder = productOrders[position]
-                val orderProductSameShopAdapter = OrderProductSameShopAdapter(itemOrder.cartItems)
+                holder.submitOrderSameShop(itemOrder.cartItems)
                 tvShopName.text = itemOrder.cart.tenShop
-                recyclerViewOrderItem.apply {
-                    adapter = orderProductSameShopAdapter
-                    layoutManager = LinearLayoutManager(context)
-                    addItemDecoration(MarginItemDecoration(20))
-                }
-                tvTotalPrice.text = buildString {
-                    append(CalculateUtils.calcTotalPrice(itemOrder.cartItems))
-                    append("$")
-                }
+                showShippingMethod(this)
             } else {
                 orderFromBuyNow?.let { order ->
                     layoutItem.root.isVisible = true
@@ -80,20 +127,65 @@ class OrderProductAdapter(
                             append("x")
                             append(order.number)
                         }
-                        tvTotalPrice.text = buildString {
-                            append(CalculateUtils.calcTotalPrice(order))
-                            append("$")
-                        }
                     }
+                    showShippingMethod(this)
                 }
             }
         }
-
     }
 
     override fun getItemCount(): Int = if (productOrders.isNotEmpty()) productOrders.size else 1
 
+    private fun showShippingMethod(binding: LayoutProductOrderItemBinding) {
+        binding.apply {
+            linearShipping.setOnClickListener {
+                if (!isClickToShow) {
+                    isClickToShow = true
+                    imgRotateShip.animate()
+                        .rotation(90f)
+                        .setDuration(500)
+                        .withEndAction {
+                            recyclerViewShippingMethod.isVisible = true
+                        }
+                } else {
+                    isClickToShow = false
+                    imgRotateShip.animate()
+                        .rotation(0f)
+                        .setDuration(500)
+                        .withEndAction {
+                            recyclerViewShippingMethod.isVisible = false
+                        }
+                }
+            }
+        }
+    }
+
     class OrderProductViewHolder(val binding: LayoutProductOrderItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root) {
+        private val orderProductSameShopAdapter = OrderProductSameShopAdapter()
+        private val shippingMethodAdapter = ShippingMethodAdapter()
+
+        init {
+            binding.apply {
+                recyclerViewOrderItem.apply {
+                    adapter = orderProductSameShopAdapter
+                    layoutManager = LinearLayoutManager(context)
+                    addItemDecoration(MarginItemDecoration(20))
+                }
+                recyclerViewShippingMethod.apply {
+                    adapter = shippingMethodAdapter
+                    layoutManager = LinearLayoutManager(context)
+                }
+            }
+        }
+
+        fun submitOrderSameShop(list: List<CartItem>) {
+            orderProductSameShopAdapter.submitList(list)
+        }
+
+        fun submitShippingMethod(list: List<ShippingMethod>) {
+            shippingMethodAdapter.submitList(list)
+        }
+    }
 
 }

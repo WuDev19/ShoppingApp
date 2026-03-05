@@ -63,6 +63,15 @@ class VerifyOtpFragment(private val onSuccess: () -> Unit) : BottomSheetDialogFr
             BundleCompat.getParcelable(it, StringConstants.OTP_MODEL, OtpModel::class.java)
         }
     }
+    private val provinceId by lazy {
+        arguments?.getInt(StringConstants.PROVINCE_ID)
+    }
+    private val districtId by lazy {
+        arguments?.getInt(StringConstants.DISTRICT_ID)
+    }
+    private val wardCode by lazy {
+        arguments?.getString(StringConstants.WARD_CODE)
+    }
     private var isExpire: Boolean = false
 
     @Inject
@@ -89,7 +98,14 @@ class VerifyOtpFragment(private val onSuccess: () -> Unit) : BottomSheetDialogFr
 
             btnVerify.setOnClickListener {
                 if (!isExpire) {
-                    if (uriAnh == null || shopName == null || shopPhone == null || shopAddress == null) {
+                    if (uriAnh == null ||
+                        shopName == null ||
+                        shopPhone == null ||
+                        shopAddress == null ||
+                        provinceId == null ||
+                        districtId == null ||
+                        wardCode == null
+                    ) {
                         ToastUtils.showToast(requireContext(), StringConstants.HAS_ERROR)
                         return@setOnClickListener
                     }
@@ -113,6 +129,9 @@ class VerifyOtpFragment(private val onSuccess: () -> Unit) : BottomSheetDialogFr
                             shopName!!,
                             shopPhone!!,
                             shopAddress!!,
+                            provinceId!!,
+                            districtId!!,
+                            wardCode!!,
                             "",
                             "ADMIN"
                         )

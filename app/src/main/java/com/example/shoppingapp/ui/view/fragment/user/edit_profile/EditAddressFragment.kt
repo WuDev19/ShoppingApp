@@ -125,7 +125,7 @@ class EditAddressFragment : Fragment() {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> Unit
                             is StateListener.Error -> {
-                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
+                                Log.e(StringConstants.DEBUG, "onViewCreated: failed ${it.e?.message}")
                             }
 
                             is StateListener.Success<List<ProvinceGhn>> -> {
@@ -140,10 +140,11 @@ class EditAddressFragment : Fragment() {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> Unit
                             is StateListener.Error -> {
-                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
+                                Log.e(StringConstants.DEBUG, "onViewCreated: failed ${it.e?.message}")
                             }
 
                             is StateListener.Success<List<DistrictGhn>> -> {
+                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.result}")
                                 selectDistrictAdapter.setData(it.result)
                             }
                         }
@@ -155,7 +156,7 @@ class EditAddressFragment : Fragment() {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> Unit
                             is StateListener.Error -> {
-                                Log.e(StringConstants.DEBUG, "onViewCreated: ${it.e?.message}")
+                                Log.e(StringConstants.DEBUG, "onViewCreated: failed ${it.e?.message}")
                             }
 
                             is StateListener.Success<List<WardGhn>> -> {
@@ -198,6 +199,7 @@ class EditAddressFragment : Fragment() {
                             if (tvDetailAddress.text.toString()
                                     .isNotEmpty()
                             ) tvDetailAddress.setText("")
+                            Log.e(StringConstants.DEBUG, "onViewCreated: ${item.provinceID}")
                             viewModel.getDistrictOfProvince(item.provinceID)
                         }
                     }

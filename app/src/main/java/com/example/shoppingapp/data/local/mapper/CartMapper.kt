@@ -18,6 +18,10 @@ object CartMapper {
             cartEntity.maNB,
             cartEntity.tenShop,
             cartEntity.avtShop,
+            cartEntity.provinceIdShop,
+            cartEntity.districtIdShop,
+            cartEntity.wardCodeShop,
+            cartEntity.shopGhnId,
             cartEntity.updateTime,
         )
     }
@@ -34,6 +38,10 @@ object CartMapper {
                 cartItemEntity.unitPrice,
                 cartItemEntity.color,
                 cartItemEntity.kichco,
+                cartItemEntity.width,
+                cartItemEntity.height,
+                cartItemEntity.length,
+                cartItemEntity.weight,
                 cartItemEntity.maGioHang
             ),
             cartItemEntity.soLuong,
@@ -50,6 +58,10 @@ object CartMapper {
             cartDTO.maNB!!,
             cartDTO.tenShop!!,
             cartDTO.avtShop!!,
+            cartDTO.provinceIdShop!!,
+            cartDTO.districtIdShop!!,
+            cartDTO.wardCodeShop!!,
+            cartDTO.shopGhnId!!,
             cartDTO.updateTime!!,
         )
     }
@@ -65,6 +77,10 @@ object CartMapper {
             cartItemDTO.detailProduct.unitPrice!!,
             cartItemDTO.detailProduct.color!!,
             cartItemDTO.detailProduct.kichco!!,
+            cartItemDTO.detailProduct.width!!,
+            cartItemDTO.detailProduct.height!!,
+            cartItemDTO.detailProduct.length!!,
+            cartItemDTO.detailProduct.weight!!,
             cartItemDTO.detailProduct.maSp!!,
             cartItemDTO.soLuong!!,
             cartItemDTO.giamGia!!,

@@ -230,6 +230,10 @@ class DetailProductFragment : Fragment() {
                     userId,
                     productDetail.maNguoiBan!!,
                     productDetail.tenNguoiBan!!,
+                    productDetail.provinceId!!,
+                    productDetail.districtId!!,
+                    productDetail.wardCode!!,
+                    productDetail.shopGhnId!!,
                     number,
                     productDetail.giamgia ?: 0,
                     productChiTiet

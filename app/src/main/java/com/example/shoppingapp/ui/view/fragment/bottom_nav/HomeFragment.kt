@@ -213,55 +213,57 @@ class HomeFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.stateUserName.collectLatest {
-                when (it) {
-                    is StateListener.Idle -> {
-                        val hour = LocalTime.now().hour
-                        val time = if (hour < 12) {
-                            StringConstants.MORNING
-                        } else if (hour in 12..18) {
-                            StringConstants.AFTERNOON
-                        } else {
-                            StringConstants.EVENING
-                        }
-                        binding.tvGreeting.text = time
-                    }
-
-                    is StateListener.Success -> {
-                        binding.tvUsername.text = it.result
-                    }
-
-                    is StateListener.Error -> {
-                        ToastUtils.showToast(requireContext(), it.e.toString())
-                    }
-
-                    is StateListener.Loading -> {}
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.numberCartState.collectLatest {
-                    when (it) {
-                        is StateListener.Idle -> Unit
-                        is StateListener.Loading -> Unit
-                        is StateListener.Error -> Log.e(
-                            StringConstants.DEBUG,
-                            "onViewCreated: ${it.e.toString()}"
-                        )
+                launch {
+                    viewModel.stateUserName.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> {
+                                val hour = LocalTime.now().hour
+                                val time = if (hour < 12) {
+                                    StringConstants.MORNING
+                                } else if (hour in 12..18) {
+                                    StringConstants.AFTERNOON
+                                } else {
+                                    StringConstants.EVENING
+                                }
+                                binding.tvGreeting.text = time
+                            }
 
-                        is StateListener.Success -> {
-                            val number = it.result
-                            if (number != 0) {
-                                binding.tvNumberCart.isVisible = true
-                                binding.tvNumberCart.text = number.toString()
-                            } else {
-                                binding.tvNumberCart.isVisible = false
+                            is StateListener.Success -> {
+                                binding.tvUsername.text = it.result
+                            }
+
+                            is StateListener.Error -> {
+                                ToastUtils.showToast(requireContext(), it.e.toString())
+                            }
+
+                            is StateListener.Loading -> {}
+                        }
+                    }
+                }
+                launch {
+                    viewModel.numberCartState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> Log.e(
+                                StringConstants.DEBUG,
+                                "onViewCreated: ${it.e.toString()}"
+                            )
+
+                            is StateListener.Success -> {
+                                val number = it.result
+                                if (number != 0) {
+                                    binding.tvNumberCart.isVisible = true
+                                    binding.tvNumberCart.text = number.toString()
+                                } else {
+                                    binding.tvNumberCart.isVisible = false
+                                }
                             }
                         }
                     }
                 }
+
             }
         }
     }

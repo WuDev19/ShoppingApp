@@ -25,9 +25,14 @@ object ProductDTOMapper {
     fun mapToProductDetail(productDetailDTO: ProductDetailDTO): ProductDetail {
         return ProductDetail(
             productDetailDTO.maSp,
-            productDetailDTO.tenNguoiBan,
-            productDetailDTO.maNguoiBan,
-            productDetailDTO.avtShop,
+            productDetailDTO.nguoiBanDTO?.tenShop,
+            productDetailDTO.nguoiBanDTO?.maNguoiBan,
+            productDetailDTO.nguoiBanDTO?.avtShop,
+            productDetailDTO.nguoiBanDTO?.provinceId,
+            productDetailDTO.nguoiBanDTO?.districtId,
+            productDetailDTO.nguoiBanDTO?.wardCode,
+            productDetailDTO.nguoiBanDTO?.shopGhnId,
+            productDetailDTO.nguoiBanDTO?.diaChi,
             productDetailDTO.giaSp,
             productDetailDTO.motaSp,
             productDetailDTO.giamgia,
@@ -46,7 +51,11 @@ object ProductDTOMapper {
             productChiTietDTO.unitPrice,
             productChiTietDTO.color,
             productChiTietDTO.kichco,
-            productChiTietDTO.maSp
+            productChiTietDTO.width,
+            productChiTietDTO.height,
+            productChiTietDTO.length,
+            productChiTietDTO.weight,
+            productChiTietDTO.maSp,
         )
     }
 

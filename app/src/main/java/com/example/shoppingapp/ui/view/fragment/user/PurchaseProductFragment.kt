@@ -2,6 +2,7 @@ package com.example.shoppingapp.ui.view.fragment.user
 
 import androidx.fragment.app.viewModels
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,11 +14,16 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.shoppingapp.R
+import com.example.shoppingapp.data.remote.dto.request.ghn.CalculateFeeGhnRequest
 import com.example.shoppingapp.databinding.FragmentPurchaseProductBinding
+import com.example.shoppingapp.domain.model.AddressItem
+import com.example.shoppingapp.domain.model.ghn.FeeServiceGhn
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
-import com.example.shoppingapp.ui.view.adapter.MainPurchaseAdapter
+import com.example.shoppingapp.domain.model.ghn.ShippingMethod
+import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.OrderProductAdapter
+import com.example.shoppingapp.ui.view.adapter.ShippingMethodAdapter
 import com.example.shoppingapp.ui.viewmodel.user.PurchaseProductViewModel
 import com.example.shoppingapp.utils.CalculateUtils
 import com.example.shoppingapp.utils.CheckNavigation
@@ -54,10 +60,14 @@ class PurchaseProductFragment : Fragment() {
             )
         }
     }
-    private lateinit var mainPurchaseAdapter: MainPurchaseAdapter
     private lateinit var orderProductAdapter: OrderProductAdapter
     private var totalPrice: Int = 0
+    private var address: AddressItem? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.e(StringConstants.DEBUG, "onCreate: $orderFromBuyNow", )
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,25 +80,93 @@ class PurchaseProductFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         orderProductAdapter =
             OrderProductAdapter(listOrder ?: emptyList(), orderFromBuyNow)
-        mainPurchaseAdapter = MainPurchaseAdapter(orderProductAdapter) {
-            CheckNavigation.navigateTo(
-                controller,
-                R.id.action_purchaseProductFragment_to_addressFragment2,
-                R.id.action_purchaseProductFragment2_to_addressFragment3
-            )
-        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
                     viewModel.getAddress.collectLatest { addresses ->
                         if (addresses.isNotEmpty()) {
-                            val result =
-                                addresses.filter { addressItem -> addressItem.defaultAddress }
-                                    .ifEmpty {
-                                        listOf(addresses.first())
+                            address = addresses
+                                .filter { addressItem -> addressItem.defaultAddress }
+                                .ifEmpty {
+                                    listOf(addresses.first())
+                                }.firstOrNull()
+                            binding.apply {
+                                tvAddress.text = address?.addressName ?: ""
+                                tvUsername.text = address?.name ?: ""
+                                tvPhone.text = address?.sdt ?: ""
+                            }
+                            orderFromBuyNow?.let {
+                                val params = mapOf(
+                                    "shopId" to it.shopGhnId.toString(),
+                                    "fromDistrictId" to it.districtId.toString(),
+                                    "toDistrictId" to address!!.districtId.toString()
+                                )
+                                val costDiscount =
+                                    (it.number * it.productChiTiet.unitPrice!!) -
+                                            (it.number * it.productChiTiet.unitPrice!!) * it.discount / 100
+                                val calculateFeeGhnRequest = CalculateFeeGhnRequest(
+                                    to_ward_code = address!!.wardCode,
+                                    to_district_id = address!!.districtId,
+                                    weight = it.productChiTiet.weight!!,
+                                    insurance_value = if (costDiscount >= 1000000) costDiscount else 0,
+                                    cod_value = if (binding.radioCod.isChecked) costDiscount else 0
+                                )
+                                viewModel.getService(params, calculateFeeGhnRequest, it.shopGhnId)
+                            }
+                            listOrder?.let {
+                                it.forEach { orderFromCart ->
+                                    var totalWeight = 0
+                                    var cost = 0
+                                    orderFromCart.cartItems.forEach { cartItem ->
+                                        totalWeight += cartItem.detailProduct.weight!!
+                                        val sum =
+                                            (cartItem.soLuong * cartItem.detailProduct.unitPrice!!) -
+                                                    ((cartItem.soLuong * cartItem.detailProduct.unitPrice!!) * cartItem.giamGia / 100)
+                                        cost += sum
+                                        Log.e("Tính phí", "onViewCreated: gia $sum", )
                                     }
-                            mainPurchaseAdapter.setAddress(result.first())
+                                    Log.e("Tính phí", "onViewCreated: $totalWeight", )
+                                    val shopGhnId = orderFromCart.cart.shopGhnId
+                                    val fromDistrict = orderFromCart.cart.districtIdShop
+                                    val toDistrict = address?.districtId
+                                    val params = mapOf(
+                                        "shopId" to shopGhnId.toString(),
+                                        "fromDistrictId" to fromDistrict.toString(),
+                                        "toDistrictId" to toDistrict.toString()
+                                    )
+                                    val calculateFeeGhnRequest = CalculateFeeGhnRequest(
+                                        to_ward_code = address!!.wardCode,
+                                        to_district_id = address!!.districtId,
+                                        weight = totalWeight,
+                                        insurance_value = if (cost >= 1000000) cost else 0,
+                                        cod_value = if (binding.radioCod.isChecked) cost else 0
+                                    )
+                                    viewModel.getService(params, calculateFeeGhnRequest, shopGhnId)
+                                }
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.serviceState.collect {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> {
+                                Log.e(
+                                    StringConstants.DEBUG,
+                                    "onViewCreated: ${it.e?.message}"
+                                )
+                            }
+
+                            is StateListener.Success<ShippingMethod> -> {
+                                Log.e(
+                                    "Tính phí",
+                                    "onViewCreated: ${it.result}",
+                                )
+                                orderProductAdapter.setServices(mutableListOf(it.result))
+                            }
                         }
                     }
                 }
@@ -97,22 +175,49 @@ class PurchaseProductFragment : Fragment() {
                         CalculateUtils.calcTotalPrice(it)
                     } ?: CalculateUtils.calcTotalPriceFromCart(listOrder ?: emptyList())
                 }.await()
-                mainPurchaseAdapter.setTotalPrice(totalPrice)
-                binding.tvTotalPrice.text = buildString {
-                    append(totalPrice)
-                    append("$")
+                binding.apply {
+                    tvTotalPrice.text = buildString {
+                        append(totalPrice)
+                        append("$")
+                    }
+                    tvTotalBill.text = buildString {
+                        append(totalPrice)
+                        append("$")
+                    }
                 }
             }
         }
 
         binding.apply {
-            recyclerViewPurchase.apply {
-                adapter = mainPurchaseAdapter
-                layoutManager = LinearLayoutManager(requireContext())
+            linearAddress.setOnClickListener {
+                CheckNavigation.navigateTo(
+                    controller,
+                    R.id.action_purchaseProductFragment_to_addressFragment2,
+                    R.id.action_purchaseProductFragment2_to_addressFragment3
+                )
+            }
+
+            recyclerViewOrder.apply {
+                adapter = orderProductAdapter
+                layoutManager = LinearLayoutManager(context)
+            }
+
+            radioCod.setOnClickListener {
+                radioCod.isChecked = true
+                radioOlb.isChecked = false
+            }
+
+            radioOlb.setOnClickListener {
+                radioOlb.isChecked = true
+                radioCod.isChecked = false
             }
 
             imgBack.setOnClickListener {
                 controller.popBackStack()
+            }
+
+            btnBuy.setOnClickListener {
+
             }
         }
 

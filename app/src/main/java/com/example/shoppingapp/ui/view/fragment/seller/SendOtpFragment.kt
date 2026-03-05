@@ -21,6 +21,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.shoppingapp.R
@@ -41,15 +42,18 @@ class SendOtpFragment : Fragment() {
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
     private val argsRegister: SendOtpFragmentArgs by navArgs()
-
     private val uriAnh: Uri?
         get() = argsRegister.uriAnh
-
     private val shopName: String
         get() = argsRegister.shopName
-
     private val shopAddress: String
         get() = argsRegister.shopAddress
+    private val provinceId: Int
+        get() = argsRegister.provinceId
+    private val districtId: Int
+        get() = argsRegister.districtId
+    private val wardCode: String
+        get() = argsRegister.wardCode
 
     private val resultLauncher: ActivityResultLauncher<String> = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -84,7 +88,7 @@ class SendOtpFragment : Fragment() {
 
             btnSendOtp.setOnClickListener {
                 val phone = edtPhone.text.toString().trim()
-                if(phone.isEmpty() || phone.length < 9){
+                if (phone.isEmpty() || phone.length < 9) {
                     ToastUtils.showToast(requireContext(), "Please enter shop phone number")
                     return@setOnClickListener
                 }
@@ -124,7 +128,7 @@ class SendOtpFragment : Fragment() {
         _binding = null
     }
 
-    private fun checkPermission(){
+    private fun checkPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     requireContext(),
@@ -141,7 +145,7 @@ class SendOtpFragment : Fragment() {
     }
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
-    fun createNotification(otpModel: OtpModel){
+    fun createNotification(otpModel: OtpModel) {
         val notification = NotificationCompat.Builder(
             requireContext(),
             StringConstants.SEND_OTP_CHANEL_ID
@@ -162,19 +166,25 @@ class SendOtpFragment : Fragment() {
 
     private fun showVerifyFragment(otpModel: OtpModel) {
         binding.apply {
-            val verifyOtpFragment = VerifyOtpFragment{
-                controller.popBackStack()
+            val verifyOtpFragment = VerifyOtpFragment {
+                controller.navigate(
+                    R.id.action_sendOtpFragment_to_profileFragment, null,
+                    NavOptions.Builder().setPopUpTo(R.id.profileFragment, inclusive = false).build()
+                )
             }
-            Log.e(StringConstants.DEBUG, "kajshda: $shopName va \n $shopAddress")
             val bundle = bundleOf(
                 StringConstants.URI_ANH to uriAnh,
                 StringConstants.SHOP_NAME to shopName,
                 StringConstants.SHOP_ADDRESS to shopAddress,
                 StringConstants.OTP_MODEL to otpModel,
-                StringConstants.SHOP_PHONE to edtPhone.text.toString().trim()
+                StringConstants.SHOP_PHONE to edtPhone.text.toString().trim(),
+                StringConstants.PROVINCE_ID to provinceId,
+                StringConstants.DISTRICT_ID to districtId,
+                StringConstants.WARD_CODE to wardCode
             )
             verifyOtpFragment.arguments = bundle
-            val frag = childFragmentManager.findFragmentByTag("verifyFragment") as? VerifyOtpFragment
+            val frag =
+                childFragmentManager.findFragmentByTag("verifyFragment") as? VerifyOtpFragment
             frag?.dismiss()
             verifyOtpFragment.show(
                 childFragmentManager,

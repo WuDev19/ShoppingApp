@@ -20,7 +20,7 @@ interface CartAPI {
         @Query("pageNumber") pageNumber: Int
     ): Response<ListCartDTO>
 
-    @GET("cartItem/get/numberOfCart/{id}")
+    @GET("cartItem/get/numberCartItem/{id}")
     suspend fun getNumberOfCartItem(@Path("id") id: String): Response<Int>
 
 }

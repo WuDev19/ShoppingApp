@@ -1,11 +1,15 @@
 package com.example.shoppingapp.domain.model
 
+import android.os.Parcelable
 import com.example.shoppingapp.domain.model.product.ProductChiTiet
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class CartItem(
-    val cartItemId: Int? = 0,
-    val maGioHang: Int? = 0,
-    val detailProduct: ProductChiTiet? = null,
-    val soLuong: Int? = 0,
-    val giamGia: Int? = 0,
-    val cartId: Int? = 0,
-) : CartUiModel()
+    val cartItemId: Int,
+    val maGioHang: Int,
+    val detailProduct: ProductChiTiet,
+    val soLuong: Int,
+    val giamGia: Int,
+    val cartId: Int,
+) : CartUiModel(), Parcelable
