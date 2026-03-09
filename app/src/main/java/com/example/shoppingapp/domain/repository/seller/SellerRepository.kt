@@ -3,9 +3,11 @@ package com.example.shoppingapp.domain.repository.seller
 import androidx.paging.PagingData
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
+import com.example.shoppingapp.data.remote.dto.request.VoucherRequest
 import com.example.shoppingapp.domain.model.OtpModel
 import com.example.shoppingapp.domain.model.SellerInStore
 import com.example.shoppingapp.domain.model.SellerSetting
+import com.example.shoppingapp.domain.model.ShopVouchers
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
 
@@ -17,5 +19,6 @@ interface SellerRepository {
     fun verifyOtp(otp: String): Flow<StateListener<Unit>>
     fun registerSeller(sellerRequest: SellerRequest): Flow<StateListener<AuthResponse>>
     fun editProfile(sellerId: Int, profile: Map<String, String>) : Flow<StateListener<SellerSetting>>
-
+    suspend fun createVoucher(sellerId: Int, voucherRequest: VoucherRequest): StateListener<Unit>
+    suspend fun getShopVouchers(sellerId: Int): StateListener<List<ShopVouchers>>
 }

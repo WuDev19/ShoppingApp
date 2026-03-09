@@ -62,6 +62,10 @@ class DashBoardSellerFragment : Fragment() {
                 controller.navigate(R.id.action_dashBoardSellerFragment_to_postProductFragment)
             }
 
+            btnNewVoucher.setOnClickListener {
+                controller.navigate(R.id.action_dashBoardSellerFragment_to_createVoucherFragment)
+            }
+
             imgBack.setOnClickListener {
                 controller.popBackStack()
                 ViewPagerUtils.enableViewPager(viewPager2, controller)

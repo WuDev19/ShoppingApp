@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -17,13 +18,13 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.data.remote.dto.request.ghn.CalculateFeeGhnRequest
 import com.example.shoppingapp.databinding.FragmentPurchaseProductBinding
 import com.example.shoppingapp.domain.model.AddressItem
-import com.example.shoppingapp.domain.model.ghn.FeeServiceGhn
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
+import com.example.shoppingapp.domain.model.ShowVoucherModel
 import com.example.shoppingapp.domain.model.ghn.ShippingMethod
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.OrderProductAdapter
-import com.example.shoppingapp.ui.view.adapter.ShippingMethodAdapter
+import com.example.shoppingapp.ui.view.fragment.seller.VoucherOfShopFragment
 import com.example.shoppingapp.ui.viewmodel.user.PurchaseProductViewModel
 import com.example.shoppingapp.utils.CalculateUtils
 import com.example.shoppingapp.utils.CheckNavigation
@@ -37,6 +38,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class PurchaseProductFragment : Fragment() {
 
+    private val TAG = PurchaseProductFragment::class.simpleName
     private val viewModel: PurchaseProductViewModel by viewModels()
     private var _binding: FragmentPurchaseProductBinding? = null
     private val binding
@@ -60,14 +62,16 @@ class PurchaseProductFragment : Fragment() {
             )
         }
     }
+    private val listService by lazy { mutableListOf<ShippingMethod>() }
     private lateinit var orderProductAdapter: OrderProductAdapter
     private var totalPrice: Int = 0
     private var address: AddressItem? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e(StringConstants.DEBUG, "onCreate: $orderFromBuyNow", )
+        Log.e(StringConstants.DEBUG, "onCreate: $orderFromBuyNow")
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -79,7 +83,19 @@ class PurchaseProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         orderProductAdapter =
-            OrderProductAdapter(listOrder ?: emptyList(), orderFromBuyNow)
+            OrderProductAdapter(listOrder ?: emptyList(), orderFromBuyNow) { sellerId ->
+                val voucherOfShopFragment = VoucherOfShopFragment { voucherId, voucherValue ->
+                    val showVoucherModel = ShowVoucherModel(voucherId, voucherValue, sellerId)
+                    orderProductAdapter.setVoucher(showVoucherModel)
+                    Log.e(TAG, "onViewCreated: $voucherValue va $sellerId")
+
+                }
+                val bundle = bundleOf(
+                    StringConstants.ID_SELLER to sellerId
+                )
+                voucherOfShopFragment.arguments = bundle
+                voucherOfShopFragment.show(childFragmentManager, voucherOfShopFragment.tag)
+            }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -124,9 +140,9 @@ class PurchaseProductFragment : Fragment() {
                                             (cartItem.soLuong * cartItem.detailProduct.unitPrice!!) -
                                                     ((cartItem.soLuong * cartItem.detailProduct.unitPrice!!) * cartItem.giamGia / 100)
                                         cost += sum
-                                        Log.e("Tính phí", "onViewCreated: gia $sum", )
+                                        Log.e("Tính phí", "onViewCreated: gia $sum")
                                     }
-                                    Log.e("Tính phí", "onViewCreated: $totalWeight", )
+                                    Log.e("Tính phí", "onViewCreated: $totalWeight")
                                     val shopGhnId = orderFromCart.cart.shopGhnId
                                     val fromDistrict = orderFromCart.cart.districtIdShop
                                     val toDistrict = address?.districtId

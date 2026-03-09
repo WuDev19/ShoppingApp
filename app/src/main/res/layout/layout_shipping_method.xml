@@ -27,14 +27,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Estimate time"
                 android:textColor="@color/button_color" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tv_cost"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/_10_00"
                 android:textColor="@color/black" />
 
         </LinearLayout>
@@ -45,7 +43,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/linear_time_cost"
             android:padding="6dp"
-            android:text="@string/_10_00"
             android:textColor="@color/black" />
 
     </RelativeLayout>

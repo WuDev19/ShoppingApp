@@ -31,14 +31,21 @@ class ConfirmResetPasswordActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewmodel.state.collectLatest {
-                when(it){
+                when (it) {
                     is StateListener.Idle -> {}
                     is StateListener.Error -> {
-                        ToastUtils.showToast(this@ConfirmResetPasswordActivity, StringConstants.HAS_ERROR)
+                        ToastUtils.showToast(
+                            this@ConfirmResetPasswordActivity,
+                            StringConstants.HAS_ERROR
+                        )
                     }
+
                     is StateListener.Loading -> {}
                     is StateListener.Success -> {
-                        ToastUtils.showToast(this@ConfirmResetPasswordActivity, StringConstants.CHECK_EMAIL)
+                        ToastUtils.showToast(
+                            this@ConfirmResetPasswordActivity,
+                            StringConstants.CHECK_EMAIL
+                        )
                     }
                 }
             }
@@ -58,8 +65,7 @@ class ConfirmResetPasswordActivity : AppCompatActivity() {
         viewbinding.tvResendEmail.setOnClickListener {
             if (email != null) {
                 viewmodel.resetPassword(email)
-            }
-            else {
+            } else {
                 ToastUtils.showToast(this@ConfirmResetPasswordActivity, StringConstants.HAS_ERROR)
             }
         }

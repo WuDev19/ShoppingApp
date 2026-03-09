@@ -152,6 +152,9 @@
         <action
             android:id="@+id/action_dashBoardSellerFragment_to_sellerSettingFragment"
             app:destination="@id/sellerSettingFragment" />
+        <action
+            android:id="@+id/action_dashBoardSellerFragment_to_createVoucherFragment"
+            app:destination="@id/createVoucherFragment" />
 
     </fragment>
 
@@ -211,5 +214,10 @@
         android:name="com.example.shoppingapp.ui.view.fragment.seller.SellerSettingFragment"
         android:label="fragment_seller_setting"
         tools:layout="@layout/fragment_seller_setting" />
+    <fragment
+        android:id="@+id/createVoucherFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.seller.CreateVoucherFragment"
+        android:label="fragment_create_voucher"
+        tools:layout="@layout/fragment_create_voucher" />
 
 </navigation>

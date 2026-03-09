@@ -164,4 +164,24 @@
     <string name="select_district">Select district</string>
     <string name="select_province">Select province</string>
     <string name="select_ward">Select ward</string>
+    <string name="create_voucher">Voucher</string>
+    <string name="enter_voucher_code">Enter voucher code</string>
+    <string name="gen">Gen</string>
+    <string name="enter_voucher_description_optional">Enter voucher description (optional)</string>
+    <string name="enter_voucher_value">Enter voucher value</string>
+    <string name="minimum_price_to_use">Minimum price to use</string>
+    <string name="maximum_usage_amount">Maximum usage amount</string>
+    <string name="maximum_discount_if_you_use_percent_type">Maximum discount</string>
+    <string name="start_time">Start time</string>
+    <string name="create">Create</string>
+    <string name="select_start_time">Select start time</string>
+    <string name="select_start_date">Select start date</string>
+    <string name="voucher_percent">Percent</string>
+    <string name="fixed">Fixed</string>
+    <string name="select_end_time">Select end time</string>
+    <string name="if_you_use_percent_enter_from_1_to_100">(If you use percent, enter from 1 to 100)</string>
+    <string name="if_you_use_fixed_it_equals_the_voucher_value_otherwise_enter_your_decision">(If you use fixed, it equals the voucher value, otherwise enter your decision)</string>
+    <string name="find">Find</string>
+    <string name="gi_m_gi_10_t_i_thi_u_149k">Giảm giá 10% tối thiểu 149k</string>
+    <string name="apply">Apply</string>
 </resources>

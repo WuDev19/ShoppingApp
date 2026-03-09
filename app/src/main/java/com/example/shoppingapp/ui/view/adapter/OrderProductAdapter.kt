@@ -10,6 +10,7 @@ import com.example.shoppingapp.databinding.LayoutProductOrderItemBinding
 import com.example.shoppingapp.domain.model.CartItem
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
+import com.example.shoppingapp.domain.model.ShowVoucherModel
 import com.example.shoppingapp.domain.model.ghn.ShippingMethod
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.utils.CalculateUtils
@@ -17,19 +18,29 @@ import com.example.shoppingapp.utils.CalculateUtils
 class OrderProductAdapter(
     private val productOrders: List<OrderFromCart>,
     private val orderFromBuyNow: OrderFromBuyNow?,
+    private val onClickVoucher: (Int) -> Unit
 ) : RecyclerView.Adapter<OrderProductAdapter.OrderProductViewHolder>() {
 
     private var isClickToShow = false
     fun setServices(listService: MutableList<ShippingMethod>) {
-        if (orderFromBuyNow == null) {
+        if (orderFromBuyNow != null) {
             notifyItemChanged(0, listService)
         } else {
-            var position = 0
-            productOrders.filterIndexed { index, orderCart ->
-                position = index
-                orderCart.cart.shopGhnId == listService.first().shopId
+            val position = productOrders.indexOfFirst {
+                it.cart.shopGhnId == listService.first().shopId
             }
             notifyItemChanged(position, listService)
+        }
+    }
+
+    fun setVoucher(showVoucherModel: ShowVoucherModel) {
+        if (orderFromBuyNow != null) {
+            notifyItemChanged(0, showVoucherModel)
+        } else {
+            val position = productOrders.indexOfFirst {
+                it.cart.maNB == showVoucherModel.sellerId
+            }
+            notifyItemChanged(position, showVoucherModel)
         }
     }
 
@@ -80,6 +91,16 @@ class OrderProductAdapter(
                         }
                     }
                     holder.submitShippingMethod(services)
+                } else if (payload is ShowVoucherModel) {
+                    holder.binding.apply {
+                        if (orderFromBuyNow == null) {
+                            tvVoucherShop.text = payload.voucherValue
+                        } else {
+                            layoutItem.apply {
+                                tvVoucherShop.text = payload.voucherValue
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -96,7 +117,9 @@ class OrderProductAdapter(
                 val itemOrder = productOrders[position]
                 holder.submitOrderSameShop(itemOrder.cartItems)
                 tvShopName.text = itemOrder.cart.tenShop
-                showShippingMethod(this)
+                linearVoucher.setOnClickListener {
+                    onClickVoucher(itemOrder.cart.maNB)
+                }
             } else {
                 orderFromBuyNow?.let { order ->
                     layoutItem.root.isVisible = true
@@ -128,9 +151,12 @@ class OrderProductAdapter(
                             append(order.number)
                         }
                     }
-                    showShippingMethod(this)
+                    linearVoucher.setOnClickListener {
+                        onClickVoucher(order.sellerId)
+                    }
                 }
             }
+            showShippingMethod(this)
         }
     }
 

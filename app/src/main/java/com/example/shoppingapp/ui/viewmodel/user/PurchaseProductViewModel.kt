@@ -2,10 +2,8 @@ package com.example.shoppingapp.ui.viewmodel.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.data.remote.dto.get.ghn.ServiceDTO
 import com.example.shoppingapp.data.remote.dto.request.ghn.CalculateFeeGhnRequest
 import com.example.shoppingapp.data.remote.dto.request.ghn.EstimateTimeGhnRequest
-import com.example.shoppingapp.domain.model.ghn.FeeServiceGhn
 import com.example.shoppingapp.domain.model.ghn.ServiceGhn
 import com.example.shoppingapp.domain.model.ghn.ShippingMethod
 import com.example.shoppingapp.domain.usecase.ghn_usecase.CalculateFeeUseCase
@@ -18,11 +16,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flatMapConcat
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.zip

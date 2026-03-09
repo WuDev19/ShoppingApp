@@ -1,6 +1,8 @@
 package com.example.shoppingapp.data.repository.impl
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
@@ -14,12 +16,14 @@ import com.example.shoppingapp.data.remote.dto.get.OtpDto
 import com.example.shoppingapp.data.remote.dto.request.GenerateTokenRequest
 import com.example.shoppingapp.data.remote.dto.request.RegisterSellerRequest
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
+import com.example.shoppingapp.data.remote.dto.request.VoucherRequest
 import com.example.shoppingapp.data.source.paging_source.PagingSourceSeller
 import com.example.shoppingapp.di.qualifier.DeviceId
 import com.example.shoppingapp.di.qualifier.IpAddress
 import com.example.shoppingapp.domain.model.OtpModel
 import com.example.shoppingapp.domain.model.SellerInStore
 import com.example.shoppingapp.domain.model.SellerSetting
+import com.example.shoppingapp.domain.model.ShopVouchers
 import com.example.shoppingapp.domain.repository.seller.SellerRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.squareup.moshi.Moshi
@@ -28,6 +32,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class SellerRepositoryImpl @Inject constructor(
@@ -175,6 +180,51 @@ class SellerRepositoryImpl @Inject constructor(
             emit(StateListener.Error(e))
         }
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun createVoucher(
+        sellerId: Int,
+        voucherRequest: VoucherRequest
+    ): StateListener<Unit> = withContext(Dispatchers.IO) {
+        try {
+            val response = advancedFunctionsSellerAPI.createVoucher(sellerId, voucherRequest)
+            if (response.isSuccessful) {
+                StateListener.Success(Unit)
+            } else {
+                val errorBody = response.errorBody()
+                val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+                errorBody?.string()?.let {
+                    StateListener.Error(Exception(adapter.fromJson(it)?.message))
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            }
+        } catch (e: Exception) {
+            StateListener.Error(e)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override suspend fun getShopVouchers(sellerId: Int): StateListener<List<ShopVouchers>> =
+        withContext(Dispatchers.IO) {
+            try {
+                val response = advancedFunctionsSellerAPI.getShopVouchers(sellerId)
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    data?.let {
+                        val finalResult = it.map { shopVouchersDTO ->
+                            SellerMapper.mapToShopVouchers(shopVouchersDTO)
+                        }
+                        StateListener.Success(finalResult)
+                    } ?: StateListener.Error(IllegalStateException("Object conversion error"))
+                } else {
+                    val errorBody = response.errorBody()
+                    val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+                    errorBody?.string()?.let {
+                        StateListener.Error(Exception(adapter.fromJson(it)?.message))
+                    } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+                }
+            } catch (e: Exception) {
+                StateListener.Error(e)
+            }
+        }
 
     private fun OtpDto.mapToOtpModel(): OtpModel {
         return OtpModel(this.expireTime, this.message)

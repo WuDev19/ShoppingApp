@@ -136,6 +136,16 @@ class HomeFragment : Fragment() {
 
         binding.apply {
 
+            val hour = LocalTime.now().hour
+            val time = if (hour < 12) {
+                StringConstants.MORNING
+            } else if (hour in 12..18) {
+                StringConstants.AFTERNOON
+            } else {
+                StringConstants.EVENING
+            }
+            binding.tvGreeting.text = time
+
             recyclerViewProducts.apply {
                 layoutManager = GridLayoutManager(requireContext(), 2)
                 adapter = productAdapter
@@ -217,17 +227,7 @@ class HomeFragment : Fragment() {
                 launch {
                     viewModel.stateUserName.collectLatest {
                         when (it) {
-                            is StateListener.Idle -> {
-                                val hour = LocalTime.now().hour
-                                val time = if (hour < 12) {
-                                    StringConstants.MORNING
-                                } else if (hour in 12..18) {
-                                    StringConstants.AFTERNOON
-                                } else {
-                                    StringConstants.EVENING
-                                }
-                                binding.tvGreeting.text = time
-                            }
+                            is StateListener.Idle -> Unit
 
                             is StateListener.Success -> {
                                 binding.tvUsername.text = it.result

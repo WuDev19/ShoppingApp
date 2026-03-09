@@ -24,6 +24,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.ToastUtils
@@ -31,6 +32,9 @@ import com.example.shoppingapp.databinding.FragmentSendOtpBinding
 import com.example.shoppingapp.domain.model.OtpModel
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.viewmodel.seller.SendOtpViewModel
+import com.example.shoppingapp.utils.BottomNavigationUtils
+import com.example.shoppingapp.utils.ViewPagerUtils
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -41,6 +45,12 @@ class SendOtpFragment : Fragment() {
     private var _binding: FragmentSendOtpBinding? = null
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
+    private val viewPager2: ViewPager2 by lazy { requireActivity().findViewById(R.id.view_pager2) }
+    private val bottomNavigationView: BottomNavigationView by lazy {
+        requireActivity().findViewById(
+            R.id.bottom_navigation_view
+        )
+    }
     private val argsRegister: SendOtpFragmentArgs by navArgs()
     private val uriAnh: Uri?
         get() = argsRegister.uriAnh
@@ -171,6 +181,8 @@ class SendOtpFragment : Fragment() {
                     R.id.action_sendOtpFragment_to_profileFragment, null,
                     NavOptions.Builder().setPopUpTo(R.id.profileFragment, inclusive = false).build()
                 )
+                ViewPagerUtils.enableViewPager(viewPager2, controller)
+                BottomNavigationUtils.showBottomNavigation(bottomNavigationView, controller)
             }
             val bundle = bundleOf(
                 StringConstants.URI_ANH to uriAnh,
