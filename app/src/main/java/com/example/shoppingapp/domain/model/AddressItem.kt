@@ -12,5 +12,6 @@ data class AddressItem (
     val districtId: Int,
     val wardCode: String,
     val defaultAddress: Boolean,
-    val maND: String
+    val maND: String,
+    var isSelected: Boolean
 ) : Parcelable

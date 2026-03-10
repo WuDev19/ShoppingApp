@@ -54,4 +54,18 @@
         android:textColor="@color/white"
         app:backgroundTint="@color/button_color"/>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_select_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/select_address"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:cornerRadius="10dp"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/button_color"
+        android:visibility="gone"/>
+
 </LinearLayout>

@@ -17,6 +17,7 @@ object UserAddressMapper {
             userAddressEntity.wardCode,
             userAddressEntity.defaultAddress,
             userAddressEntity.maND,
+            false
         )
     }
 

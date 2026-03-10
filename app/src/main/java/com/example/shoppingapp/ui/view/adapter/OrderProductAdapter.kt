@@ -162,6 +162,7 @@ class OrderProductAdapter(
 
     override fun getItemCount(): Int = if (productOrders.isNotEmpty()) productOrders.size else 1
 
+    // TODO: fix cai click sau
     private fun showShippingMethod(binding: LayoutProductOrderItemBinding) {
         binding.apply {
             linearShipping.setOnClickListener {

@@ -62,15 +62,9 @@ class PurchaseProductFragment : Fragment() {
             )
         }
     }
-    private val listService by lazy { mutableListOf<ShippingMethod>() }
     private lateinit var orderProductAdapter: OrderProductAdapter
     private var totalPrice: Int = 0
     private var address: AddressItem? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.e(StringConstants.DEBUG, "onCreate: $orderFromBuyNow")
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -87,8 +81,6 @@ class PurchaseProductFragment : Fragment() {
                 val voucherOfShopFragment = VoucherOfShopFragment { voucherId, voucherValue ->
                     val showVoucherModel = ShowVoucherModel(voucherId, voucherValue, sellerId)
                     orderProductAdapter.setVoucher(showVoucherModel)
-                    Log.e(TAG, "onViewCreated: $voucherValue va $sellerId")
-
                 }
                 val bundle = bundleOf(
                     StringConstants.ID_SELLER to sellerId
@@ -107,60 +99,9 @@ class PurchaseProductFragment : Fragment() {
                                 .ifEmpty {
                                     listOf(addresses.first())
                                 }.firstOrNull()
-                            binding.apply {
-                                tvAddress.text = address?.addressName ?: ""
-                                tvUsername.text = address?.name ?: ""
-                                tvPhone.text = address?.sdt ?: ""
-                            }
-                            orderFromBuyNow?.let {
-                                val params = mapOf(
-                                    "shopId" to it.shopGhnId.toString(),
-                                    "fromDistrictId" to it.districtId.toString(),
-                                    "toDistrictId" to address!!.districtId.toString()
-                                )
-                                val costDiscount =
-                                    (it.number * it.productChiTiet.unitPrice!!) -
-                                            (it.number * it.productChiTiet.unitPrice!!) * it.discount / 100
-                                val calculateFeeGhnRequest = CalculateFeeGhnRequest(
-                                    to_ward_code = address!!.wardCode,
-                                    to_district_id = address!!.districtId,
-                                    weight = it.productChiTiet.weight!!,
-                                    insurance_value = if (costDiscount >= 1000000) costDiscount else 0,
-                                    cod_value = if (binding.radioCod.isChecked) costDiscount else 0
-                                )
-                                viewModel.getService(params, calculateFeeGhnRequest, it.shopGhnId)
-                            }
-                            listOrder?.let {
-                                it.forEach { orderFromCart ->
-                                    var totalWeight = 0
-                                    var cost = 0
-                                    orderFromCart.cartItems.forEach { cartItem ->
-                                        totalWeight += cartItem.detailProduct.weight!!
-                                        val sum =
-                                            (cartItem.soLuong * cartItem.detailProduct.unitPrice!!) -
-                                                    ((cartItem.soLuong * cartItem.detailProduct.unitPrice!!) * cartItem.giamGia / 100)
-                                        cost += sum
-                                        Log.e("Tính phí", "onViewCreated: gia $sum")
-                                    }
-                                    Log.e("Tính phí", "onViewCreated: $totalWeight")
-                                    val shopGhnId = orderFromCart.cart.shopGhnId
-                                    val fromDistrict = orderFromCart.cart.districtIdShop
-                                    val toDistrict = address?.districtId
-                                    val params = mapOf(
-                                        "shopId" to shopGhnId.toString(),
-                                        "fromDistrictId" to fromDistrict.toString(),
-                                        "toDistrictId" to toDistrict.toString()
-                                    )
-                                    val calculateFeeGhnRequest = CalculateFeeGhnRequest(
-                                        to_ward_code = address!!.wardCode,
-                                        to_district_id = address!!.districtId,
-                                        weight = totalWeight,
-                                        insurance_value = if (cost >= 1000000) cost else 0,
-                                        cod_value = if (binding.radioCod.isChecked) cost else 0
-                                    )
-                                    viewModel.getService(params, calculateFeeGhnRequest, shopGhnId)
-                                }
-                            }
+                            displayAddress(address)
+                            handleServiceIfOrderFromBuyNowNotNull()
+                            handleServiceIfListOrderNotEmpty()
                         }
                     }
                 }
@@ -177,12 +118,18 @@ class PurchaseProductFragment : Fragment() {
                             }
 
                             is StateListener.Success<ShippingMethod> -> {
-                                Log.e(
-                                    "Tính phí",
-                                    "onViewCreated: ${it.result}",
-                                )
                                 orderProductAdapter.setServices(mutableListOf(it.result))
                             }
+                        }
+                    }
+                }
+                launch {
+                    controller.currentBackStackEntry?.savedStateHandle?.getStateFlow<AddressItem?>(
+                        StringConstants.PURCHASE_TO_ADDRESS,
+                        null
+                    )?.collectLatest { addressItem ->
+                        addressItem?.let {
+                            displayAddress(it)
                         }
                     }
                 }
@@ -206,10 +153,14 @@ class PurchaseProductFragment : Fragment() {
 
         binding.apply {
             linearAddress.setOnClickListener {
+                val bundle = bundleOf(
+                    StringConstants.PURCHASE_TO_ADDRESS to true
+                )
                 CheckNavigation.navigateTo(
                     controller,
                     R.id.action_purchaseProductFragment_to_addressFragment2,
-                    R.id.action_purchaseProductFragment2_to_addressFragment3
+                    R.id.action_purchaseProductFragment2_to_addressFragment3,
+                    bundle
                 )
             }
 
@@ -237,6 +188,67 @@ class PurchaseProductFragment : Fragment() {
             }
         }
 
+    }
+
+    private fun handleServiceIfListOrderNotEmpty() {
+        listOrder?.let {
+            it.forEach { orderFromCart ->
+                var totalWeight = 0
+                var cost = 0
+                orderFromCart.cartItems.forEach { cartItem ->
+                    totalWeight += cartItem.detailProduct.weight!!
+                    val sum =
+                        (cartItem.soLuong * cartItem.detailProduct.unitPrice!!) -
+                                ((cartItem.soLuong * cartItem.detailProduct.unitPrice!!) * cartItem.giamGia / 100)
+                    cost += sum
+                }
+                val shopGhnId = orderFromCart.cart.shopGhnId
+                val fromDistrict = orderFromCart.cart.districtIdShop
+                val toDistrict = address?.districtId
+                val params = mapOf(
+                    "shopId" to shopGhnId.toString(),
+                    "fromDistrictId" to fromDistrict.toString(),
+                    "toDistrictId" to toDistrict.toString()
+                )
+                val calculateFeeGhnRequest = CalculateFeeGhnRequest(
+                    to_ward_code = address!!.wardCode,
+                    to_district_id = address!!.districtId,
+                    weight = totalWeight,
+                    insurance_value = if (cost >= 1000000) cost else 0,
+                    cod_value = if (binding.radioCod.isChecked) cost else 0
+                )
+                viewModel.getService(params, calculateFeeGhnRequest, shopGhnId)
+            }
+        }
+    }
+
+    private fun handleServiceIfOrderFromBuyNowNotNull() {
+        orderFromBuyNow?.let {
+            val params = mapOf(
+                "shopId" to it.shopGhnId.toString(),
+                "fromDistrictId" to it.districtId.toString(),
+                "toDistrictId" to address!!.districtId.toString()
+            )
+            val costDiscount =
+                (it.number * it.productChiTiet.unitPrice!!) -
+                        (it.number * it.productChiTiet.unitPrice!!) * it.discount / 100
+            val calculateFeeGhnRequest = CalculateFeeGhnRequest(
+                to_ward_code = address!!.wardCode,
+                to_district_id = address!!.districtId,
+                weight = it.productChiTiet.weight!!,
+                insurance_value = if (costDiscount >= 1000000) costDiscount else 0,
+                cod_value = if (binding.radioCod.isChecked) costDiscount else 0
+            )
+            viewModel.getService(params, calculateFeeGhnRequest, it.shopGhnId)
+        }
+    }
+
+    private fun displayAddress(address: AddressItem?){
+        binding.apply {
+            tvAddress.text = address?.addressName ?: ""
+            tvUsername.text = address?.name ?: ""
+            tvPhone.text = address?.sdt ?: ""
+        }
     }
 
     override fun onDestroyView() {

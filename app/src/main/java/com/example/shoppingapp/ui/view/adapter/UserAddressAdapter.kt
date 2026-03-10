@@ -1,17 +1,23 @@
 package com.example.shoppingapp.ui.view.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.UserAddressItemBinding
 import com.example.shoppingapp.domain.model.AddressItem
 
-class UserAddressAdapter (private val onItemClick: (AddressItem) -> Unit):
-    ListAdapter<AddressItem, UserAddressAdapter.UserAddressViewHolder>(diffCallBack) {
+class UserAddressAdapter(
+    private val isFromPurchase: Boolean,
+    private val onItemClick: (AddressItem) -> Unit,
+    private val onSelectAddress: (AddressItem) -> Unit
+) : ListAdapter<AddressItem, UserAddressAdapter.UserAddressViewHolder>(diffCallBack) {
+    private var oldPosition = -1
+
     companion object {
         val diffCallBack = object : DiffUtil.ItemCallback<AddressItem>() {
             override fun areItemsTheSame(
@@ -47,17 +53,42 @@ class UserAddressAdapter (private val onItemClick: (AddressItem) -> Unit):
         position: Int
     ) {
         val userAddress = getItem(position)
-       holder.binding.apply {
-           userAddress?.let {
-               tvName.text = it.name
-               tvPhone.text = it.sdt
-               tvAddress.text = it.addressName
-               tvDefault.isVisible = it.defaultAddress
-               linearUserAddress.setOnClickListener {_->
-                   onItemClick(it)
-               }
-           }
-       }
+        holder.binding.apply {
+            userAddress?.let {
+                if (userAddress.isSelected) {
+                    cardUserAddress.strokeColor =
+                        ContextCompat.getColor(root.context, R.color.button_color)
+                    cardUserAddress.strokeWidth = 5
+                } else {
+                    cardUserAddress.strokeColor =
+                        ContextCompat.getColor(root.context, R.color.black)
+                    cardUserAddress.strokeWidth = 1
+                }
+                tvName.text = it.name
+                tvPhone.text = it.sdt
+                tvAddress.text = it.addressName
+                tvDefault.isVisible = it.defaultAddress
+                tvAddress.setOnClickListener { _ ->
+                    onItemClick(it)
+                }
+                if (isFromPurchase) {
+                    linearUserAddress.setOnClickListener { _ ->
+                        onSelectAddress(it)
+                        if (oldPosition != position) {
+                            userAddress.isSelected = true
+                            cardUserAddress.strokeColor =
+                                ContextCompat.getColor(root.context, R.color.button_color)
+                            cardUserAddress.strokeWidth = 5
+                            if (oldPosition != -1) {
+                                getItem(oldPosition).isSelected = false
+                                notifyItemChanged(oldPosition)
+                            }
+                            oldPosition = holder.bindingAdapterPosition
+                        }
+                    }
+                }
+            }
+        }
     }
 
     class UserAddressViewHolder(val binding: UserAddressItemBinding) :
