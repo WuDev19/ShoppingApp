@@ -1,12 +1,16 @@
 package com.example.shoppingapp.ui.view.fragment.user
 
+import android.content.DialogInterface
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
@@ -171,11 +175,11 @@ class PurchaseProductFragment : Fragment() {
 
             radioCod.setOnClickListener {
                 radioCod.isChecked = true
-                radioOlb.isChecked = false
+                radioVnPay.isChecked = false
             }
 
-            radioOlb.setOnClickListener {
-                radioOlb.isChecked = true
+            radioVnPay.setOnClickListener {
+                radioVnPay.isChecked = true
                 radioCod.isChecked = false
             }
 
@@ -184,7 +188,21 @@ class PurchaseProductFragment : Fragment() {
             }
 
             btnBuy.setOnClickListener {
+                if (radioVnPay.isChecked) {
+                    val dialog = AlertDialog.Builder(requireContext())
+                        .setIcon(R.drawable.icon_avatar)
+                        .setTitle("Online payment")
+                        .setMessage("If you choose online payment, you must pay first")
+                        .setNegativeButton("Cancel") { dialogInterface, _ -> dialogInterface.dismiss() }
+                        .setPositiveButton("Ok") { dialogInterface, _ ->
 
+                        }
+                        .create()
+                    dialog.show()
+                    dialog.window?.apply {
+                        setBackgroundDrawableResource(R.drawable.custom_dialog)
+                    }
+                }
             }
         }
 
@@ -243,7 +261,7 @@ class PurchaseProductFragment : Fragment() {
         }
     }
 
-    private fun displayAddress(address: AddressItem?){
+    private fun displayAddress(address: AddressItem?) {
         binding.apply {
             tvAddress.text = address?.addressName ?: ""
             tvUsername.text = address?.name ?: ""

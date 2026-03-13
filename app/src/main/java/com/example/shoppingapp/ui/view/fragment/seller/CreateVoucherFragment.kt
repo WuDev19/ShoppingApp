@@ -31,7 +31,6 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
-import java.util.TimeZone
 import java.util.UUID
 
 @AndroidEntryPoint
@@ -41,10 +40,6 @@ class CreateVoucherFragment : Fragment() {
     private var _binding: FragmentCreateVoucherBinding? = null
     private val binding: FragmentCreateVoucherBinding
         get() = _binding!!
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

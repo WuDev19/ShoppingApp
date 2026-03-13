@@ -145,7 +145,8 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_gravity="center_vertical"
-                            app:srcCompat="@drawable/icon_add" />
+                            android:scaleType="centerCrop"
+                            app:srcCompat="@drawable/icon_cod" />
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="0dp"
@@ -173,7 +174,7 @@
                             android:layout_width="30dp"
                             android:layout_height="30dp"
                             android:layout_gravity="center_vertical"
-                            app:srcCompat="@drawable/icon_add" />
+                            app:srcCompat="@drawable/icon_vn_pay"/>
 
                         <com.google.android.material.textview.MaterialTextView
                             android:layout_width="0dp"
@@ -181,11 +182,11 @@
                             android:layout_gravity="center_vertical"
                             android:layout_marginStart="10dp"
                             android:layout_weight="1"
-                            android:text="@string/mb_bank"
+                            android:text="@string/vnpay"
                             android:textColor="@color/black" />
 
                         <com.google.android.material.radiobutton.MaterialRadioButton
-                            android:id="@+id/radio_olb"
+                            android:id="@+id/radio_vn_pay"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             app:buttonTint="@color/button_color" />
