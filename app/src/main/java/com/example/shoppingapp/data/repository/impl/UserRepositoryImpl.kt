@@ -32,7 +32,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -292,7 +291,6 @@ class UserRepositoryImpl @Inject constructor(
         orderRequest: OrderRequest
     ): StateListener<Order> =
         try {
-            Log.e("PurchaseProductFragment", "createOrder: $shopGhnId va $orderRequest")
             val response = userAPI.createOrder(shopGhnId, orderRequest)
             if (response.isSuccessful) {
                 val result = response.body()

@@ -102,11 +102,70 @@ class CreateOrderUseCase @Inject constructor(
             return repo.createOrder(shopGhnId, orderRequest)
         } else {
             val cart = orderFromCart!!.cart
+            var totalWeight = 0
+            val listCreateOrderItemGhnRequest = mutableListOf<CreateOrderItemGhnRequest>()
+            val listOrderDetailRequest = mutableListOf<OrderDetailRequest>()
+            if (finalPrice != null) {
+                totalAmount = finalPrice.finalPrice
+                insuranceValue = finalPrice.priceWithoutShip
+            } else {
+                totalAmount =
+                    CalculateUtils.calcTotalPrice(orderFromCart.cartItems) + shippingMethod.feeServiceGhn.totalFee
+                insuranceValue = totalAmount - shippingMethod.feeServiceGhn.totalFee
+            }
             orderFromCart.cartItems.forEach { cartItem ->
                 val productChiTiet = cartItem.detailProduct
                 val number = cartItem.soLuong
+                unitPrice = CalculateUtils.calcDiscount(
+                    cartItem.giamGia,
+                    cartItem.detailProduct.unitPrice!!
+                )
+                val createOrderItemGhnRequest = CreateOrderItemGhnRequest(
+                    productChiTiet.tenDetail!!,
+                    number,
+                    unitPrice,
+                    productChiTiet.weight!!,
+                    productChiTiet.length!!,
+                    productChiTiet.width!!,
+                    productChiTiet.height!!
+                )
+                listCreateOrderItemGhnRequest.add(createOrderItemGhnRequest)
+                val orderDetailRequest = OrderDetailRequest(
+                    productChiTiet.maSanPhamDeTail!!,
+                    number,
+                    unitPrice
+                )
+                listOrderDetailRequest.add(orderDetailRequest)
+                totalWeight += cartItem.detailProduct.weight!!
             }
-            return StateListener.Idle
+            val createOrderGhnRequest = CreateOrderGhnRequest(
+                addressItem.name,
+                addressItem.sdt,
+                addressItem.addressName,
+                addressItem.wardCode,
+                addressItem.districtId,
+                totalWeight,
+                shippingMethod.serviceId,
+                shippingMethod.serviceTypeId,
+                2,
+                if (insuranceValue > 5000000) 5000000 else insuranceValue,
+                if (totalAmount > 50000000) 50000000 else totalAmount,
+                note[shopGhnId] ?: "",
+                "KHONGCHOXEMHANG",
+                listCreateOrderItemGhnRequest
+            )
+            val orderRequest = OrderRequest(
+                auth.currentUser!!.uid,
+                cart.maNB,
+                shippingMethod.feeServiceGhn.serviceName,
+                paymentMethod,
+                totalAmount,
+                voucherOrder?.voucherId ?: -1,
+                note[shopGhnId] ?: "",
+                createOrderGhnRequest,
+                listOrderDetailRequest
+            )
+            return repo.createOrder(shopGhnId, orderRequest)
         }
     }
 

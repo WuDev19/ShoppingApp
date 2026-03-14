@@ -58,7 +58,10 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_marginStart="10dp"
-                android:hint="@string/write_your_note_for_shop"/>
+                android:hint="@string/write_your_note_for_shop"
+                android:background="@drawable/border_view"
+                android:backgroundTint="@color/light_grey"
+                android:padding="6dp"/>
 
         </LinearLayout>
 

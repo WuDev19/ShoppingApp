@@ -6,7 +6,6 @@ import com.example.shoppingapp.data.remote.dto.request.ghn.CalculateFeeGhnReques
 import com.example.shoppingapp.data.remote.dto.request.ghn.EstimateTimeGhnRequest
 import com.example.shoppingapp.domain.model.AddressItem
 import com.example.shoppingapp.domain.model.FinalPrice
-import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
 import com.example.shoppingapp.domain.model.VoucherOrder
@@ -35,10 +34,10 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class PurchaseProductViewModel @Inject constructor(
@@ -52,7 +51,7 @@ class PurchaseProductViewModel @Inject constructor(
 
     private val _serviceState = MutableStateFlow<StateListener<ShippingMethod>>(StateListener.Idle)
     val serviceState = _serviceState.asStateFlow()
-    private val _createOrderState = Channel<StateListener<Order>>()
+    private val _createOrderState = Channel<StateListener<String>>()
     val createOrderState = _createOrderState.receiveAsFlow()
 
     val getAddress = getUserAddressUseCase(auth.currentUser?.uid ?: "").stateIn(
@@ -127,23 +126,26 @@ class PurchaseProductViewModel @Inject constructor(
         viewModelScope.launch {
             _createOrderState.send(StateListener.Loading)
             if (orderFromBuyNow != null) {
-                _createOrderState.send(
-                    createOrderUseCase(
-                        orderFromBuyNow.shopGhnId,
-                        orderFromBuyNow,
-                        null,
-                        addressItem,
-                        shippingMethods,
-                        voucherOrders,
-                        finalPrices,
-                        note,
-                        paymentMethod,
-                        isCod
-                    )
+                val result = createOrderUseCase(
+                    orderFromBuyNow.shopGhnId,
+                    orderFromBuyNow,
+                    null,
+                    addressItem,
+                    shippingMethods,
+                    voucherOrders,
+                    finalPrices,
+                    note,
+                    paymentMethod,
+                    isCod
                 )
+                if (result is StateListener.Success) {
+                    _createOrderState.send(StateListener.Success("Success"))
+                } else if (result is StateListener.Error) {
+                    _createOrderState.send(StateListener.Error(result.e))
+                }
             } else {
                 val listShopId = listOrder!!.map { it.cart.shopGhnId }
-                listShopId.asFlow()
+                val listResult = listShopId.asFlow()
                     .flatMapMerge(concurrency = 5) { shopGhnId ->
                         flow {
                             val data = createOrderUseCase(
@@ -160,9 +162,12 @@ class PurchaseProductViewModel @Inject constructor(
                             )
                             emit(data)
                         }.flowOn(Dispatchers.Default)
-                    }.collect {
-                        _createOrderState.send(it)
-                    }
+                    }.toList()
+                if (listResult.isNotEmpty() && listResult.size == listShopId.size) {
+                    _createOrderState.send(StateListener.Success("Success"))
+                } else {
+                    _createOrderState.send(StateListener.Error(Exception("Please check your data or connection")))
+                }
             }
         }
     }

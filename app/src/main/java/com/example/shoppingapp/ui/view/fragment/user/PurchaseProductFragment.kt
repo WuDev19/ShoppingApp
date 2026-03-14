@@ -180,7 +180,7 @@ class PurchaseProductFragment : Fragment() {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> Unit
                             is StateListener.Error -> Log.e(TAG, "onViewCreated: ${it.e?.message}")
-                            is StateListener.Success<Order> -> {
+                            is StateListener.Success<String> -> {
                                 Log.e(TAG, "onViewCreated: ${it.result}")
                             }
                         }
@@ -237,21 +237,7 @@ class PurchaseProductFragment : Fragment() {
             }
 
             btnBuy.setOnClickListener {
-                if (radioVnPay.isChecked) {
-                    val dialog = AlertDialog.Builder(requireContext())
-                        .setIcon(R.drawable.icon_avatar)
-                        .setTitle("Shopping App")
-                        .setMessage("If you choose online payment, you must pay first")
-                        .setNegativeButton("Cancel") { dialogInterface, _ -> dialogInterface.dismiss() }
-                        .setPositiveButton("Ok") { dialogInterface, _ ->
-
-                        }
-                        .create()
-                    dialog.show()
-                    dialog.window?.apply {
-                        setBackgroundDrawableResource(R.drawable.custom_dialog)
-                    }
-                } else {
+                if (radioCod.isChecked) {
                     if (address == null || shippingMethods.isEmpty()) {
                         ToastUtils.showToast(requireContext(), "Not ready, wait a minute")
                         return@setOnClickListener
@@ -277,7 +263,20 @@ class PurchaseProductFragment : Fragment() {
                         paymentMethod = "COD",
                         isCod = true
                     )
+                } else {
+                    val dialog = AlertDialog.Builder(requireContext())
+                        .setIcon(R.drawable.icon_avatar)
+                        .setTitle("Shopping App")
+                        .setMessage("If you choose online payment, you must pay first")
+                        .setNegativeButton("Cancel") { dialogInterface, _ -> dialogInterface.dismiss() }
+                        .setPositiveButton("Ok") { dialogInterface, _ ->
 
+                        }
+                        .create()
+                    dialog.show()
+                    dialog.window?.apply {
+                        setBackgroundDrawableResource(R.drawable.custom_dialog)
+                    }
                 }
             }
         }
