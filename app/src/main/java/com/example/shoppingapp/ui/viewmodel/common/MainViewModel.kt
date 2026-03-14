@@ -4,8 +4,8 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.utils.StringConstants
-import com.example.shoppingapp.domain.usecase.profileusecase.ConfirmChangeEmailUseCase
-import com.example.shoppingapp.domain.usecase.profileusecase.LogoutUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.ConfirmChangeEmailUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.LogoutUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel

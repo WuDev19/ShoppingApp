@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.utils.TokenManager
 import com.example.shoppingapp.domain.model.SellerSetting
-import com.example.shoppingapp.domain.usecase.profileusecase.UploadAvatarUseCase
-import com.example.shoppingapp.domain.usecase.sellerusecase.EditProfileSellerUseCase
-import com.example.shoppingapp.domain.usecase.sellerusecase.GetSellerSettingInfoUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.UploadAvatarUseCase
+import com.example.shoppingapp.domain.usecase.seller_usecase.EditProfileSellerUseCase
+import com.example.shoppingapp.domain.usecase.seller_usecase.GetSellerSettingInfoUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

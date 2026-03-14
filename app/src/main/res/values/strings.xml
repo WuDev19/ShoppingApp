@@ -186,4 +186,6 @@
     <string name="apply">Apply</string>
     <string name="select_address">Select address</string>
     <string name="vnpay">VNPay</string>
+    <string name="note">Note:</string>
+    <string name="write_your_note_for_shop">Write your note for shop</string>
 </resources>

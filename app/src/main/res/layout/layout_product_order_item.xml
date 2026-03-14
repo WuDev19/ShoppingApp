@@ -41,10 +41,36 @@
         </FrameLayout>
 
         <LinearLayout
-            android:id="@+id/linear_voucher"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/note" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edt_note"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:hint="@string/write_your_note_for_shop"/>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_grey" />
+
+        <LinearLayout
+            android:id="@+id/linear_voucher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:padding="10dp">
 

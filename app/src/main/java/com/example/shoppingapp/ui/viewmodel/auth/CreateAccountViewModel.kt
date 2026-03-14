@@ -2,11 +2,9 @@ package com.example.shoppingapp.ui.viewmodel.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.domain.model.LoginModel
-import com.example.shoppingapp.domain.usecase.authusecase.CreateAccountUseCase
+import com.example.shoppingapp.domain.usecase.auth_usecase.CreateAccountUseCase
 import com.example.shoppingapp.ui.state.StateListener
-import com.google.firebase.auth.AuthResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

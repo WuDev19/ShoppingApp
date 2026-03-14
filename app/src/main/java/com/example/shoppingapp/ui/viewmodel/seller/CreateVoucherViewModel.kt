@@ -3,7 +3,7 @@ package com.example.shoppingapp.ui.viewmodel.seller
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.data.remote.dto.request.VoucherRequest
-import com.example.shoppingapp.domain.usecase.sellerusecase.CreateShopVoucherUseCase
+import com.example.shoppingapp.domain.usecase.seller_usecase.CreateShopVoucherUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel

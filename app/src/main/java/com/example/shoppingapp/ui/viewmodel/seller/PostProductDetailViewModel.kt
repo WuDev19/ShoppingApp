@@ -12,8 +12,8 @@ import com.example.shoppingapp.data.remote.dto.request.PostProductDetailRequest
 import com.example.shoppingapp.data.remote.dto.request.PostProductRequest
 import com.example.shoppingapp.data.source.cloudinary.impl.CloudinaryImageProductUploader
 import com.example.shoppingapp.domain.model.UploadingModel
-import com.example.shoppingapp.domain.usecase.productusecase.post.PostProductUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.post.UploadImageProductUseCase
+import com.example.shoppingapp.domain.usecase.product_usecase.post.PostProductUseCase
+import com.example.shoppingapp.domain.usecase.product_usecase.post.UploadImageProductUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

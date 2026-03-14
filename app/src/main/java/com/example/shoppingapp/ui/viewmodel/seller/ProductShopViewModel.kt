@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.shoppingapp.domain.model.product.ProductDisplay
-import com.example.shoppingapp.domain.usecase.sellerusecase.GetAllProductOfShopUseCase
+import com.example.shoppingapp.domain.usecase.seller_usecase.GetAllProductOfShopUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

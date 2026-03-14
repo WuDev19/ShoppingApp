@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
 import com.example.shoppingapp.data.remote.dto.request.SellerRequest
-import com.example.shoppingapp.domain.usecase.profileusecase.UploadAvatarUseCase
-import com.example.shoppingapp.domain.usecase.sellerusecase.RegisterSellerUseCase
-import com.example.shoppingapp.domain.usecase.sellerusecase.VerifyOtpUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.UploadAvatarUseCase
+import com.example.shoppingapp.domain.usecase.seller_usecase.RegisterSellerUseCase
+import com.example.shoppingapp.domain.usecase.seller_usecase.VerifyOtpUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.domain.model.user.UserProfile
-import com.example.shoppingapp.domain.usecase.profileusecase.GetUserProfileUseCase
-import com.example.shoppingapp.domain.usecase.profileusecase.UpdateAvatarUseCase
-import com.example.shoppingapp.domain.usecase.profileusecase.UploadAvatarUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.GetUserProfileUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.UpdateAvatarUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.UploadAvatarUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel

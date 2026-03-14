@@ -2,7 +2,7 @@ package com.example.shoppingapp.ui.viewmodel.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shoppingapp.domain.usecase.authusecase.ResetPasswordUseCase
+import com.example.shoppingapp.domain.usecase.auth_usecase.ResetPasswordUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

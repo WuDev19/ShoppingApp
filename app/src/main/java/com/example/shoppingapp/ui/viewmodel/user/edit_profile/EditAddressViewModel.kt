@@ -9,9 +9,9 @@ import com.example.shoppingapp.domain.model.ghn.WardGhn
 import com.example.shoppingapp.domain.usecase.ghn_usecase.GetDistrictOfProvinceUseCase
 import com.example.shoppingapp.domain.usecase.ghn_usecase.GetProvinceUseCase
 import com.example.shoppingapp.domain.usecase.ghn_usecase.GetWardOfDistrictUseCase
-import com.example.shoppingapp.domain.usecase.profileusecase.AddUserAddressUseCase
-import com.example.shoppingapp.domain.usecase.profileusecase.DeleteUserAddressUseCase
-import com.example.shoppingapp.domain.usecase.profileusecase.EditUserAddressUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.AddUserAddressUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.DeleteUserAddressUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.EditUserAddressUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel

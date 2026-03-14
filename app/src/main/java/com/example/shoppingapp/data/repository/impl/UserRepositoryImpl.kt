@@ -8,11 +8,13 @@ import com.example.shoppingapp.data.local.mapper.UserAddressMapper
 import com.example.shoppingapp.data.local.mapper.UserMapper
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
+import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.AvatarUploader
 import com.example.shoppingapp.domain.model.AddressItem
+import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.domain.repository.user.UserRepository
@@ -30,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -283,5 +286,28 @@ class UserRepositoryImpl @Inject constructor(
     }.catch {
         emit(StateListener.Error(Exception(it.message)))
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun createOrder(
+        shopGhnId: Int,
+        orderRequest: OrderRequest
+    ): StateListener<Order> =
+        try {
+            Log.e("PurchaseProductFragment", "createOrder: $shopGhnId va $orderRequest")
+            val response = userAPI.createOrder(shopGhnId, orderRequest)
+            if (response.isSuccessful) {
+                val result = response.body()
+                result?.let {
+                    StateListener.Success(Order(it.orderId, it.amount))
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            } else {
+                val errorBody = response.errorBody()
+                val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+                errorBody?.string()?.let {
+                    StateListener.Error(Exception(adapter.fromJson(it)?.message))
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            }
+        } catch (e: Exception) {
+            StateListener.Error(e)
+        }
 
 }

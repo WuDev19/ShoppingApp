@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class VoucherOfShopFragment(private val onClickVoucher: (Int, String) -> Unit) :
+class VoucherOfShopFragment(private val onClickVoucher: (Int, String, Int, Int, Int, String) -> Unit) :
     BottomSheetDialogFragment() {
     private val TAG = VoucherOfShopFragment::class.simpleName
     private val viewModel: VoucherOfShopViewModel by viewModels()
@@ -32,7 +32,11 @@ class VoucherOfShopFragment(private val onClickVoucher: (Int, String) -> Unit) :
         get() = _binding!!
     private lateinit var shopVoucherAdapter: ShopVoucherAdapter
     private var voucherId = -1
+    private var shopGhnId = -1
     private var voucherValue = ""
+    private var voucherOriginValue = -1
+    private var maxDiscount = -1
+    private var voucherType = ""
     private var listVoucher: List<ShopVouchers> = mutableListOf()
 
     private val sellerId: Int? by lazy { arguments?.getInt(StringConstants.ID_SELLER) }
@@ -54,13 +58,17 @@ class VoucherOfShopFragment(private val onClickVoucher: (Int, String) -> Unit) :
         sellerId?.let {
             viewModel.getShopVouchers(it)
         }
-        shopVoucherAdapter = ShopVoucherAdapter(emptyList()) { voucherId, voucherValue ->
-            Log.e(TAG, "onViewCreated: $voucherId")
-            if (voucherId != -1) {
-                this.voucherId = voucherId
-                this.voucherValue = voucherValue
+        shopVoucherAdapter =
+            ShopVoucherAdapter(emptyList()) { voucherId, voucherValue, shopGhnId, voucherOriginValue, maxDiscount, voucherType ->
+                if (voucherId != -1) {
+                    this.voucherId = voucherId
+                    this.shopGhnId = shopGhnId
+                    this.voucherValue = voucherValue
+                    this.voucherOriginValue = voucherOriginValue
+                    this.maxDiscount = maxDiscount
+                    this.voucherType = voucherType
+                }
             }
-        }
 
         binding.apply {
             recyclerViewShopVoucher.apply {
@@ -69,7 +77,14 @@ class VoucherOfShopFragment(private val onClickVoucher: (Int, String) -> Unit) :
                 isNestedScrollingEnabled = true
             }
             btnApplyVoucher.setOnClickListener {
-                onClickVoucher(voucherId, voucherValue)
+                onClickVoucher(
+                    voucherId,
+                    voucherValue,
+                    shopGhnId,
+                    voucherOriginValue,
+                    maxDiscount,
+                    voucherType
+                )
                 dismiss()
             }
             btnFind.setOnClickListener {

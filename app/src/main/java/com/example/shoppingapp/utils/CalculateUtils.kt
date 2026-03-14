@@ -6,12 +6,12 @@ import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
 
 object CalculateUtils {
-    fun calcDiscount(discount: Int, price: Int): Int {
+    fun calcDiscount(discount: Int, price: Int): Long {
         val deduct = price * discount / 100
-        return price - deduct
+        return price - deduct.toLong()
     }
 
-    fun calcTotalPrice(cartItems: List<CartItem>): Int =
+    fun calcTotalPrice(cartItems: List<CartItem>): Long =
         cartItems.sumOf { cartItem ->
             calcDiscount(
                 cartItem.giamGia,
@@ -19,7 +19,7 @@ object CalculateUtils {
             ) * cartItem.soLuong
         }
 
-    fun calcTotalPrice(orderFromBuyNow: OrderFromBuyNow): Int {
+    fun calcTotalPrice(orderFromBuyNow: OrderFromBuyNow): Long {
         Log.e(StringConstants.DEBUG, "calcTotalPrice: $orderFromBuyNow")
         return calcDiscount(
             orderFromBuyNow.discount,
@@ -27,7 +27,7 @@ object CalculateUtils {
         ) * orderFromBuyNow.number
     }
 
-    fun calcTotalPriceFromCart(orderFromCarts: List<OrderFromCart>): Int {
+    fun calcTotalPriceFromCart(orderFromCarts: List<OrderFromCart>): Long {
         return orderFromCarts.sumOf { fromCart ->
             fromCart.cartItems.sumOf { cartItem ->
                 calcDiscount(

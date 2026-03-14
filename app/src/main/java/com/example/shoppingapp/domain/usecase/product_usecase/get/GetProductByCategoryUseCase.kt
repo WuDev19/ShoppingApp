@@ -1,0 +1,13 @@
+package com.example.shoppingapp.domain.usecase.product_usecase.get
+
+import androidx.paging.PagingData
+import com.example.shoppingapp.domain.model.product.ProductDisplay
+import com.example.shoppingapp.domain.repository.product.ProductRepository
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+class GetProductByCategoryUseCase @Inject constructor(private val repo: ProductRepository) {
+
+    operator fun invoke(theLoai: String): Flow<PagingData<ProductDisplay>> = repo.getProductByCategory(theLoai)
+
+}

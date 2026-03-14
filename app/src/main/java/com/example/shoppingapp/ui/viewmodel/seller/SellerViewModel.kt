@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.domain.model.SellerInStore
-import com.example.shoppingapp.domain.usecase.sellerusecase.GetSellerInStoreInfoUseCase
+import com.example.shoppingapp.domain.usecase.seller_usecase.GetSellerInStoreInfoUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -6,8 +6,8 @@ import com.example.shoppingapp.data.remote.dto.request.CartAndCartItemRequest
 import com.example.shoppingapp.data.remote.dto.request.CartItemRequest
 import com.example.shoppingapp.data.remote.dto.request.CartRequest
 import com.example.shoppingapp.domain.model.product.ProductChiTiet
-import com.example.shoppingapp.domain.usecase.cartusecase.CreateCartUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.get.GetProductChiTietUseCase
+import com.example.shoppingapp.domain.usecase.cart_usecase.CreateCartUseCase
+import com.example.shoppingapp.domain.usecase.product_usecase.get.GetProductChiTietUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.shoppingapp.domain.model.SearchProductShop
-import com.example.shoppingapp.domain.usecase.sellerusecase.SearchProductInShopUseCase
+import com.example.shoppingapp.domain.usecase.seller_usecase.SearchProductInShopUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

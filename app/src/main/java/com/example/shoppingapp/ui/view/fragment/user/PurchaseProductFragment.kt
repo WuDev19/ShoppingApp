@@ -1,16 +1,13 @@
 package com.example.shoppingapp.ui.view.fragment.user
 
-import android.content.DialogInterface
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.lifecycle.Lifecycle
@@ -22,9 +19,12 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.data.remote.dto.request.ghn.CalculateFeeGhnRequest
 import com.example.shoppingapp.databinding.FragmentPurchaseProductBinding
 import com.example.shoppingapp.domain.model.AddressItem
+import com.example.shoppingapp.domain.model.FinalPrice
+import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
 import com.example.shoppingapp.domain.model.ShowVoucherModel
+import com.example.shoppingapp.domain.model.VoucherOrder
 import com.example.shoppingapp.domain.model.ghn.ShippingMethod
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.OrderProductAdapter
@@ -33,6 +33,7 @@ import com.example.shoppingapp.ui.viewmodel.user.PurchaseProductViewModel
 import com.example.shoppingapp.utils.CalculateUtils
 import com.example.shoppingapp.utils.CheckNavigation
 import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -67,8 +68,12 @@ class PurchaseProductFragment : Fragment() {
         }
     }
     private lateinit var orderProductAdapter: OrderProductAdapter
-    private var totalPrice: Int = 0
+    private var totalPrice: Long = 0
     private var address: AddressItem? = null
+    private val voucherOrders by lazy { mutableMapOf<Int, VoucherOrder>() }
+    private val shippingMethods by lazy { mutableMapOf<Int, ShippingMethod>() }
+    private val finalPrices by lazy { mutableMapOf<Int, FinalPrice>() }
+    private val userNotes by lazy { mutableMapOf<Int, String>() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -81,17 +86,46 @@ class PurchaseProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         orderProductAdapter =
-            OrderProductAdapter(listOrder ?: emptyList(), orderFromBuyNow) { sellerId ->
-                val voucherOfShopFragment = VoucherOfShopFragment { voucherId, voucherValue ->
-                    val showVoucherModel = ShowVoucherModel(voucherId, voucherValue, sellerId)
-                    orderProductAdapter.setVoucher(showVoucherModel)
-                }
-                val bundle = bundleOf(
-                    StringConstants.ID_SELLER to sellerId
-                )
-                voucherOfShopFragment.arguments = bundle
-                voucherOfShopFragment.show(childFragmentManager, voucherOfShopFragment.tag)
-            }
+            OrderProductAdapter(
+                listOrder ?: emptyList(),
+                orderFromBuyNow,
+                onClickVoucher = { sellerId ->
+                    val voucherOfShopFragment =
+                        VoucherOfShopFragment { voucherId, voucherValue, shopGhnId, voucherOriginValue, maxDiscount, voucherType ->
+                            if (voucherId != -1) {
+                                voucherOrders[shopGhnId] =
+                                    VoucherOrder(voucherId, voucherValue, shopGhnId)
+                                val showVoucherModel =
+                                    ShowVoucherModel(
+                                        voucherId,
+                                        voucherValue,
+                                        shopGhnId,
+                                        voucherOriginValue,
+                                        maxDiscount,
+                                        voucherType
+                                    )
+                                orderProductAdapter.setVoucher(showVoucherModel)
+                            }
+                        }
+                    val bundle = bundleOf(
+                        StringConstants.ID_SELLER to sellerId
+                    )
+                    voucherOfShopFragment.arguments = bundle
+                    voucherOfShopFragment.show(childFragmentManager, voucherOfShopFragment.tag)
+                },
+                finalPrice = { finalTotalPrice, shopGhnId, totalPriceOrigin, discountValue, priceWithoutShip ->
+                    finalPrices[shopGhnId] =
+                        FinalPrice(
+                            finalTotalPrice,
+                            shopGhnId,
+                            totalPriceOrigin,
+                            discountValue,
+                            priceWithoutShip
+                        )
+                },
+                onWriteNote = {
+                    note, shopGhnId -> userNotes[shopGhnId] = note
+                })
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -112,8 +146,8 @@ class PurchaseProductFragment : Fragment() {
                 launch {
                     viewModel.serviceState.collect {
                         when (it) {
-                            is StateListener.Idle -> Unit
-                            is StateListener.Loading -> Unit
+                            is StateListener.Idle -> Unit // TODO:
+                            is StateListener.Loading -> Unit //đoạn này cho một cái shimmer block cả màn hình nào xong mới cho bấm vào shopvoucher
                             is StateListener.Error -> {
                                 Log.e(
                                     StringConstants.DEBUG,
@@ -122,7 +156,9 @@ class PurchaseProductFragment : Fragment() {
                             }
 
                             is StateListener.Success<ShippingMethod> -> {
-                                orderProductAdapter.setServices(mutableListOf(it.result))
+                                val shippingMethod = it.result
+                                shippingMethods[shippingMethod.shopId] = shippingMethod
+                                orderProductAdapter.setServices(mutableListOf(shippingMethod))
                             }
                         }
                     }
@@ -133,7 +169,20 @@ class PurchaseProductFragment : Fragment() {
                         null
                     )?.collectLatest { addressItem ->
                         addressItem?.let {
+                            address = it
                             displayAddress(it)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.createOrderState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                            is StateListener.Success<Order> -> {
+                                Log.e(TAG, "onViewCreated: ${it.result}")
+                            }
                         }
                     }
                 }
@@ -191,7 +240,7 @@ class PurchaseProductFragment : Fragment() {
                 if (radioVnPay.isChecked) {
                     val dialog = AlertDialog.Builder(requireContext())
                         .setIcon(R.drawable.icon_avatar)
-                        .setTitle("Online payment")
+                        .setTitle("Shopping App")
                         .setMessage("If you choose online payment, you must pay first")
                         .setNegativeButton("Cancel") { dialogInterface, _ -> dialogInterface.dismiss() }
                         .setPositiveButton("Ok") { dialogInterface, _ ->
@@ -202,6 +251,33 @@ class PurchaseProductFragment : Fragment() {
                     dialog.window?.apply {
                         setBackgroundDrawableResource(R.drawable.custom_dialog)
                     }
+                } else {
+                    if (address == null || shippingMethods.isEmpty()) {
+                        ToastUtils.showToast(requireContext(), "Not ready, wait a minute")
+                        return@setOnClickListener
+                    }
+                    orderFromBuyNow?.let {
+                        viewModel.createOrderWithCod(
+                            orderFromBuyNow = it,
+                            addressItem = address!!,
+                            shippingMethods = shippingMethods,
+                            voucherOrders = voucherOrders,
+                            finalPrices = finalPrices,
+                            note = userNotes,
+                            paymentMethod = "COD",
+                            isCod = true
+                        )
+                    } ?: viewModel.createOrderWithCod(
+                        listOrder = listOrder,
+                        addressItem = address!!,
+                        shippingMethods = shippingMethods,
+                        voucherOrders = voucherOrders,
+                        finalPrices = finalPrices,
+                        note = userNotes,
+                        paymentMethod = "COD",
+                        isCod = true
+                    )
+
                 }
             }
         }

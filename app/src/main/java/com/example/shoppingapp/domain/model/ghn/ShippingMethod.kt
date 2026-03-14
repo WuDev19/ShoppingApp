@@ -8,5 +8,7 @@ data class ShippingMethod(
     val shopId: Int,
     val feeServiceGhn: FeeServiceGhn,
     val estimateGhn: EstimateGhn,
-    var isSelected: Boolean
+    var isSelected: Boolean,
+    val serviceId: Int,
+    val serviceTypeId: Int
 ) : Parcelable

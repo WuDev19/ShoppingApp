@@ -9,7 +9,7 @@ import com.example.shoppingapp.domain.model.ShopVouchers
 
 class ShopVoucherAdapter(
     private var listVoucher: List<ShopVouchers>,
-    private val onSelectVoucher: (Int, String) -> Unit
+    private val onSelectVoucher: (Int, String, Int, Int, Int, String) -> Unit
 ) :
     RecyclerView.Adapter<ShopVoucherAdapter.ShopVoucherViewHolder>() {
 
@@ -83,16 +83,30 @@ class ShopVoucherAdapter(
                         notifyItemChanged(oldPosition)
                     }
                     oldPosition = holder.bindingAdapterPosition
-                    onSelectVoucher(voucher.voucherId, voucherValue)
+                    onSelectVoucher(
+                        voucher.voucherId,
+                        voucherValue,
+                        voucher.shopGhnId,
+                        voucher.voucherValue,
+                        voucher.maxDiscountValue,
+                        voucher.voucherType
+                    )
                 } else {
                     if (!voucher.isSelected) {
                         voucher.isSelected = true
                         rbSelect.isChecked = true
-                        onSelectVoucher(voucher.voucherId, voucherValue)
+                        onSelectVoucher(
+                            voucher.voucherId,
+                            voucherValue,
+                            voucher.shopGhnId,
+                            voucher.voucherValue,
+                            voucher.maxDiscountValue,
+                            voucher.voucherType
+                        )
                     } else {
                         voucher.isSelected = false
                         rbSelect.isChecked = false
-                        onSelectVoucher(-1, "")
+                        onSelectVoucher(-1, "", -1, -1, -1, "")
                     }
                 }
             }

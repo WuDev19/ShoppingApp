@@ -5,10 +5,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.shoppingapp.domain.model.product.ProductDisplay
-import com.example.shoppingapp.domain.usecase.authusecase.GetUserCurrentUseCase
-import com.example.shoppingapp.domain.usecase.cartusecase.GetNumberCartItemUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.get.GetProductUseCase
-import com.example.shoppingapp.domain.usecase.productusecase.get.SearchProductUseCase
+import com.example.shoppingapp.domain.usecase.auth_usecase.GetUserCurrentUseCase
+import com.example.shoppingapp.domain.usecase.cart_usecase.GetNumberCartItemUseCase
+import com.example.shoppingapp.domain.usecase.product_usecase.get.GetProductUseCase
+import com.example.shoppingapp.domain.usecase.product_usecase.get.SearchProductUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel

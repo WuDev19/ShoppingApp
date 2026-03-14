@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.utils.TokenManager
 import com.example.shoppingapp.data.remote.dto.get.AuthResponse
-import com.example.shoppingapp.domain.usecase.authusecase.LoginEmailUseCase
-import com.example.shoppingapp.domain.usecase.authusecase.LoginGoogleUseCase
+import com.example.shoppingapp.domain.usecase.auth_usecase.LoginEmailUseCase
+import com.example.shoppingapp.domain.usecase.auth_usecase.LoginGoogleUseCase
 import com.example.shoppingapp.ui.state.StateListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

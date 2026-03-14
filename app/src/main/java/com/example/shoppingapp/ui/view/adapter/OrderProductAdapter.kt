@@ -4,6 +4,7 @@ import android.text.TextPaint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppingapp.databinding.LayoutProductOrderItemBinding
@@ -14,14 +15,19 @@ import com.example.shoppingapp.domain.model.ShowVoucherModel
 import com.example.shoppingapp.domain.model.ghn.ShippingMethod
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.utils.CalculateUtils
+import kotlin.apply
+import kotlin.math.min
 
 class OrderProductAdapter(
     private val productOrders: List<OrderFromCart>,
     private val orderFromBuyNow: OrderFromBuyNow?,
-    private val onClickVoucher: (Int) -> Unit
+    private val onClickVoucher: (Int) -> Unit,
+    private val finalPrice: (Long, Int, Long, Int, Long) -> Unit,
+    private val onWriteNote: (String, Int) -> Unit
 ) : RecyclerView.Adapter<OrderProductAdapter.OrderProductViewHolder>() {
 
     private var isClickToShow = false
+    private val feeServices by lazy { mutableListOf<MutableList<ShippingMethod>>() }
     fun setServices(listService: MutableList<ShippingMethod>) {
         if (orderFromBuyNow != null) {
             notifyItemChanged(0, listService)
@@ -31,6 +37,7 @@ class OrderProductAdapter(
             }
             notifyItemChanged(position, listService)
         }
+        feeServices.add(listService)
     }
 
     fun setVoucher(showVoucherModel: ShowVoucherModel) {
@@ -38,7 +45,7 @@ class OrderProductAdapter(
             notifyItemChanged(0, showVoucherModel)
         } else {
             val position = productOrders.indexOfFirst {
-                it.cart.maNB == showVoucherModel.sellerId
+                it.cart.shopGhnId == showVoucherModel.shopGhnId
             }
             notifyItemChanged(position, showVoucherModel)
         }
@@ -64,7 +71,7 @@ class OrderProductAdapter(
         if (payloads.isEmpty()) {
             super.onBindViewHolder(holder, position, payloads)
         } else {
-            var totalPriceWithoutShipFee = if (productOrders.isNotEmpty()) {
+            val totalPrice: Long = if (productOrders.isNotEmpty()) { //tổng tiền ban đầu
                 CalculateUtils.calcTotalPrice(productOrders[position].cartItems)
             } else {
                 CalculateUtils.calcTotalPrice(
@@ -74,32 +81,49 @@ class OrderProductAdapter(
             payloads.forEach { payload ->
                 if (payload is MutableList<*>) {
                     val services = payload.filterIsInstance<ShippingMethod>()
-                    totalPriceWithoutShipFee += services[0].feeServiceGhn.totalFee
-                    holder.binding.apply {
-                        if (orderFromBuyNow == null) {
-                            tvTotalPrice.text = buildString {
-                                append(totalPriceWithoutShipFee)
-                                append("$")
-                            }
-                        } else {
-                            layoutItem.apply {
-                                tvTotalPrice.text = buildString {
-                                    append(totalPriceWithoutShipFee)
-                                    append("$")
-                                }
-                            }
-                        }
-                    }
                     holder.submitShippingMethod(services)
                 } else if (payload is ShowVoucherModel) {
                     holder.binding.apply {
-                        if (orderFromBuyNow == null) {
-                            tvVoucherShop.text = payload.voucherValue
+                        var finalTotalPrice: Long = 0
+                        var discountValue: Int
+                        var priceWithoutShip: Long = 0
+                        if (payload.voucherType == "Percent") {
+                            discountValue = (totalPrice * payload.voucherOriginValue / 100).toInt()
+                            finalTotalPrice += totalPrice - min(
+                                payload.maxDiscount,
+                                discountValue
+                            ).toLong()
+                            priceWithoutShip = finalTotalPrice
                         } else {
+                            discountValue = payload.voucherOriginValue
+                            finalTotalPrice += totalPrice - discountValue
+                            priceWithoutShip = finalTotalPrice
+                        }
+                        if (orderFromBuyNow == null) {
+                            val service = feeServices
+                                .firstOrNull { shippingMethods ->
+                                    shippingMethods[0].shopId == productOrders[position].cart.shopGhnId
+                                }
+                                ?.firstOrNull { shippingMethod -> shippingMethod.isSelected }
+                            finalTotalPrice += service?.feeServiceGhn?.totalFee ?: 0
+                            tvVoucherShop.text = payload.voucherValue
+                            tvTotalPrice.text = finalTotalPrice.toString()
+                        } else {
+                            finalTotalPrice += feeServices[0].firstOrNull { shippingMethod ->
+                                shippingMethod.isSelected
+                            }?.feeServiceGhn?.totalFee ?: 0
                             layoutItem.apply {
                                 tvVoucherShop.text = payload.voucherValue
+                                tvTotalPrice.text = finalTotalPrice.toString()
                             }
                         }
+                        finalPrice(
+                            finalTotalPrice,
+                            payload.shopGhnId,
+                            totalPrice,
+                            discountValue,
+                            priceWithoutShip
+                        )
                     }
                 }
             }
@@ -119,6 +143,9 @@ class OrderProductAdapter(
                 tvShopName.text = itemOrder.cart.tenShop
                 linearVoucher.setOnClickListener {
                     onClickVoucher(itemOrder.cart.maNB)
+                }
+                edtNote.addTextChangedListener { text ->
+                    onWriteNote(text.toString(), itemOrder.cart.shopGhnId)
                 }
             } else {
                 orderFromBuyNow?.let { order ->
@@ -153,6 +180,9 @@ class OrderProductAdapter(
                     }
                     linearVoucher.setOnClickListener {
                         onClickVoucher(order.sellerId)
+                    }
+                    edtNote.addTextChangedListener { text ->
+                        onWriteNote(text.toString(), order.shopGhnId)
                     }
                 }
             }
