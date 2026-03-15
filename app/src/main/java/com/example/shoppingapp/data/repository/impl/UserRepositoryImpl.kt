@@ -6,8 +6,10 @@ import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
 import com.example.shoppingapp.data.local.mapper.UserAddressMapper
 import com.example.shoppingapp.data.local.mapper.UserMapper
+import com.example.shoppingapp.data.remote.api.PaymentAPI
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
+import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
@@ -37,6 +39,7 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val userAPI: UserAPI,
+    private val paymentAPI: PaymentAPI,
     private val firestore: FirebaseFirestore,
     @param:AvatarUploader private val avatarUploader: CloudinaryUploader,
     private val moshi: Moshi,
@@ -296,6 +299,25 @@ class UserRepositoryImpl @Inject constructor(
                 val result = response.body()
                 result?.let {
                     StateListener.Success(Order(it.orderId, it.amount))
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            } else {
+                val errorBody = response.errorBody()
+                val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+                errorBody?.string()?.let {
+                    StateListener.Error(Exception(adapter.fromJson(it)?.message))
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            }
+        } catch (e: Exception) {
+            StateListener.Error(e)
+        }
+
+    override suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<String> =
+        try {
+            val response = paymentAPI.createPayment(orderPaymentRequest)
+            if (response.isSuccessful) {
+                val result = response.body()
+                result?.let {
+                    StateListener.Success(it.paymentUrl)
                 } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
             } else {
                 val errorBody = response.errorBody()

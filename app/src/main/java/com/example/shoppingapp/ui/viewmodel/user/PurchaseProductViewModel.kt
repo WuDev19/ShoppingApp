@@ -1,11 +1,14 @@
 package com.example.shoppingapp.ui.viewmodel.user
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.ghn.CalculateFeeGhnRequest
 import com.example.shoppingapp.data.remote.dto.request.ghn.EstimateTimeGhnRequest
 import com.example.shoppingapp.domain.model.AddressItem
 import com.example.shoppingapp.domain.model.FinalPrice
+import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
 import com.example.shoppingapp.domain.model.VoucherOrder
@@ -15,8 +18,10 @@ import com.example.shoppingapp.domain.usecase.ghn_usecase.CalculateFeeUseCase
 import com.example.shoppingapp.domain.usecase.ghn_usecase.EstimateTimeDeliveryUseCase
 import com.example.shoppingapp.domain.usecase.ghn_usecase.GetServiceGhnUseCase
 import com.example.shoppingapp.domain.usecase.user_usecase.CreateOrderUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.CreatePaymentUseCase
 import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.GetUserAddressUseCase
 import com.example.shoppingapp.ui.state.StateListener
+import com.example.shoppingapp.utils.StringConstants
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +51,7 @@ class PurchaseProductViewModel @Inject constructor(
     private val calculateFeeUseCase: CalculateFeeUseCase,
     private val estimateTimeDeliveryUseCase: EstimateTimeDeliveryUseCase,
     private val createOrderUseCase: CreateOrderUseCase,
+    private val createPaymentUseCase: CreatePaymentUseCase,
     private val auth: FirebaseAuth
 ) : ViewModel() {
 
@@ -111,8 +117,7 @@ class PurchaseProductViewModel @Inject constructor(
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun createOrderWithCod(
+    fun createOrder(
         orderFromBuyNow: OrderFromBuyNow? = null,
         listOrder: List<OrderFromCart>? = null,
         addressItem: AddressItem,
@@ -121,7 +126,48 @@ class PurchaseProductViewModel @Inject constructor(
         finalPrices: Map<Int, FinalPrice>,
         note: Map<Int, String>,
         paymentMethod: String,
-        isCod: Boolean
+    ) {
+        when (paymentMethod) {
+            "COD" -> {
+                createOrderWithCod(
+                    orderFromBuyNow,
+                    listOrder,
+                    addressItem,
+                    shippingMethods,
+                    voucherOrders,
+                    finalPrices,
+                    note,
+                    paymentMethod,
+                )
+            }
+
+            "VNPay" -> {
+                createOrderWithVNPay(
+                    orderFromBuyNow,
+                    listOrder,
+                    addressItem,
+                    shippingMethods,
+                    voucherOrders,
+                    finalPrices,
+                    note,
+                    paymentMethod,
+                )
+            }
+
+            else -> viewModelScope.launch { _createOrderState.send(StateListener.Error(Exception("Please choose a payment method"))) }
+        }
+    }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun createOrderWithCod(
+        orderFromBuyNow: OrderFromBuyNow? = null,
+        listOrder: List<OrderFromCart>? = null,
+        addressItem: AddressItem,
+        shippingMethods: Map<Int, ShippingMethod>,
+        voucherOrders: Map<Int, VoucherOrder>,
+        finalPrices: Map<Int, FinalPrice>,
+        note: Map<Int, String>,
+        paymentMethod: String,
     ) {
         viewModelScope.launch {
             _createOrderState.send(StateListener.Loading)
@@ -136,7 +182,6 @@ class PurchaseProductViewModel @Inject constructor(
                     finalPrices,
                     note,
                     paymentMethod,
-                    isCod
                 )
                 if (result is StateListener.Success) {
                     _createOrderState.send(StateListener.Success("Success"))
@@ -158,7 +203,6 @@ class PurchaseProductViewModel @Inject constructor(
                                 finalPrices,
                                 note,
                                 paymentMethod,
-                                isCod
                             )
                             emit(data)
                         }.flowOn(Dispatchers.Default)
@@ -172,4 +216,52 @@ class PurchaseProductViewModel @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun createOrderWithVNPay(
+        orderFromBuyNow: OrderFromBuyNow? = null,
+        listOrder: List<OrderFromCart>? = null,
+        addressItem: AddressItem,
+        shippingMethods: Map<Int, ShippingMethod>,
+        voucherOrders: Map<Int, VoucherOrder>,
+        finalPrices: Map<Int, FinalPrice>,
+        note: Map<Int, String>,
+        paymentMethod: String,
+    ) {
+        viewModelScope.launch {
+            if (orderFromBuyNow != null) {
+                flow {
+                    emit(
+                        createOrderUseCase(
+                            orderFromBuyNow.shopGhnId,
+                            orderFromBuyNow,
+                            null,
+                            addressItem,
+                            shippingMethods,
+                            voucherOrders,
+                            finalPrices,
+                            note,
+                            paymentMethod,
+                        )
+                    )
+                }.flatMapConcat { stateListenerOrder ->
+                    flow {
+                        when (stateListenerOrder) {
+                            is StateListener.Idle -> emit(stateListenerOrder)
+                            is StateListener.Loading -> emit(stateListenerOrder)
+                            is StateListener.Error -> emit(stateListenerOrder)
+                            is StateListener.Success<Order> -> {
+                                val order = stateListenerOrder.result
+                                val orderPaymentRequest =
+                                    OrderPaymentRequest(order.orderId, order.amount)
+                                val result = createPaymentUseCase(orderPaymentRequest)
+                                emit(result)
+                            }
+                        }
+                    }
+                }.collectLatest {
+                    Log.e("VNPAYYY", "createOrderWithVNPay: $it")
+                }
+            }
+        }
+    }
 }

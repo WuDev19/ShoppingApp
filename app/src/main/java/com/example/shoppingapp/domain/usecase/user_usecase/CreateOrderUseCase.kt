@@ -31,7 +31,6 @@ class CreateOrderUseCase @Inject constructor(
         finalPrices: Map<Int, FinalPrice>,
         note: Map<Int, String>,
         paymentMethod: String,
-        isCod: Boolean
     ): StateListener<Order> {
         val shippingMethod = shippingMethods[shopGhnId]!!
         val voucherOrder = voucherOrders[shopGhnId]
@@ -48,7 +47,8 @@ class CreateOrderUseCase @Inject constructor(
                     orderFromBuyNow.discount,
                     productChiTiet.unitPrice!!
                 ) //giá chưa áp voucher
-                insuranceValue = finalPrice.priceWithoutShip //giá sản phẩm khi áp voucher
+                insuranceValue =
+                    finalPrice.priceWithoutShip //giá sản phẩm khi áp voucher nhưng ko tính ship
             } else {
                 unitPrice = CalculateUtils.calcDiscount(
                     orderFromBuyNow.discount,

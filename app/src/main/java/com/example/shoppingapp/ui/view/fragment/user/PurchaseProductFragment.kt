@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -123,8 +124,8 @@ class PurchaseProductFragment : Fragment() {
                             priceWithoutShip
                         )
                 },
-                onWriteNote = {
-                    note, shopGhnId -> userNotes[shopGhnId] = note
+                onWriteNote = { note, shopGhnId ->
+                    userNotes[shopGhnId] = note
                 })
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -178,10 +179,23 @@ class PurchaseProductFragment : Fragment() {
                     viewModel.createOrderState.collectLatest {
                         when (it) {
                             is StateListener.Idle -> Unit
-                            is StateListener.Loading -> Unit
-                            is StateListener.Error -> Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                            is StateListener.Loading -> {
+                                binding.frameShimmer.isVisible = true
+                            }
+
+                            is StateListener.Error -> {
+                                Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                                binding.frameShimmer.isVisible = false
+                                ToastUtils.showToast(
+                                    requireContext(),
+                                    it.e?.message ?: StringConstants.HAS_ERROR
+                                )
+                            }
+
                             is StateListener.Success<String> -> {
                                 Log.e(TAG, "onViewCreated: ${it.result}")
+                                binding.frameShimmer.isVisible = false
+                                ToastUtils.showToast(requireContext(), it.result)
                             }
                         }
                     }
@@ -237,50 +251,43 @@ class PurchaseProductFragment : Fragment() {
             }
 
             btnBuy.setOnClickListener {
-                if (radioCod.isChecked) {
-                    if (address == null || shippingMethods.isEmpty()) {
-                        ToastUtils.showToast(requireContext(), "Not ready, wait a minute")
-                        return@setOnClickListener
-                    }
-                    orderFromBuyNow?.let {
-                        viewModel.createOrderWithCod(
-                            orderFromBuyNow = it,
-                            addressItem = address!!,
-                            shippingMethods = shippingMethods,
-                            voucherOrders = voucherOrders,
-                            finalPrices = finalPrices,
-                            note = userNotes,
-                            paymentMethod = "COD",
-                            isCod = true
-                        )
-                    } ?: viewModel.createOrderWithCod(
-                        listOrder = listOrder,
+                if (address == null || shippingMethods.isEmpty()) {
+                    ToastUtils.showToast(requireContext(), "Not ready, wait a minute")
+                    return@setOnClickListener
+                }
+                orderFromBuyNow?.let {
+                    viewModel.createOrder(
+                        orderFromBuyNow = it,
                         addressItem = address!!,
                         shippingMethods = shippingMethods,
                         voucherOrders = voucherOrders,
                         finalPrices = finalPrices,
                         note = userNotes,
-                        paymentMethod = "COD",
-                        isCod = true
+                        paymentMethod = determinePayment(this),
                     )
-                } else {
-                    val dialog = AlertDialog.Builder(requireContext())
-                        .setIcon(R.drawable.icon_avatar)
-                        .setTitle("Shopping App")
-                        .setMessage("If you choose online payment, you must pay first")
-                        .setNegativeButton("Cancel") { dialogInterface, _ -> dialogInterface.dismiss() }
-                        .setPositiveButton("Ok") { dialogInterface, _ ->
-
-                        }
-                        .create()
-                    dialog.show()
-                    dialog.window?.apply {
-                        setBackgroundDrawableResource(R.drawable.custom_dialog)
-                    }
-                }
+                } ?: viewModel.createOrder(
+                    listOrder = listOrder,
+                    addressItem = address!!,
+                    shippingMethods = shippingMethods,
+                    voucherOrders = voucherOrders,
+                    finalPrices = finalPrices,
+                    note = userNotes,
+                    paymentMethod = determinePayment(this),
+                )
             }
         }
 
+    }
+
+    private fun determinePayment(binding: FragmentPurchaseProductBinding): String {
+        binding.apply {
+            if (radioCod.isChecked) {
+                return "COD"
+            } else if (radioVnPay.isChecked) {
+                return "VNPay"
+            }
+        }
+        return ""
     }
 
     private fun handleServiceIfListOrderNotEmpty() {

@@ -1,6 +1,7 @@
 package com.example.shoppingapp.domain.repository.user
 
 import android.net.Uri
+import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
@@ -42,5 +43,7 @@ interface UserRepository {
     fun deleteUserAddress(idUser: String, idAddress: Int): Flow<StateListener<Int>>
 
     suspend fun createOrder(shopGhnId: Int, orderRequest: OrderRequest): StateListener<Order>
+
+    suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<String>
 
 }
