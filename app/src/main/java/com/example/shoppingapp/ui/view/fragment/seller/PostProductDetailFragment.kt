@@ -258,7 +258,7 @@ class PostProductDetailFragment : Fragment() {
                     generalPrice,
                     description,
                     null,
-                    if (discount == -1) null else discount,
+                    discount,
                     introduction,
                     listPostProductDetailRequest,
                     null

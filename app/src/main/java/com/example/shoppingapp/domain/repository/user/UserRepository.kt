@@ -45,5 +45,6 @@ interface UserRepository {
     suspend fun createOrder(shopGhnId: Int, orderRequest: OrderRequest): StateListener<Order>
 
     suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<String>
+    suspend fun updateStatusOrder(orderId: Int): StateListener<Unit>
 
 }

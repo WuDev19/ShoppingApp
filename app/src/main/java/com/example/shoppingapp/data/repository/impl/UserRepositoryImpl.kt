@@ -330,4 +330,23 @@ class UserRepositoryImpl @Inject constructor(
             StateListener.Error(e)
         }
 
+    override suspend fun updateStatusOrder(orderId: Int): StateListener<Unit> =
+        try {
+            val response = userAPI.updateStatusOrder(orderId)
+            if (response.isSuccessful) {
+                val result = response.body()
+                result?.let {
+                    StateListener.Success(Unit)
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            } else {
+                val errorBody = response.errorBody()
+                val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+                errorBody?.string()?.let {
+                    StateListener.Error(Exception(adapter.fromJson(it)?.message))
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            }
+        } catch (e: Exception) {
+            StateListener.Error(e)
+        }
+
 }

@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.fragment.user
 
+import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.browser.customtabs.CustomTabsClient
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -40,6 +43,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import androidx.core.net.toUri
+import com.example.shoppingapp.ui.view.activity.common.MainActivity
 
 @AndroidEntryPoint
 class PurchaseProductFragment : Fragment() {
@@ -196,6 +201,32 @@ class PurchaseProductFragment : Fragment() {
                                 Log.e(TAG, "onViewCreated: ${it.result}")
                                 binding.frameShimmer.isVisible = false
                                 ToastUtils.showToast(requireContext(), it.result)
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.paymentUrlState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> {//thêm cái preload web
+                                binding.frameShimmer.isVisible = true
+                            }
+                            is StateListener.Error -> {
+                                binding.frameShimmer.isVisible = false
+                                ToastUtils.showToast(
+                                    requireContext(),
+                                    it.e?.message ?: StringConstants.HAS_ERROR
+                                )
+                                Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                            }
+
+                            is StateListener.Success<String> -> {
+                                binding.frameShimmer.isVisible = false
+                                (requireActivity() as MainActivity).isOpenWeb = true
+                                val customTabsClient = CustomTabsIntent.Builder()
+                                    .build()
+                                customTabsClient.launchUrl(requireContext(), it.result.toUri())
                             }
                         }
                     }

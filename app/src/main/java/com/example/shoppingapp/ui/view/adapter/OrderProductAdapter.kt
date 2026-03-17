@@ -86,7 +86,7 @@ class OrderProductAdapter(
                     holder.binding.apply {
                         var finalTotalPrice: Long = 0
                         var discountValue: Int
-                        var priceWithoutShip: Long = 0
+                        var priceWithoutShip: Long
                         if (payload.voucherType == "Percent") {
                             discountValue = (totalPrice * payload.voucherOriginValue / 100).toInt()
                             finalTotalPrice += totalPrice - min(
@@ -107,22 +107,24 @@ class OrderProductAdapter(
                                 ?.firstOrNull { shippingMethod -> shippingMethod.isSelected }
                             finalTotalPrice += service?.feeServiceGhn?.totalFee ?: 0
                             tvVoucherShop.text = payload.voucherValue
-                            tvTotalPrice.text = finalTotalPrice.toString()
+                            tvTotalPrice.text =
+                                if (finalTotalPrice < 0) "0" else finalTotalPrice.toString()
                         } else {
                             finalTotalPrice += feeServices[0].firstOrNull { shippingMethod ->
                                 shippingMethod.isSelected
                             }?.feeServiceGhn?.totalFee ?: 0
                             layoutItem.apply {
                                 tvVoucherShop.text = payload.voucherValue
-                                tvTotalPrice.text = finalTotalPrice.toString()
+                                tvTotalPrice.text =
+                                    if (finalTotalPrice < 0) "0" else finalTotalPrice.toString()
                             }
                         }
                         finalPrice(
-                            finalTotalPrice,
+                            if (finalTotalPrice < 0) 0 else finalTotalPrice,
                             payload.shopGhnId,
                             totalPrice,
                             discountValue,
-                            priceWithoutShip
+                            if (priceWithoutShip < 0) 0 else priceWithoutShip
                         )
                     }
                 }

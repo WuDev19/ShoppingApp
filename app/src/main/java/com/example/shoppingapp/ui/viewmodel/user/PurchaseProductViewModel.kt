@@ -32,11 +32,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.forEach
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
@@ -59,6 +62,8 @@ class PurchaseProductViewModel @Inject constructor(
     val serviceState = _serviceState.asStateFlow()
     private val _createOrderState = Channel<StateListener<String>>()
     val createOrderState = _createOrderState.receiveAsFlow()
+    private val _paymentUrlState = Channel<StateListener<String>>()
+    val paymentUrlState = _paymentUrlState.receiveAsFlow()
 
     val getAddress = getUserAddressUseCase(auth.currentUser?.uid ?: "").stateIn(
         viewModelScope,
@@ -228,6 +233,7 @@ class PurchaseProductViewModel @Inject constructor(
         paymentMethod: String,
     ) {
         viewModelScope.launch {
+            _paymentUrlState.send(StateListener.Loading)
             if (orderFromBuyNow != null) {
                 flow {
                     emit(
@@ -252,15 +258,52 @@ class PurchaseProductViewModel @Inject constructor(
                             is StateListener.Success<Order> -> {
                                 val order = stateListenerOrder.result
                                 val orderPaymentRequest =
-                                    OrderPaymentRequest(order.orderId, order.amount)
+                                    OrderPaymentRequest(order.orderId.toString(), order.amount)
                                 val result = createPaymentUseCase(orderPaymentRequest)
                                 emit(result)
                             }
                         }
                     }
                 }.collectLatest {
-                    Log.e("VNPAYYY", "createOrderWithVNPay: $it")
+                    _paymentUrlState.send(it)
                 }
+            } else {
+                val listShopGhnId = listOrder!!.map { it.cart.shopGhnId }
+                val listResult = listShopGhnId.asFlow()
+                    .flatMapMerge { shopGhnId ->
+                        flow {
+                            val data = createOrderUseCase(
+                                shopGhnId,
+                                null,
+                                listOrder.first { it.cart.shopGhnId == shopGhnId },
+                                addressItem,
+                                shippingMethods,
+                                voucherOrders,
+                                finalPrices,
+                                note,
+                                paymentMethod,
+                            )
+                            emit(data)
+                        }.flowOn(Dispatchers.Default)
+                    }.toList()
+                val orderIdBuilder = StringBuilder()
+                var totalAmout: Long = 0
+                listResult.forEach {
+                    if (it is StateListener.Success) {
+                        orderIdBuilder.append(it.result.orderId).append("_")
+                        totalAmout += it.result.amount
+                    }
+                }
+                val orderId =
+                    if (orderIdBuilder.isNotEmpty()) orderIdBuilder.dropLast(1).toString() else ""
+                _paymentUrlState.send(
+                    createPaymentUseCase(
+                        OrderPaymentRequest(
+                            orderId,
+                            totalAmout
+                        )
+                    )
+                )
             }
         }
     }

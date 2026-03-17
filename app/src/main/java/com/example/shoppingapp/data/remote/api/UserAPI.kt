@@ -68,4 +68,7 @@ interface UserAPI {
         @Body orderRequest: OrderRequest
     ): Response<OrderDTO>
 
+    @PATCH("user/update-order/{orderId}")
+    suspend fun updateStatusOrder(@Path("orderId") orderId: Int): Response<Unit>
+
 }

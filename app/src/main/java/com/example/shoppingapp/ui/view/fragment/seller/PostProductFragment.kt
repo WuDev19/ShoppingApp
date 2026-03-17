@@ -157,7 +157,7 @@ class PostProductFragment : Fragment() {
             val price = edtProductPrice.text.toString().trim()
             val discount =
                 if (edtDiscount.text.toString().isNotEmpty()) edtDiscount.text.toString().trim()
-                    .toInt() else -1
+                    .toInt() else 0
             val introduction = if (edtIntroduction.text.toString()
                     .isNotEmpty()
             ) edtIntroduction.text.toString().trim() else null

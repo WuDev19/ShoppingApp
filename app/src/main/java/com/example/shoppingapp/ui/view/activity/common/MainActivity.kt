@@ -23,6 +23,7 @@ import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.activity.auth.LoginActivity
 import com.example.shoppingapp.ui.view.adapter.ViewPagerAdapter
 import com.example.shoppingapp.ui.viewmodel.common.MainViewModel
+import com.example.shoppingapp.utils.ToastUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -32,10 +33,11 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
+    private val TAG = MainActivity::class.simpleName
     private val viewModel: MainViewModel by viewModels()
     private lateinit var viewbinding: ActivityMainBinding
     private val viewPagerAdapter: ViewPagerAdapter by lazy { ViewPagerAdapter(this@MainActivity) }
+    var isOpenWeb: Boolean = false
 
     @Inject
     lateinit var sessionManager: SessionManager
@@ -49,22 +51,43 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 //chỗ này là khi gửi link email mới và đăng nhập để vào main activity, vào main thì cập nhật lại db, nếu lỗi thì cho logout và login lại
-                viewModel.updateEmailState.collectLatest {
-                    if (it is StateListener.Error) {
-                        val builder = AlertDialog.Builder(this@MainActivity)
-                            .setTitle("Ouchh")
-                            .setMessage(StringConstants.HAS_ERROR + " \nPlease log out and log in again!")
-                            .setIcon(R.drawable.icon_warning)
-                            .setCancelable(false)
-                            .setPositiveButton(
-                                "Ok"
-                            ) { _, _ ->
-                                viewModel.logout()
+                launch {
+                    viewModel.updateEmailState.collectLatest {
+                        if (it is StateListener.Error) {
+                            val builder = AlertDialog.Builder(this@MainActivity)
+                                .setTitle("Ouchh")
+                                .setMessage(StringConstants.HAS_ERROR + " \nPlease log out and log in again!")
+                                .setIcon(R.drawable.icon_warning)
+                                .setCancelable(false)
+                                .setPositiveButton(
+                                    "Ok"
+                                ) { _, _ ->
+                                    viewModel.logout()
+                                }
+                            val dialog = builder.create()
+                            dialog.show()
+                            dialog.window?.apply {
+                                setBackgroundDrawableResource(R.drawable.custom_dialog)
                             }
-                        val dialog = builder.create()
-                        dialog.show()
-                        dialog.window?.apply {
-                            setBackgroundDrawableResource(R.drawable.custom_dialog)
+                        }
+                    }
+                }
+                launch {
+                    viewModel.updateEmailState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> {
+                                Log.e(TAG, "onCreate: ${it.e?.message}")
+                                ToastUtils.showToast(
+                                    this@MainActivity,
+                                    it.e?.message ?: StringConstants.HAS_ERROR
+                                )
+                            }
+
+                            is StateListener.Success<Unit> -> {
+                                Log.e(TAG, "onCreate: ${it.result}")
+                            }
                         }
                     }
                 }
@@ -217,7 +240,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        Log.e(StringConstants.DEBUG, "onNewIntent: $intent")
+        Log.e(StringConstants.DEBUG, "onNewIntent: ${intent.data}")
+        if (isOpenWeb) {
+            isOpenWeb = false
+            val checkState = intent.data.toString().split("?")[1].split("=")
+            if (checkState[0] == "failed") {
+                ToastUtils.showToast(this, "Payment error, please try again")
+            } else {
+                val orderIds = checkState[1].split("_")
+                if (orderIds.size > 1) {
+
+                } else {
+                    viewModel.updateStatusOrder(orderIds[0].toInt())
+                }
+            }
+
+        }
     }
 
 }
