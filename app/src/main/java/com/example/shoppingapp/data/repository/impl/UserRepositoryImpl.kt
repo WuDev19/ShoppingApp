@@ -6,6 +6,7 @@ import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
 import com.example.shoppingapp.data.local.mapper.UserAddressMapper
 import com.example.shoppingapp.data.local.mapper.UserMapper
+import com.example.shoppingapp.data.remote.api.OrderAPI
 import com.example.shoppingapp.data.remote.api.PaymentAPI
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
@@ -13,10 +14,15 @@ import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
+import com.example.shoppingapp.data.remote.helper.NetworkHelper
+import com.example.shoppingapp.data.remote.mapper.OrderMapper
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.AvatarUploader
 import com.example.shoppingapp.domain.model.AddressItem
+import com.example.shoppingapp.domain.model.AfterPayment
 import com.example.shoppingapp.domain.model.Order
+import com.example.shoppingapp.domain.model.OrderDetail
+import com.example.shoppingapp.domain.model.OrderStatus
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.domain.repository.user.UserRepository
@@ -39,6 +45,7 @@ import javax.inject.Inject
 class UserRepositoryImpl @Inject constructor(
     private val auth: FirebaseAuth,
     private val userAPI: UserAPI,
+    private val orderAPI: OrderAPI,
     private val paymentAPI: PaymentAPI,
     private val firestore: FirebaseFirestore,
     @param:AvatarUploader private val avatarUploader: CloudinaryUploader,
@@ -294,7 +301,7 @@ class UserRepositoryImpl @Inject constructor(
         orderRequest: OrderRequest
     ): StateListener<Order> =
         try {
-            val response = userAPI.createOrder(shopGhnId, orderRequest)
+            val response = orderAPI.createOrder(shopGhnId, orderRequest)
             if (response.isSuccessful) {
                 val result = response.body()
                 result?.let {
@@ -311,13 +318,13 @@ class UserRepositoryImpl @Inject constructor(
             StateListener.Error(e)
         }
 
-    override suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<String> =
+    override suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<AfterPayment> =
         try {
             val response = paymentAPI.createPayment(orderPaymentRequest)
             if (response.isSuccessful) {
                 val result = response.body()
                 result?.let {
-                    StateListener.Success(it.paymentUrl)
+                    StateListener.Success(AfterPayment(orderPaymentRequest.orderId, it.paymentUrl))
                 } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
             } else {
                 val errorBody = response.errorBody()
@@ -330,13 +337,13 @@ class UserRepositoryImpl @Inject constructor(
             StateListener.Error(e)
         }
 
-    override suspend fun updateStatusOrder(orderId: Int): StateListener<Unit> =
+    override suspend fun updateStatusOrder(orderId: Int): StateListener<Order> =
         try {
-            val response = userAPI.updateStatusOrder(orderId)
+            val response = orderAPI.updateStatusOrder(orderId)
             if (response.isSuccessful) {
                 val result = response.body()
                 result?.let {
-                    StateListener.Success(Unit)
+                    StateListener.Success(Order(it.orderId, it.amount))
                 } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
             } else {
                 val errorBody = response.errorBody()
@@ -349,4 +356,27 @@ class UserRepositoryImpl @Inject constructor(
             StateListener.Error(e)
         }
 
+    override suspend fun getOrderStatus(orderId: Int): StateListener<OrderStatus> {
+        return NetworkHelper.callApi(
+            apiCall = {
+                orderAPI.getOrderDetail(orderId)
+            },
+            mapper = {
+                OrderMapper.mapToOrderStatus(it)
+            },
+            moshi
+        )
+    }
+
+    override suspend fun getOrderDetail(orderId: Int): StateListener<OrderDetail> {
+        return NetworkHelper.callApi(
+            apiCall = {
+                orderAPI.getOrderDetail(orderId)
+            },
+            mapper = { orderDetailDTO ->
+                OrderMapper.mapToOrderDetail(orderDetailDTO)
+            },
+            moshi
+        )
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.shoppingapp.domain.usecase.user_usecase
+package com.example.shoppingapp.domain.usecase.user_usecase.order_usecase
 
 import com.example.shoppingapp.data.remote.dto.request.OrderDetailRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
@@ -78,7 +78,7 @@ class CreateOrderUseCase @Inject constructor(
                 shippingMethod.serviceTypeId,
                 2,
                 if (insuranceValue > 5000000) 5000000 else insuranceValue,
-                if (totalAmount > 50000000) 50000000 else totalAmount,
+                if (insuranceValue > 50000000) 50000000 else insuranceValue,
                 note[shopGhnId] ?: "",
                 "KHONGCHOXEMHANG",
                 listOf(createOrderItemGhnRequest)
@@ -149,7 +149,7 @@ class CreateOrderUseCase @Inject constructor(
                 shippingMethod.serviceTypeId,
                 2,
                 if (insuranceValue > 5000000) 5000000 else insuranceValue,
-                if (totalAmount > 50000000) 50000000 else totalAmount,
+                if (insuranceValue > 50000000) 50000000 else insuranceValue,
                 note[shopGhnId] ?: "",
                 "KHONGCHOXEMHANG",
                 listCreateOrderItemGhnRequest

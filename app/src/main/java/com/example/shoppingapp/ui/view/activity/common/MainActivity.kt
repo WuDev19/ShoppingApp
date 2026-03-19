@@ -38,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewbinding: ActivityMainBinding
     private val viewPagerAdapter: ViewPagerAdapter by lazy { ViewPagerAdapter(this@MainActivity) }
     var isOpenWeb: Boolean = false
+    var isPaymentCompleted: Boolean = false
 
     @Inject
     lateinit var sessionManager: SessionManager
@@ -72,47 +73,24 @@ class MainActivity : AppCompatActivity() {
                         }
                     }
                 }
-                launch {
-                    viewModel.updateEmailState.collectLatest {
-                        when (it) {
-                            is StateListener.Idle -> Unit
-                            is StateListener.Loading -> Unit
-                            is StateListener.Error -> {
-                                Log.e(TAG, "onCreate: ${it.e?.message}")
-                                ToastUtils.showToast(
-                                    this@MainActivity,
-                                    it.e?.message ?: StringConstants.HAS_ERROR
-                                )
-                            }
 
-                            is StateListener.Success<Unit> -> {
-                                Log.e(TAG, "onCreate: ${it.result}")
-                            }
+                launch {
+                    viewModel.logoutState.collectLatest {
+                        if (it is StateListener.Success) {
+                            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                            finishAffinity()
                         }
                     }
                 }
-            }
-        }
 
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.logoutState.collectLatest {
-                    if (it is StateListener.Success) {
-                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                        finishAffinity()
-                    }
-                }
-            }
-        }
-
-        // TODO: them dialog
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                sessionManager.needLogoutState.collectLatest { needLogout ->
-                    delay(2000)
-                    if (needLogout) {
-                        val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                        startActivity(intent)
+                launch {
+                    // TODO: them dialog
+                    sessionManager.needLogoutState.collectLatest { needLogout ->
+                        delay(2000)
+                        if (needLogout) {
+                            val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                        }
                     }
                 }
             }
@@ -240,21 +218,21 @@ class MainActivity : AppCompatActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        Log.e(StringConstants.DEBUG, "onNewIntent: ${intent.data}")
+        Log.e(TAG, "onNewIntent: ")
         if (isOpenWeb) {
             isOpenWeb = false
             val checkState = intent.data.toString().split("?")[1].split("=")
             if (checkState[0] == "failed") {
                 ToastUtils.showToast(this, "Payment error, please try again")
             } else {
+                isPaymentCompleted = true
                 val orderIds = checkState[1].split("_")
                 if (orderIds.size > 1) {
-
+                    viewModel.updateStatusOrder(orderIds.map { it.toInt() })
                 } else {
                     viewModel.updateStatusOrder(orderIds[0].toInt())
                 }
             }
-
         }
     }
 

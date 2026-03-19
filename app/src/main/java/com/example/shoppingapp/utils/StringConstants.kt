@@ -96,4 +96,5 @@ object StringConstants {
     const val SELECT_START_DATE = "Select start date"
     const val SELECT_END_DATE = "Select end date"
     const val PURCHASE_TO_ADDRESS = "purchase_to_address"
+    const val ORDER_ID = "order_id"
 }

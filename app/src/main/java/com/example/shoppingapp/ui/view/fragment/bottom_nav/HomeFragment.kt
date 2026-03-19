@@ -26,9 +26,6 @@ import androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import androidx.viewpager2.widget.ViewPager2
-import com.denzcoskun.imageslider.constants.ScaleTypes
-import com.denzcoskun.imageslider.interfaces.ItemClickListener
-import com.denzcoskun.imageslider.models.SlideModel
 import com.example.shoppingapp.R
 import com.example.shoppingapp.utils.BottomNavigationUtils
 import com.example.shoppingapp.utils.StringConstants
@@ -44,9 +41,7 @@ import com.example.shoppingapp.ui.viewmodel.ShareViewModel
 import com.example.shoppingapp.ui.viewmodel.bottom_nav.HomeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 
@@ -194,32 +189,6 @@ class HomeFragment : Fragment() {
                 isSearch = it.toString().isNotEmpty()
             }
 
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            val listSlideModel = mutableListOf<SlideModel>()
-            listPopularCategories.asFlow().transform {
-                val slideModel = SlideModel(it.intRes, ScaleTypes.FIT)
-                emit(slideModel)
-            }.collect {
-                listSlideModel.add(it)
-            }
-            binding.imageSlider.setImageList(listSlideModel)
-
-            // TODO: xu ly click 
-            binding.imageSlider.setItemClickListener(object : ItemClickListener {
-                override fun doubleClick(position: Int) {
-
-                }
-
-                override fun onItemSelected(position: Int) {
-                    ToastUtils.showToast(
-                        requireContext(),
-                        "${listSlideModel[position].imagePath} va $position"
-                    )
-                }
-
-            })
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

@@ -1,12 +1,16 @@
 package com.example.shoppingapp.domain.repository.user
 
 import android.net.Uri
+import com.example.shoppingapp.data.remote.dto.get.OrderDetailDTO
 import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.domain.model.AddressItem
+import com.example.shoppingapp.domain.model.AfterPayment
 import com.example.shoppingapp.domain.model.Order
+import com.example.shoppingapp.domain.model.OrderDetail
+import com.example.shoppingapp.domain.model.OrderStatus
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.ui.state.StateListener
@@ -44,7 +48,9 @@ interface UserRepository {
 
     suspend fun createOrder(shopGhnId: Int, orderRequest: OrderRequest): StateListener<Order>
 
-    suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<String>
-    suspend fun updateStatusOrder(orderId: Int): StateListener<Unit>
+    suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<AfterPayment>
+    suspend fun updateStatusOrder(orderId: Int): StateListener<Order>
+    suspend fun getOrderStatus(orderId: Int): StateListener<OrderStatus>
+    suspend fun getOrderDetail(orderId: Int): StateListener<OrderDetail>
 
 }

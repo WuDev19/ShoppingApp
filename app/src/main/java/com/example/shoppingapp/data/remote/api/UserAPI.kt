@@ -62,13 +62,4 @@ interface UserAPI {
         @Path("idAddress") idAddress: Int
     ): Response<Unit>
 
-    @POST("user/create-order/{shopGhnId}")
-    suspend fun createOrder(
-        @Path("shopGhnId") shopGhnId: Int,
-        @Body orderRequest: OrderRequest
-    ): Response<OrderDTO>
-
-    @PATCH("user/update-order/{orderId}")
-    suspend fun updateStatusOrder(@Path("orderId") orderId: Int): Response<Unit>
-
 }

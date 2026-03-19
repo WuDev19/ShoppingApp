@@ -6,6 +6,7 @@ import com.example.shoppingapp.utils.TokenManager
 import com.example.shoppingapp.data.remote.api.AuthAPI
 import com.example.shoppingapp.data.remote.api.CartAPI
 import com.example.shoppingapp.data.remote.api.CategoryAPI
+import com.example.shoppingapp.data.remote.api.OrderAPI
 import com.example.shoppingapp.data.remote.api.PaymentAPI
 import com.example.shoppingapp.data.remote.api.product.GetProductAPI
 import com.example.shoppingapp.data.remote.api.seller.NormalFunctionSellerAPI
@@ -167,5 +168,10 @@ object APIModule {
     @Singleton
     fun providePaymentAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): PaymentAPI =
         retrofit.create(PaymentAPI::class.java)
+
+    @Provides
+    @Singleton
+    fun provideOrderAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit): OrderAPI =
+        retrofit.create(OrderAPI::class.java)
 
 }

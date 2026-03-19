@@ -115,6 +115,9 @@
         <action
             android:id="@+id/action_purchaseProductFragment_to_addressFragment2"
             app:destination="@id/addressFragment2" />
+        <action
+            android:id="@+id/action_purchaseProductFragment_to_afterPurchaseFragment"
+            app:destination="@id/afterPurchaseFragment" />
     </fragment>
     <fragment
         android:id="@+id/addressFragment2"
@@ -139,5 +142,19 @@
         android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+    <fragment
+        android:id="@+id/afterPurchaseFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.AfterPurchaseFragment"
+        android:label="fragment_after_purchase"
+        tools:layout="@layout/fragment_after_purchase" >
+        <action
+            android:id="@+id/action_afterPurchaseFragment_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.OrderDetailFragment"
+        android:label="fragment_order_detail"
+        tools:layout="@layout/fragment_order_detail" />
 
 </navigation>

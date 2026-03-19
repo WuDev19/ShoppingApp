@@ -189,22 +189,12 @@
 
     </FrameLayout>
 
-    <com.denzcoskun.imageslider.ImageSlider
-        android:id="@+id/image_slider"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_below="@id/frame_common"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        app:iss_corner_radius="20"
-        app:iss_auto_cycle="true"/>
-
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_view_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/view_all"
-        android:layout_below="@id/image_slider"
+        android:layout_below="@id/frame_common"
         android:layout_alignParentEnd="true"
         android:layout_marginEnd="10dp"
         android:textColor="@color/button_color"
@@ -214,7 +204,7 @@
         android:id="@+id/tv_scroll"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_below="@id/image_slider"
+        android:layout_below="@id/frame_common"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
         android:importantForAccessibility="no"

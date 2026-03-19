@@ -1,6 +1,5 @@
 package com.example.shoppingapp.ui.view.fragment.user
 
-import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -8,8 +7,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AlertDialog
-import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
@@ -24,7 +21,6 @@ import com.example.shoppingapp.data.remote.dto.request.ghn.CalculateFeeGhnReques
 import com.example.shoppingapp.databinding.FragmentPurchaseProductBinding
 import com.example.shoppingapp.domain.model.AddressItem
 import com.example.shoppingapp.domain.model.FinalPrice
-import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
 import com.example.shoppingapp.domain.model.ShowVoucherModel
@@ -44,13 +40,18 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import androidx.core.net.toUri
+import com.example.shoppingapp.domain.model.AfterPayment
 import com.example.shoppingapp.ui.view.activity.common.MainActivity
+import com.example.shoppingapp.ui.viewmodel.common.MainViewModel
 
 @AndroidEntryPoint
 class PurchaseProductFragment : Fragment() {
 
     private val TAG = PurchaseProductFragment::class.simpleName
     private val viewModel: PurchaseProductViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModels(ownerProducer = {
+        requireActivity()
+    })
     private var _binding: FragmentPurchaseProductBinding? = null
     private val binding
         get() = _binding!!
@@ -80,6 +81,7 @@ class PurchaseProductFragment : Fragment() {
     private val shippingMethods by lazy { mutableMapOf<Int, ShippingMethod>() }
     private val finalPrices by lazy { mutableMapOf<Int, FinalPrice>() }
     private val userNotes by lazy { mutableMapOf<Int, String>() }
+    private var afterPayment: AfterPayment? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -197,10 +199,10 @@ class PurchaseProductFragment : Fragment() {
                                 )
                             }
 
-                            is StateListener.Success<String> -> {
-                                Log.e(TAG, "onViewCreated: ${it.result}")
+                            is StateListener.Success<String> -> { //người dùng thanh toán bằng cod
+                                val orderId = it.result
                                 binding.frameShimmer.isVisible = false
-                                ToastUtils.showToast(requireContext(), it.result)
+                                navigateAndSendData(orderId)
                             }
                         }
                     }
@@ -212,6 +214,7 @@ class PurchaseProductFragment : Fragment() {
                             is StateListener.Loading -> {//thêm cái preload web
                                 binding.frameShimmer.isVisible = true
                             }
+
                             is StateListener.Error -> {
                                 binding.frameShimmer.isVisible = false
                                 ToastUtils.showToast(
@@ -221,12 +224,37 @@ class PurchaseProductFragment : Fragment() {
                                 Log.e(TAG, "onViewCreated: ${it.e?.message}")
                             }
 
-                            is StateListener.Success<String> -> {
+                            is StateListener.Success<AfterPayment> -> {
+                                val data = it.result
+                                afterPayment = data
                                 binding.frameShimmer.isVisible = false
                                 (requireActivity() as MainActivity).isOpenWeb = true
                                 val customTabsClient = CustomTabsIntent.Builder()
                                     .build()
-                                customTabsClient.launchUrl(requireContext(), it.result.toUri())
+                                customTabsClient.launchUrl(
+                                    requireContext(),
+                                    data.paymentUrl.toUri()
+                                )
+                            }
+                        }
+                    }
+                }
+                launch {
+                    mainViewModel.updateStatusOrderState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> Unit
+                            is StateListener.Error -> {
+                                Log.e(TAG, "onCreate: ${it.e?.message}")
+                                ToastUtils.showToast(
+                                    requireContext(),
+                                    it.e?.message ?: StringConstants.HAS_ERROR
+                                )
+                            }
+
+                            is StateListener.Success<String> -> { //người dùng thanh toán thành công bằng vnpay
+                                Log.e(TAG, "onCreate: ${it.result}")
+                                navigateAndSendData(it.result)
                             }
                         }
                     }
@@ -385,6 +413,32 @@ class PurchaseProductFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.e("MainActivity", "onResume: purchase ")
+        val mainActivity = (requireActivity() as MainActivity)
+        //khi thanh toán thành công thì openWeb mới = false
+        if (mainActivity.isOpenWeb && !mainActivity.isPaymentCompleted) { //người dùng mở trang thanh toán nhưng ko thanh toán
+            //navigate to after purchase với status order là await confirmation
+            mainActivity.isPaymentCompleted = false //khi popUp rồi thì cái gán này cũng ko quan trọng lắm
+            afterPayment?.let {
+                navigateAndSendData(it.orderId)
+            }
+        }
+    }
+
+    private fun navigateAndSendData(orderId: String) {
+        val bundle = bundleOf(
+            StringConstants.ORDER_ID to orderId
+        )
+        CheckNavigation.navigateToWhenPurchase(
+            controller,
+            R.id.action_purchaseProductFragment_to_afterPurchaseFragment,
+            R.id.action_purchaseProductFragment2_to_afterPurchaseFragment2,
+            bundle
+        )
     }
 
 }

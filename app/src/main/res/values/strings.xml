@@ -188,4 +188,11 @@
     <string name="vnpay">VNPay</string>
     <string name="note">Note:</string>
     <string name="write_your_note_for_shop">Write your note for shop</string>
+    <string name="order_result">Order Result</string>
+    <string name="order_detail">Order Detail</string>
+    <string name="shipping_information">Shipping Information</string>
+    <string name="shipping_code">Shipping code:</string>
+    <string name="order_date">Order date:</string>
+    <string name="expected_delivery_date">Expected delivery date:</string>
+    <string name="delivery_address">Delivery address</string>
 </resources>

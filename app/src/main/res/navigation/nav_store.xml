@@ -9,7 +9,7 @@
         android:id="@+id/storeFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.bottom_nav.StoreFragment"
         android:label="fragment_store"
-        tools:layout="@layout/fragment_store" >
+        tools:layout="@layout/fragment_store">
         <action
             android:id="@+id/action_storeFragment_to_detailProductFragment2"
             app:destination="@id/detailProductFragment2" />
@@ -24,7 +24,7 @@
         android:id="@+id/detailProductFragment2"
         android:name="com.example.shoppingapp.ui.view.fragment.product.DetailProductFragment"
         android:label="fragment_detail_product"
-        tools:layout="@layout/fragment_detail_product" >
+        tools:layout="@layout/fragment_detail_product">
         <action
             android:id="@+id/action_detailProductFragment2_self"
             app:destination="@id/detailProductFragment2" />
@@ -42,7 +42,7 @@
         android:id="@+id/cartFragment2"
         android:name="com.example.shoppingapp.ui.view.fragment.product.CartFragment"
         android:label="fragment_cart"
-        tools:layout="@layout/fragment_cart" >
+        tools:layout="@layout/fragment_cart">
         <action
             android:id="@+id/action_cartFragment2_to_purchaseProductFragment2"
             app:destination="@id/purchaseProductFragment2" />
@@ -51,7 +51,7 @@
         android:id="@+id/sellerFragment2"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.SellerFragment"
         android:label="fragment_seller"
-        tools:layout="@layout/fragment_seller" >
+        tools:layout="@layout/fragment_seller">
         <action
             android:id="@+id/action_sellerFragment2_to_detailProductFragment2"
             app:destination="@id/detailProductFragment2" />
@@ -66,7 +66,7 @@
         android:id="@+id/searchProductFragment2"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.SearchProductFragment"
         android:label="fragment_search_product"
-        tools:layout="@layout/fragment_search_product" >
+        tools:layout="@layout/fragment_search_product">
         <action
             android:id="@+id/action_searchProductFragment2_to_detailProductFragment2"
             app:destination="@id/detailProductFragment2" />
@@ -75,7 +75,7 @@
         android:id="@+id/categoryProductDetailShopFragment2"
         android:name="com.example.shoppingapp.ui.view.fragment.seller.CategoryProductDetailShopFragment"
         android:label="fragment_category_product_detail_shop"
-        tools:layout="@layout/fragment_category_product_detail_shop" >
+        tools:layout="@layout/fragment_category_product_detail_shop">
         <action
             android:id="@+id/action_categoryProductDetailShopFragment2_to_detailProductFragment2"
             app:destination="@id/detailProductFragment2" />
@@ -89,16 +89,19 @@
         android:id="@+id/purchaseProductFragment2"
         android:name="com.example.shoppingapp.ui.view.fragment.user.PurchaseProductFragment"
         android:label="fragment_purchase_product"
-        tools:layout="@layout/fragment_purchase_product" >
+        tools:layout="@layout/fragment_purchase_product">
         <action
             android:id="@+id/action_purchaseProductFragment2_to_addressFragment3"
             app:destination="@id/addressFragment3" />
+        <action
+            android:id="@+id/action_purchaseProductFragment2_to_afterPurchaseFragment2"
+            app:destination="@id/afterPurchaseFragment2" />
     </fragment>
     <fragment
         android:id="@+id/addressFragment3"
         android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.AddressFragment"
         android:label="fragment_address"
-        tools:layout="@layout/fragment_address" >
+        tools:layout="@layout/fragment_address">
         <action
             android:id="@+id/action_addressFragment3_to_editAddressFragment3"
             app:destination="@id/editAddressFragment3" />
@@ -107,7 +110,7 @@
         android:id="@+id/editAddressFragment3"
         android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.EditAddressFragment"
         android:label="fragment_edit_address"
-        tools:layout="@layout/fragment_edit_address" >
+        tools:layout="@layout/fragment_edit_address">
         <action
             android:id="@+id/action_editAddressFragment3_to_mapFragment2"
             app:destination="@id/mapFragment2" />
@@ -117,5 +120,20 @@
         android:name="com.example.shoppingapp.ui.view.fragment.user.edit_profile.MapFragment"
         android:label="fragment_map"
         tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/afterPurchaseFragment2"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.AfterPurchaseFragment"
+        android:label="fragment_after_purchase"
+        tools:layout="@layout/fragment_after_purchase">
+        <action
+            android:id="@+id/action_afterPurchaseFragment2_to_orderDetailFragment2"
+            app:destination="@id/orderDetailFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/orderDetailFragment2"
+        android:name="com.example.shoppingapp.ui.view.fragment.user.OrderDetailFragment"
+        android:label="fragment_order_detail"
+        tools:layout="@layout/fragment_order_detail" />
 
 </navigation>

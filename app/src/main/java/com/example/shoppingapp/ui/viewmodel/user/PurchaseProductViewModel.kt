@@ -1,12 +1,12 @@
 package com.example.shoppingapp.ui.viewmodel.user
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.ghn.CalculateFeeGhnRequest
 import com.example.shoppingapp.data.remote.dto.request.ghn.EstimateTimeGhnRequest
 import com.example.shoppingapp.domain.model.AddressItem
+import com.example.shoppingapp.domain.model.AfterPayment
 import com.example.shoppingapp.domain.model.FinalPrice
 import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderFromBuyNow
@@ -17,11 +17,10 @@ import com.example.shoppingapp.domain.model.ghn.ShippingMethod
 import com.example.shoppingapp.domain.usecase.ghn_usecase.CalculateFeeUseCase
 import com.example.shoppingapp.domain.usecase.ghn_usecase.EstimateTimeDeliveryUseCase
 import com.example.shoppingapp.domain.usecase.ghn_usecase.GetServiceGhnUseCase
-import com.example.shoppingapp.domain.usecase.user_usecase.CreateOrderUseCase
-import com.example.shoppingapp.domain.usecase.user_usecase.CreatePaymentUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.order_usecase.CreateOrderUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.order_usecase.CreatePaymentUseCase
 import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.GetUserAddressUseCase
 import com.example.shoppingapp.ui.state.StateListener
-import com.example.shoppingapp.utils.StringConstants
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,14 +31,12 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.forEach
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toList
@@ -62,7 +59,7 @@ class PurchaseProductViewModel @Inject constructor(
     val serviceState = _serviceState.asStateFlow()
     private val _createOrderState = Channel<StateListener<String>>()
     val createOrderState = _createOrderState.receiveAsFlow()
-    private val _paymentUrlState = Channel<StateListener<String>>()
+    private val _paymentUrlState = Channel<StateListener<AfterPayment>>()
     val paymentUrlState = _paymentUrlState.receiveAsFlow()
 
     val getAddress = getUserAddressUseCase(auth.currentUser?.uid ?: "").stateIn(
@@ -189,7 +186,7 @@ class PurchaseProductViewModel @Inject constructor(
                     paymentMethod,
                 )
                 if (result is StateListener.Success) {
-                    _createOrderState.send(StateListener.Success("Success"))
+                    _createOrderState.send(StateListener.Success(result.result.orderId.toString()))
                 } else if (result is StateListener.Error) {
                     _createOrderState.send(StateListener.Error(result.e))
                 }
@@ -211,9 +208,18 @@ class PurchaseProductViewModel @Inject constructor(
                             )
                             emit(data)
                         }.flowOn(Dispatchers.Default)
-                    }.toList()
+                    }.filterIsInstance<StateListener.Success<Order>>()
+                    .toList()
                 if (listResult.isNotEmpty() && listResult.size == listShopId.size) {
-                    _createOrderState.send(StateListener.Success("Success"))
+                    val orderIdBuilder = StringBuilder()
+                    listResult.forEach { order ->
+                        orderIdBuilder.append((order.result.orderId)).append("_")
+                    }
+                    _createOrderState.send(
+                        StateListener.Success(
+                            orderIdBuilder.dropLast(1).toString()
+                        )
+                    )
                 } else {
                     _createOrderState.send(StateListener.Error(Exception("Please check your data or connection")))
                 }
@@ -287,11 +293,11 @@ class PurchaseProductViewModel @Inject constructor(
                         }.flowOn(Dispatchers.Default)
                     }.toList()
                 val orderIdBuilder = StringBuilder()
-                var totalAmout: Long = 0
+                var totalAmount: Long = 0
                 listResult.forEach {
                     if (it is StateListener.Success) {
                         orderIdBuilder.append(it.result.orderId).append("_")
-                        totalAmout += it.result.amount
+                        totalAmount += it.result.amount
                     }
                 }
                 val orderId =
@@ -300,7 +306,7 @@ class PurchaseProductViewModel @Inject constructor(
                     createPaymentUseCase(
                         OrderPaymentRequest(
                             orderId,
-                            totalAmout
+                            totalAmount
                         )
                     )
                 )
