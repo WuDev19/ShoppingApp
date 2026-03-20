@@ -19,11 +19,12 @@ class OrderDetailViewModel @Inject constructor(
     private val _orderDetailState = Channel<StateListener<OrderDetail>>()
     val orderDetailState = _orderDetailState.receiveAsFlow()
 
-    fun getOrderDetail(orderId: Int){
+    fun getOrderDetail(orderId: String){
         viewModelScope.launch {
             _orderDetailState.send(StateListener.Loading)
             val result = getOrderDetailUseCase(orderId)
             _orderDetailState.send(result)
         }
     }
+
 }

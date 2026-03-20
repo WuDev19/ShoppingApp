@@ -1,6 +1,6 @@
 package com.example.shoppingapp.domain.model
 
 data class Order(
-    val orderId: Int,
+    val orderId: String,
     val amount: Long
 )

@@ -228,9 +228,9 @@ class MainActivity : AppCompatActivity() {
                 isPaymentCompleted = true
                 val orderIds = checkState[1].split("_")
                 if (orderIds.size > 1) {
-                    viewModel.updateStatusOrder(orderIds.map { it.toInt() })
+                    viewModel.updateStatusOrder(orderIds)
                 } else {
-                    viewModel.updateStatusOrder(orderIds[0].toInt())
+                    viewModel.updateStatusOrder(orderIds[0])
                 }
             }
         }

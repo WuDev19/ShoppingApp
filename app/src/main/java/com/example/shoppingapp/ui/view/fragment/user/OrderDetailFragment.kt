@@ -35,7 +35,7 @@ class OrderDetailFragment : Fragment() {
     private val binding
         get() = _binding!!
     private val orderId by lazy {
-        arguments?.getInt(StringConstants.ORDER_ID)
+        arguments?.getString(StringConstants.ORDER_ID)
     }
     private val orderItemAdapter by lazy {
         OrderItemAdapter(emptyList())

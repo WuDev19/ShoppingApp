@@ -22,7 +22,7 @@ class AfterPurchaseViewModel @Inject constructor(
     private val _orderStatusState = Channel<StateListener<OrderStatus>>()
     val orderStatusState = _orderStatusState.receiveAsFlow()
 
-    fun getOrderStatus(orderId: Int) {
+    fun getOrderStatus(orderId: String) {
         viewModelScope.launch {
             _orderStatusState.send(StateListener.Loading)
             _orderStatusState.send(getOrderStatusUseCase(orderId))
@@ -30,7 +30,7 @@ class AfterPurchaseViewModel @Inject constructor(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getOrderStatus(orderIds: List<Int>) {
+    fun getOrderStatus(orderIds: List<String>) {
         viewModelScope.launch {
             _orderStatusState.send(StateListener.Loading)
             orderIds.asFlow()

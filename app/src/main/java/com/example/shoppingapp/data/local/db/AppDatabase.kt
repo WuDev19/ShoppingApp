@@ -35,9 +35,9 @@ import com.example.shoppingapp.data.local.entity.WardGhnEntity
         UserAddressEntity::class,
         ProvinceGhnEntity::class,
         DistrictGhnEntity::class,
-        WardGhnEntity::class
+        WardGhnEntity::class,
     ],
-    version = 1
+    version = 3
 )
 abstract class AppDatabase : RoomDatabase() {
 

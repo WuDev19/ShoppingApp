@@ -1,7 +1,7 @@
 package com.example.shoppingapp.data.remote.dto.get
 
 data class OrderDetailDTO(
-    val orderId: Int,
+    val orderId: String,
     val orderStatus: String,
     val shippingMethod: String,
     val paymentMethod: String,

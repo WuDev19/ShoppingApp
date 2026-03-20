@@ -75,9 +75,9 @@ class AfterPurchaseFragment : Fragment() {
         orderId?.let {
             val orderIds = it.split("_")
             if (orderIds.size > 1) {
-                viewModel.getOrderStatus(orderIds.map { oid -> oid.toInt() })
+                viewModel.getOrderStatus(orderIds)
             } else {
-                viewModel.getOrderStatus(orderIds[0].toInt())
+                viewModel.getOrderStatus(orderIds[0])
             }
         }
 

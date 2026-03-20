@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,9 +9,10 @@ import com.example.shoppingapp.domain.model.OrderStatus
 
 class AfterPurchaseOrderStatusAdapter(
     private var listStatusOrder: List<OrderStatus>,
-    private val onViewDetail: (Int) -> Unit
+    private val onViewDetail: (String) -> Unit
 ) : RecyclerView.Adapter<AfterPurchaseOrderStatusAdapter.AfterPurchaseOrderStatusViewHolder>() {
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setListStatusOrder(listStatusOrder: List<OrderStatus>) {
         this.listStatusOrder = listStatusOrder
         notifyDataSetChanged()
@@ -35,7 +37,7 @@ class AfterPurchaseOrderStatusAdapter(
         val item = listStatusOrder[position]
         holder.binding.apply {
             tvStatus.text = item.orderStatus
-            tvOrderId.text = item.orderId.toString()
+            tvOrderId.text = item.orderId
             tvOrderDate.text = item.orderDate
             tvExpectedDate.text = item.orderExpectedDate
             btDetailOrder.setOnClickListener {

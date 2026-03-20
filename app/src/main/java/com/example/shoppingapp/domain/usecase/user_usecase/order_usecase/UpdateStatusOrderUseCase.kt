@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 class UpdateStatusOrderUseCase @Inject constructor(private val repo: UserRepository) {
 
-    suspend operator fun invoke(orderId: Int): StateListener<Order> =
+    suspend operator fun invoke(orderId: String): StateListener<Order> =
         repo.updateStatusOrder(orderId)
 
 }

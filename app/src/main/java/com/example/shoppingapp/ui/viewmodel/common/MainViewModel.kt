@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(
     fun getStateEmailVerify(): Boolean =
         sharedPreferences.getBoolean(StringConstants.SHARE_VERIFY_EMAIL, true)
 
-    fun updateStatusOrder(orderId: Int) {
+    fun updateStatusOrder(orderId: String) {
         viewModelScope.launch {
             _updateStatusOrderState.send(StateListener.Loading)
             val result = updateStatusOrderUseCase(orderId)
@@ -85,13 +85,13 @@ class MainViewModel @Inject constructor(
                 _updateStatusOrderState.send(StateListener.Error(result.e))
             } else if (result is StateListener.Success) {
                 val data = result.result
-                _updateStatusOrderState.send(StateListener.Success(data.orderId.toString()))
+                _updateStatusOrderState.send(StateListener.Success(data.orderId))
             }
         }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun updateStatusOrder(orderIds: List<Int>) {
+    fun updateStatusOrder(orderIds: List<String>) {
         viewModelScope.launch {
             _updateStatusOrderState.send(StateListener.Loading)
             val listResult = orderIds.asFlow()
@@ -102,7 +102,7 @@ class MainViewModel @Inject constructor(
                 }.filterIsInstance<StateListener.Success<Order>>()
                 .toList()
             if (listResult.size == orderIds.size) {
-                val orderId = listResult.joinToString("_") { it.result.orderId.toString() }
+                val orderId = listResult.joinToString("_") { it.result.orderId }
                 _updateStatusOrderState.send(StateListener.Success(orderId))
             } else {
                 _updateStatusOrderState.send(StateListener.Error(Exception("Order status update failed")))

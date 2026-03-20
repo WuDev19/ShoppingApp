@@ -50,7 +50,7 @@ class UserRepositoryImpl @Inject constructor(
     private val firestore: FirebaseFirestore,
     @param:AvatarUploader private val avatarUploader: CloudinaryUploader,
     private val moshi: Moshi,
-    private val userAddressDAO: UserAddressDAO
+    private val userAddressDAO: UserAddressDAO,
 ) : UserRepository {
 
     override fun getUserName(): Flow<StateListener<String>> = flow {
@@ -337,7 +337,7 @@ class UserRepositoryImpl @Inject constructor(
             StateListener.Error(e)
         }
 
-    override suspend fun updateStatusOrder(orderId: Int): StateListener<Order> =
+    override suspend fun updateStatusOrder(orderId: String): StateListener<Order> =
         try {
             val response = orderAPI.updateStatusOrder(orderId)
             if (response.isSuccessful) {
@@ -356,7 +356,7 @@ class UserRepositoryImpl @Inject constructor(
             StateListener.Error(e)
         }
 
-    override suspend fun getOrderStatus(orderId: Int): StateListener<OrderStatus> {
+    override suspend fun getOrderStatus(orderId: String): StateListener<OrderStatus> {
         return NetworkHelper.callApi(
             apiCall = {
                 orderAPI.getOrderDetail(orderId)
@@ -368,7 +368,7 @@ class UserRepositoryImpl @Inject constructor(
         )
     }
 
-    override suspend fun getOrderDetail(orderId: Int): StateListener<OrderDetail> {
+    override suspend fun getOrderDetail(orderId: String): StateListener<OrderDetail> {
         return NetworkHelper.callApi(
             apiCall = {
                 orderAPI.getOrderDetail(orderId)
@@ -379,4 +379,5 @@ class UserRepositoryImpl @Inject constructor(
             moshi
         )
     }
+
 }

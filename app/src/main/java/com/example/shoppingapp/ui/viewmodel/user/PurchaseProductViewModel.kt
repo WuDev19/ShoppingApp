@@ -186,7 +186,7 @@ class PurchaseProductViewModel @Inject constructor(
                     paymentMethod,
                 )
                 if (result is StateListener.Success) {
-                    _createOrderState.send(StateListener.Success(result.result.orderId.toString()))
+                    _createOrderState.send(StateListener.Success(result.result.orderId))
                 } else if (result is StateListener.Error) {
                     _createOrderState.send(StateListener.Error(result.e))
                 }
@@ -210,6 +210,7 @@ class PurchaseProductViewModel @Inject constructor(
                         }.flowOn(Dispatchers.Default)
                     }.filterIsInstance<StateListener.Success<Order>>()
                     .toList()
+                // TODO: sửa lại logic chỗ này
                 if (listResult.isNotEmpty() && listResult.size == listShopId.size) {
                     val orderIdBuilder = StringBuilder()
                     listResult.forEach { order ->
@@ -264,7 +265,7 @@ class PurchaseProductViewModel @Inject constructor(
                             is StateListener.Success<Order> -> {
                                 val order = stateListenerOrder.result
                                 val orderPaymentRequest =
-                                    OrderPaymentRequest(order.orderId.toString(), order.amount)
+                                    OrderPaymentRequest(order.orderId, order.amount)
                                 val result = createPaymentUseCase(orderPaymentRequest)
                                 emit(result)
                             }

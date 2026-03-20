@@ -187,6 +187,12 @@ class ProfileFragment : Fragment() {
                 ViewPagerUtils.disableViewPager(viewPager2)
             }
 
+            linearOrder.setOnClickListener {
+                controller.navigate(R.id.action_profileFragment_to_myOrderFragment)
+                BottomNavigationUtils.hideBottomNavigation(bottomNavigationView)
+                ViewPagerUtils.disableViewPager(viewPager2)
+            }
+
         }
 
     }

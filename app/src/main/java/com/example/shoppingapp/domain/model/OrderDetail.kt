@@ -1,7 +1,7 @@
 package com.example.shoppingapp.domain.model
 
 data class OrderDetail(
-    val orderId: Int,
+    val orderId: String,
     val orderStatus: String,
     val shippingMethod: String,
     val paymentMethod: String,

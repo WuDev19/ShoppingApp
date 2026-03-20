@@ -13,6 +13,7 @@ import com.example.shoppingapp.data.local.dao.RemoteKeyProductDAO
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
 import com.example.shoppingapp.data.local.dao.WardGhnDAO
 import com.example.shoppingapp.data.local.db.AppDatabase
+import com.example.shoppingapp.data.local.db.DatabaseMigrations
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,6 +32,9 @@ object DatabaseModule {
             context = context,
             AppDatabase::class.java,
             "shopping_app"
+        ).addMigrations(
+            DatabaseMigrations.MIGRATION_1_2,
+            DatabaseMigrations.MIGRATION_2_3
         ).build()
     }
 

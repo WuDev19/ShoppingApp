@@ -30,4 +30,32 @@ object NetworkHelper {
             StateListener.Error(e)
         }
     }
+
+    suspend fun <T, R, L> callApiAndAddToLocal(
+        apiCall: suspend () -> Response<T>,
+        localCall: suspend (L) -> Unit,
+        mapperRemote: (T) -> R,
+        mapperLocal: (T) -> L,
+        moshi: Moshi
+    ): StateListener<R> {
+        return try {
+            val response = apiCall()
+            if (response.isSuccessful) {
+                val result = response.body()
+                result?.let {
+                    val localData = mapperLocal(it)
+                    localCall(localData)
+                    StateListener.Success(mapperRemote(it))
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            } else {
+                val errorBody = response.errorBody()
+                val adapter = moshi.adapter(ErrorResponseDTO::class.java)
+                errorBody?.string()?.let {
+                    StateListener.Error(Exception(adapter.fromJson(it)?.message))
+                } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
+            }
+        } catch (e: Exception) {
+            StateListener.Error(e)
+        }
+    }
 }

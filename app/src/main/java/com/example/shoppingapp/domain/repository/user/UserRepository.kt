@@ -1,7 +1,6 @@
 package com.example.shoppingapp.domain.repository.user
 
 import android.net.Uri
-import com.example.shoppingapp.data.remote.dto.get.OrderDetailDTO
 import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
@@ -23,34 +22,24 @@ interface UserRepository {
     fun getProfileUser(): Flow<StateListener<UserProfile>>
     fun changeNameGenderUser(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
     fun changePhone(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
-
     fun confirmChangeEmail(id: String, email: String): Flow<StateListener<Unit>>
-
     fun changeEmail(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>>
-
     fun updateAvatar(id: String, url: String): Flow<StateListener<String>>
-
     fun uploadAvatarToCloudinary(uri: Uri): Flow<StateListener<String>>
-
     fun getUserAddress(userId: String): Flow<List<AddressItem>>
-
     fun editUserAddress(
         idAddress: Int,
         userAddressRequest: UserAddressRequest
     ): Flow<StateListener<Unit>>
-
     fun addUserAddress(
         idUser: String,
         userAddressRequest: UserAddressRequest
     ): Flow<StateListener<Unit>>
-
     fun deleteUserAddress(idUser: String, idAddress: Int): Flow<StateListener<Int>>
-
     suspend fun createOrder(shopGhnId: Int, orderRequest: OrderRequest): StateListener<Order>
-
     suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<AfterPayment>
-    suspend fun updateStatusOrder(orderId: Int): StateListener<Order>
-    suspend fun getOrderStatus(orderId: Int): StateListener<OrderStatus>
-    suspend fun getOrderDetail(orderId: Int): StateListener<OrderDetail>
+    suspend fun updateStatusOrder(orderId: String): StateListener<Order>
+    suspend fun getOrderStatus(orderId: String): StateListener<OrderStatus>
+    suspend fun getOrderDetail(orderId: String): StateListener<OrderDetail>
 
 }
