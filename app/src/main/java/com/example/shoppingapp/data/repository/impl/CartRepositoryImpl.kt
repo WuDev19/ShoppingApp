@@ -24,7 +24,6 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import androidx.core.content.edit
 import androidx.paging.flatMap
-import androidx.paging.log
 import com.example.shoppingapp.domain.model.CartUiModel
 
 class CartRepositoryImpl @Inject constructor(

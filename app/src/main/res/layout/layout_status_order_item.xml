@@ -17,7 +17,6 @@
         android:id="@+id/tv_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/wait_a_second"
         android:textColor="@color/black"
         android:padding="10dp"/>
 

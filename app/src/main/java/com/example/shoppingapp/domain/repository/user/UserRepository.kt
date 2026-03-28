@@ -1,6 +1,7 @@
 package com.example.shoppingapp.domain.repository.user
 
 import android.net.Uri
+import androidx.paging.PagingData
 import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
@@ -10,6 +11,7 @@ import com.example.shoppingapp.domain.model.AfterPayment
 import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderDetail
 import com.example.shoppingapp.domain.model.OrderStatus
+import com.example.shoppingapp.domain.model.OrderUiModel
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.ui.state.StateListener
@@ -41,5 +43,6 @@ interface UserRepository {
     suspend fun updateStatusOrder(orderId: String): StateListener<Order>
     suspend fun getOrderStatus(orderId: String): StateListener<OrderStatus>
     suspend fun getOrderDetail(orderId: String): StateListener<OrderDetail>
+    fun getOrderViaStatus(userId: String, status: String): Flow<PagingData<OrderUiModel>>
 
 }

@@ -196,4 +196,5 @@
     <string name="expected_delivery_date">Expected delivery date:</string>
     <string name="delivery_address">Delivery address</string>
     <string name="my_order">My Order</string>
+    <string name="review">Review</string>
 </resources>

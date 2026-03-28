@@ -10,10 +10,10 @@ import com.example.shoppingapp.domain.model.StatusOrder
 
 class StatusOrderAdapter(
     private var listStatusOrder: List<StatusOrder>,
-    private val onStatusClick: (String) -> Unit
+    private val onStatusClick: (String, Boolean) -> Unit
 ) : RecyclerView.Adapter<StatusOrderAdapter.StatusOrderViewHolder>() {
 
-    private var oldPosition = -1
+    private var oldPosition = 0
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -62,14 +62,12 @@ class StatusOrderAdapter(
             }
             tvStatus.text = item.statusName
             tvStatus.setOnClickListener {
-                onStatusClick(item.statusName)
+                onStatusClick(item.statusName, item.isSelected)
                 if (oldPosition != position) {
-                    if (oldPosition != -1) {
-                        listStatusOrder[oldPosition].isSelected = false
-                        notifyItemChanged(oldPosition)
-                    }
+                    listStatusOrder[oldPosition].isSelected = false
+                    notifyItemChanged(oldPosition)
                     oldPosition = holder.bindingAdapterPosition
-                    listStatusOrder[position].isSelected = true
+                    item.isSelected = true
                     cardStatus.setCardBackgroundColor(
                         ContextCompat.getColor(
                             root.context,
@@ -91,4 +89,5 @@ class StatusOrderAdapter(
 
     class StatusOrderViewHolder(val binding: LayoutStatusOrderItemBinding) :
         RecyclerView.ViewHolder(binding.root)
+
 }

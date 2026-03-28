@@ -6,7 +6,10 @@ import com.example.shoppingapp.data.local.dao.CartDAO
 import com.example.shoppingapp.data.local.dao.CartItemDAO
 import com.example.shoppingapp.data.local.dao.CategoryAndProductDAO
 import com.example.shoppingapp.data.local.dao.DistrictGhnDAO
+import com.example.shoppingapp.data.local.dao.OrderDAO
+import com.example.shoppingapp.data.local.dao.OrderItemDAO
 import com.example.shoppingapp.data.local.dao.ProductDAO
+import com.example.shoppingapp.data.local.dao.ProductDetailDAO
 import com.example.shoppingapp.data.local.dao.ProvinceGhnDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyDAO
 import com.example.shoppingapp.data.local.dao.RemoteKeyProductDAO
@@ -34,7 +37,8 @@ object DatabaseModule {
             "shopping_app"
         ).addMigrations(
             DatabaseMigrations.MIGRATION_1_2,
-            DatabaseMigrations.MIGRATION_2_3
+            DatabaseMigrations.MIGRATION_2_3,
+            DatabaseMigrations.MIGRATION_3_4
         ).build()
     }
 
@@ -83,6 +87,21 @@ object DatabaseModule {
     @Provides
     fun provideWardGhnDAO(appDatabase: AppDatabase): WardGhnDAO =
         appDatabase.wardGhnDao()
+
+    @Singleton
+    @Provides
+    fun provideOrderDAO(appDatabase: AppDatabase): OrderDAO =
+        appDatabase.orderDao()
+
+    @Singleton
+    @Provides
+    fun provideOrderItemDAO(appDatabase: AppDatabase): OrderItemDAO =
+        appDatabase.orderItemDao()
+
+    @Singleton
+    @Provides
+    fun provideProductDetailDAO(appDatabase: AppDatabase): ProductDetailDAO =
+        appDatabase.productDetailDao()
 
 }
 

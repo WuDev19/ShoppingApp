@@ -2,8 +2,15 @@ package com.example.shoppingapp.data.repository.impl
 
 import android.net.Uri
 import android.util.Log
+import androidx.paging.ExperimentalPagingApi
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.insertSeparators
+import androidx.paging.map
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.data.local.dao.UserAddressDAO
+import com.example.shoppingapp.data.local.db.AppDatabase
 import com.example.shoppingapp.data.local.mapper.UserAddressMapper
 import com.example.shoppingapp.data.local.mapper.UserMapper
 import com.example.shoppingapp.data.remote.api.OrderAPI
@@ -16,6 +23,7 @@ import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.data.remote.helper.NetworkHelper
 import com.example.shoppingapp.data.remote.mapper.OrderMapper
+import com.example.shoppingapp.data.repository.mediator.OrderViaStatusMediator
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.AvatarUploader
 import com.example.shoppingapp.domain.model.AddressItem
@@ -23,6 +31,7 @@ import com.example.shoppingapp.domain.model.AfterPayment
 import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderDetail
 import com.example.shoppingapp.domain.model.OrderStatus
+import com.example.shoppingapp.domain.model.OrderUiModel
 import com.example.shoppingapp.domain.model.user.BaseUser
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.domain.repository.user.UserRepository
@@ -51,6 +60,7 @@ class UserRepositoryImpl @Inject constructor(
     @param:AvatarUploader private val avatarUploader: CloudinaryUploader,
     private val moshi: Moshi,
     private val userAddressDAO: UserAddressDAO,
+    private val appDatabase: AppDatabase
 ) : UserRepository {
 
     override fun getUserName(): Flow<StateListener<String>> = flow {
@@ -378,6 +388,112 @@ class UserRepositoryImpl @Inject constructor(
             },
             moshi
         )
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getOrderViaStatus(
+        userId: String,
+        status: String
+    ): Flow<PagingData<OrderUiModel>> {
+        val queryKey = "order_via_status:userId:$userId:status:$status"
+        return Pager(
+            config = PagingConfig(
+                pageSize = StringConstants.PAGE_SIZE,
+                initialLoadSize = StringConstants.PAGE_SIZE
+            ),
+            pagingSourceFactory = {
+                appDatabase.orderDao().getPagingSourceOrderViaStatus(userId, status)
+            },
+            remoteMediator = OrderViaStatusMediator(
+                orderAPI = orderAPI,
+                appDatabase = appDatabase,
+                queryKey = queryKey,
+                status = status,
+                userId = userId
+            )
+        ).flow.map { pagingData ->
+            pagingData.map { order ->
+                Log.e("Dataaaaa", "getOrderViaStatus: $order")
+                OrderUiModel.OrderItemUser(
+                    OrderUiModel.OrderOfShop( //tạo sẵn orderitem có hết thông tin của order với shop, vì sau khi map ở đây rồi thì sẽ bị mất info nếu ko lưu lại
+                        order.orderPojo.shopId,
+                        order.orderPojo.shopName,
+                        order.orderPojo.shopAvt
+                    ),
+                    OrderUiModel.Order(
+                        order.orderPojo.orderId,
+                        order.orderPojo.orderStatus,
+                    ),
+                    com.example.shoppingapp.data.local.mapper.OrderMapper.mapToOrderItemDetail(
+                        order.orderItemPojo,
+                        order.productDetailPojo
+                    )
+                )
+            }.insertSeparators { before, after -> //logic them cai phan cach giua cac item
+                //add shop
+                if (after == null) return@insertSeparators null
+                val beforeId = before?.orderOfShop?.shopId
+                val afterId = after.orderOfShop.shopId
+                if (beforeId != afterId) {
+                    OrderUiModel.OrderOfShop( //copy lại
+                        after.orderOfShop.shopId,
+                        after.orderOfShop.shopName,
+                        after.orderOfShop.shopAvt
+                    )
+                } else null
+            }.insertSeparators { before, after ->
+                //add order
+                if (after == null) return@insertSeparators null
+                if (before != null &&
+                    before is OrderUiModel.OrderOfShop &&
+                    after is OrderUiModel.OrderItemUser
+                ) {
+                    return@insertSeparators OrderUiModel.Order(
+                        after.order.orderId,
+                        after.order.orderStatus
+                    )
+                }
+                if (before != null &&
+                    before is OrderUiModel.OrderItemUser &&
+                    after is OrderUiModel.OrderItemUser &&
+                    before.order.orderId != after.order.orderId
+                ) {
+                    return@insertSeparators OrderUiModel.Order(
+                        after.order.orderId,
+                        after.order.orderStatus
+                    )
+                }
+                null
+            }.insertSeparators { before, after ->
+                if (after == null &&
+                    before != null &&
+                    before is OrderUiModel.OrderItemUser
+                ) return@insertSeparators OrderUiModel.OrderReview(
+                    before.order.orderId,
+                    before.order.orderStatus
+                )
+                if (after != null &&
+                    before != null &&
+                    before is OrderUiModel.OrderItemUser &&
+                    after is OrderUiModel.OrderOfShop
+                ) {
+                    OrderUiModel.OrderReview(
+                        before.order.orderId,
+                        before.order.orderStatus
+                    )
+                } else if (
+                    after != null &&
+                    before != null &&
+                    before is OrderUiModel.OrderItemUser &&
+                    after is OrderUiModel.Order
+                ) {
+                    OrderUiModel.OrderReview(
+                        before.order.orderId,
+                        before.order.orderStatus
+                    )
+                } else null
+            }
+        }
     }
 
 }
