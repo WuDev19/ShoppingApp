@@ -3,9 +3,11 @@ package com.example.shoppingapp.data.remote.mapper
 import com.example.shoppingapp.data.local.entity.OrderEntity
 import com.example.shoppingapp.data.local.entity.OrderItemEntity
 import com.example.shoppingapp.data.local.entity.ProductDetailEntity
+import com.example.shoppingapp.data.remote.dto.get.CancelOrderDTO
 import com.example.shoppingapp.data.remote.dto.get.OrderDetailDTO
 import com.example.shoppingapp.data.remote.dto.get.OrderItemDetailDTO
 import com.example.shoppingapp.data.remote.dto.get.ProductChiTietDTO
+import com.example.shoppingapp.domain.model.CancelOrder
 import com.example.shoppingapp.domain.model.OrderDetail
 import com.example.shoppingapp.domain.model.OrderItemDetail
 import com.example.shoppingapp.domain.model.OrderStatus
@@ -40,6 +42,7 @@ object OrderMapper {
             orderDetailDTO.userPhone,
             orderDetailDTO.address,
             orderDetailDTO.shopId,
+            orderDetailDTO.shopGhnId,
             orderDetailDTO.shopName,
             orderDetailDTO.shopAvt,
             orderDetailDTO.totalAmount,
@@ -65,6 +68,7 @@ object OrderMapper {
             orderDetailDTO.userPhone,
             orderDetailDTO.address,
             orderDetailDTO.shopId,
+            orderDetailDTO.shopGhnId,
             orderDetailDTO.shopName,
             orderDetailDTO.shopAvt,
             orderDetailDTO.totalAmount,
@@ -106,4 +110,6 @@ object OrderMapper {
         )
     }
 
+    fun mapToCancelOrder(cancelOrderDTO: CancelOrderDTO): CancelOrder =
+        CancelOrder(cancelOrderDTO.orderId, cancelOrderDTO.orderGhnCode)
 }

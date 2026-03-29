@@ -3,7 +3,6 @@ package com.example.shoppingapp.data.local.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.example.shoppingapp.data.remote.dto.get.OrderItemDetailDTO
 
 @Entity(
     tableName = "orders",
@@ -26,6 +25,7 @@ data class OrderEntity(
     val userPhone: String, //sdt khi đặt hàng (có thể để khác với user đặt)
     val address: String,
     val shopId: Int,
+    val shopGhnId: Int,
     val shopName: String,
     val shopAvt: String,
     val totalAmount: Int,

@@ -2,12 +2,14 @@ package com.example.shoppingapp.domain.repository.user
 
 import android.net.Uri
 import androidx.paging.PagingData
+import com.example.shoppingapp.data.remote.dto.request.CancelOrderRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
 import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.domain.model.AddressItem
 import com.example.shoppingapp.domain.model.AfterPayment
+import com.example.shoppingapp.domain.model.CancelOrder
 import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderDetail
 import com.example.shoppingapp.domain.model.OrderStatus
@@ -33,10 +35,12 @@ interface UserRepository {
         idAddress: Int,
         userAddressRequest: UserAddressRequest
     ): Flow<StateListener<Unit>>
+
     fun addUserAddress(
         idUser: String,
         userAddressRequest: UserAddressRequest
     ): Flow<StateListener<Unit>>
+
     fun deleteUserAddress(idUser: String, idAddress: Int): Flow<StateListener<Int>>
     suspend fun createOrder(shopGhnId: Int, orderRequest: OrderRequest): StateListener<Order>
     suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<AfterPayment>
@@ -44,5 +48,9 @@ interface UserRepository {
     suspend fun getOrderStatus(orderId: String): StateListener<OrderStatus>
     suspend fun getOrderDetail(orderId: String): StateListener<OrderDetail>
     fun getOrderViaStatus(userId: String, status: String): Flow<PagingData<OrderUiModel>>
+    suspend fun cancelOrder(
+        orderId: String,
+        cancelOrderRequest: CancelOrderRequest
+    ): StateListener<CancelOrder>
 
 }

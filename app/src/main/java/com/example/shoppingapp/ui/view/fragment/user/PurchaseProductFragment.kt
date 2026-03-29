@@ -187,12 +187,12 @@ class PurchaseProductFragment : Fragment() {
                         when (it) {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> {
-                                binding.frameShimmer.isVisible = true
+                                binding.layoutShimmer.frameShimmer.isVisible = true
                             }
 
                             is StateListener.Error -> {
                                 Log.e(TAG, "onViewCreated: ${it.e?.message}")
-                                binding.frameShimmer.isVisible = false
+                                binding.layoutShimmer.frameShimmer.isVisible = false
                                 ToastUtils.showToast(
                                     requireContext(),
                                     it.e?.message ?: StringConstants.HAS_ERROR
@@ -201,7 +201,7 @@ class PurchaseProductFragment : Fragment() {
 
                             is StateListener.Success<String> -> { //người dùng thanh toán bằng cod
                                 val orderId = it.result
-                                binding.frameShimmer.isVisible = false
+                                binding.layoutShimmer.frameShimmer.isVisible = false
                                 navigateAndSendData(orderId)
                             }
                         }
@@ -212,11 +212,11 @@ class PurchaseProductFragment : Fragment() {
                         when (it) {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> {//thêm cái preload web
-                                binding.frameShimmer.isVisible = true
+                                binding.layoutShimmer.frameShimmer.isVisible = true
                             }
 
                             is StateListener.Error -> {
-                                binding.frameShimmer.isVisible = false
+                                binding.layoutShimmer.frameShimmer.isVisible = false
                                 ToastUtils.showToast(
                                     requireContext(),
                                     it.e?.message ?: StringConstants.HAS_ERROR
@@ -227,7 +227,7 @@ class PurchaseProductFragment : Fragment() {
                             is StateListener.Success<AfterPayment> -> {
                                 val data = it.result
                                 afterPayment = data
-                                binding.frameShimmer.isVisible = false
+                                binding.layoutShimmer.frameShimmer.isVisible = false
                                 (requireActivity() as MainActivity).isOpenWeb = true
                                 val customTabsClient = CustomTabsIntent.Builder()
                                     .build()
@@ -422,7 +422,8 @@ class PurchaseProductFragment : Fragment() {
         //khi thanh toán thành công thì openWeb mới = false
         if (mainActivity.isOpenWeb && !mainActivity.isPaymentCompleted) { //người dùng mở trang thanh toán nhưng ko thanh toán
             //navigate to after purchase với status order là await confirmation
-            mainActivity.isPaymentCompleted = false //khi popUp rồi thì cái gán này cũng ko quan trọng lắm
+            mainActivity.isPaymentCompleted =
+                false //khi popUp rồi thì cái gán này cũng ko quan trọng lắm
             afterPayment?.let {
                 navigateAndSendData(it.orderId)
             }

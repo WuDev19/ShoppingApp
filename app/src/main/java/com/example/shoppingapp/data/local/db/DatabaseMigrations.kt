@@ -4,30 +4,46 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 object DatabaseMigrations {
-    val MIGRATION_1_2 = object : Migration(1, 2){
+    val MIGRATION_1_2 = object : Migration(1, 2) {
         override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("""
+            db.execSQL(
+                """
                 CREATE TABLE status_order (
                     statusId INTEGER NOT NULL PRIMARY KEY,
                     statusName TEXT NOT NULL
                 )
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
     }
 
-    val MIGRATION_2_3 = object : Migration(2, 3){
+    val MIGRATION_2_3 = object : Migration(2, 3) {
         override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("""
+            db.execSQL(
+                """
                 DROP TABLE status_order
-            """.trimIndent())
+            """.trimIndent()
+            )
         }
     }
 
-    val MIGRATION_3_4 = object : Migration(3, 4){
+    val MIGRATION_3_4 = object : Migration(3, 4) {
         override fun migrate(db: SupportSQLiteDatabase) {
-            db.execSQL("""
+            db.execSQL(
+                """
                 ALTER TABLE orders ADD shopId INTEGER NOT NULL
-            """.trimIndent())
+            """.trimIndent()
+            )
+        }
+    }
+
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                ALTER TABLE orders ADD shopGhnId INTEGER NOT NULL
+            """.trimIndent()
+            )
         }
     }
 

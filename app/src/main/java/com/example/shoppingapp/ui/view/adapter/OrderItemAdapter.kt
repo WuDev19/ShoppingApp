@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.adapter
 
+import android.annotation.SuppressLint
 import android.text.TextPaint
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.example.shoppingapp.domain.model.OrderItemDetail
 class OrderItemAdapter(private var orderItems: List<OrderItemDetail>) :
     RecyclerView.Adapter<OrderItemAdapter.OrderItemViewHolder>() {
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setOrderItems(orderItems: List<OrderItemDetail>){
         this.orderItems = orderItems;
         notifyDataSetChanged()
@@ -44,11 +46,13 @@ class OrderItemAdapter(private var orderItems: List<OrderItemDetail>) :
                 append(", ")
                 append(orderItem.detailProduct.kichco)
             }
-            tvPrice.text = buildString {
-                append(orderItem.detailProduct.unitPrice)
-                append("$")
+            if(orderItem.price != orderItem.detailProduct.unitPrice) {
+                tvPrice.text = buildString {
+                    append(orderItem.detailProduct.unitPrice)
+                    append("$")
+                }
+                tvPrice.paintFlags = TextPaint.STRIKE_THRU_TEXT_FLAG
             }
-            tvPrice.paintFlags = TextPaint.STRIKE_THRU_TEXT_FLAG
             tvPriceDCount.text = buildString {
                 append(orderItem.price)
                 append("$")

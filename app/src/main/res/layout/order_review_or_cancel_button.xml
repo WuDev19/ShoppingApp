@@ -12,6 +12,15 @@
         android:layout_weight="1" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:text="@string/cancel"
+        app:backgroundTint="@color/button_color"
+        app:cornerRadius="10dp" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_review"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

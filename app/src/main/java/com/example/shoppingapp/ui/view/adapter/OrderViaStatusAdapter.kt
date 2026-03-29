@@ -1,11 +1,9 @@
 package com.example.shoppingapp.ui.view.adapter
 
 import android.text.TextPaint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.core.view.marginTop
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -14,10 +12,13 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.LayoutProductOrderSameShopBinding
 import com.example.shoppingapp.databinding.OrderLayoutBinding
 import com.example.shoppingapp.databinding.OrderOfShopLayoutBinding
-import com.example.shoppingapp.databinding.OrderReviewButtonBinding
+import com.example.shoppingapp.databinding.OrderReviewOrCancelButtonBinding
 import com.example.shoppingapp.domain.model.OrderUiModel
 
-class OrderViaStatusAdapter :
+class OrderViaStatusAdapter(
+    private val onDetailOrder: (String) -> Unit,
+    private val onCancelOrder: (String, String, Int) -> Unit
+) :
     PagingDataAdapter<OrderUiModel, RecyclerView.ViewHolder>(diffCallback) {
     companion object {
         val diffCallback = object : DiffUtil.ItemCallback<OrderUiModel>() {
@@ -37,9 +38,9 @@ class OrderViaStatusAdapter :
                                 oldItem.orderItemDetail.orderItemId == newItem.orderItemDetail.orderItemId
                     }
 
-                    oldItem is OrderUiModel.OrderReview &&
-                            newItem is OrderUiModel.OrderReview -> {
-                        oldItem.orderId == newItem.orderId
+                    oldItem is OrderUiModel.OrderReviewOrCancel &&
+                            newItem is OrderUiModel.OrderReviewOrCancel -> {
+                        oldItem.order.orderId == newItem.order.orderId
                     }
 
                     else -> false
@@ -103,12 +104,12 @@ class OrderViaStatusAdapter :
             }
 
             else -> {
-                val binding = OrderReviewButtonBinding.inflate(
+                val binding = OrderReviewOrCancelButtonBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
                     false
                 )
-                OrderReviewButtonViewHolder(binding)
+                OrderReviewOrCancelButtonViewHolder(binding)
             }
         }
     }
@@ -133,11 +134,20 @@ class OrderViaStatusAdapter :
                         (10 * density).toInt(),
                         0
                     )
+                    linearOrderItem.setOnClickListener {
+                        onDetailOrder(item.order.orderId)
+                    }
+
                 }
             }
 
-            is OrderUiModel.OrderReview -> {
-                (holder as OrderReviewButtonViewHolder).bind(item)
+            is OrderUiModel.OrderReviewOrCancel -> {
+                (holder as OrderReviewOrCancelButtonViewHolder).bind(item)
+                holder.binding.apply {
+                    btnCancel.setOnClickListener {
+                        onCancelOrder(item.order.orderId, item.order.ghnOrderId, item.shopGhnId)
+                    }
+                }
             }
 
             is OrderUiModel.OrderOfShop -> {
@@ -185,11 +195,13 @@ class OrderViaStatusAdapter :
                     append(", ")
                     append(orderItem.detailProduct.kichco)
                 }
-                tvPrice.text = buildString {
-                    append(orderItem.detailProduct.unitPrice)
-                    append("$")
+                if (orderItem.price != orderItem.detailProduct.unitPrice) {
+                    tvPrice.text = buildString {
+                        append(orderItem.detailProduct.unitPrice)
+                        append("$")
+                    }
+                    tvPrice.paintFlags = TextPaint.STRIKE_THRU_TEXT_FLAG
                 }
-                tvPrice.paintFlags = TextPaint.STRIKE_THRU_TEXT_FLAG
                 tvPriceDCount.text = buildString {
                     append(orderItem.price)
                     append("$")
@@ -202,14 +214,22 @@ class OrderViaStatusAdapter :
         }
     }
 
-    class OrderReviewButtonViewHolder(val binding: OrderReviewButtonBinding) :
+    class OrderReviewOrCancelButtonViewHolder(val binding: OrderReviewOrCancelButtonBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(orderReview: OrderUiModel.OrderReview) {
+        fun bind(orderReviewOrCancel: OrderUiModel.OrderReviewOrCancel) {
             binding.apply {
-                if (orderReview.orderStatus == "Completed") {
+                if (orderReviewOrCancel.order.orderStatus == "Completed") {
                     btnReview.isVisible = true
                 } else {
                     btnReview.isVisible = false
+                }
+
+                if (orderReviewOrCancel.order.orderStatus == "Pending Payment" ||
+                    orderReviewOrCancel.order.orderStatus == "Await Confirmation"
+                ) {
+                    btnCancel.isVisible = true
+                } else {
+                    btnCancel.isVisible = false
                 }
             }
         }

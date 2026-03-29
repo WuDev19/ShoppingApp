@@ -17,6 +17,7 @@ import com.example.shoppingapp.data.remote.api.OrderAPI
 import com.example.shoppingapp.data.remote.api.PaymentAPI
 import com.example.shoppingapp.data.remote.api.UserAPI
 import com.example.shoppingapp.data.remote.dto.get.ErrorResponseDTO
+import com.example.shoppingapp.data.remote.dto.request.CancelOrderRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderPaymentRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.UserAddressRequest
@@ -28,6 +29,7 @@ import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.AvatarUploader
 import com.example.shoppingapp.domain.model.AddressItem
 import com.example.shoppingapp.domain.model.AfterPayment
+import com.example.shoppingapp.domain.model.CancelOrder
 import com.example.shoppingapp.domain.model.Order
 import com.example.shoppingapp.domain.model.OrderDetail
 import com.example.shoppingapp.domain.model.OrderStatus
@@ -417,11 +419,13 @@ class UserRepositoryImpl @Inject constructor(
                 OrderUiModel.OrderItemUser(
                     OrderUiModel.OrderOfShop( //tạo sẵn orderitem có hết thông tin của order với shop, vì sau khi map ở đây rồi thì sẽ bị mất info nếu ko lưu lại
                         order.orderPojo.shopId,
+                        order.orderPojo.shopGhnId,
                         order.orderPojo.shopName,
                         order.orderPojo.shopAvt
                     ),
                     OrderUiModel.Order(
                         order.orderPojo.orderId,
+                        order.orderPojo.ghnOrderId,
                         order.orderPojo.orderStatus,
                     ),
                     com.example.shoppingapp.data.local.mapper.OrderMapper.mapToOrderItemDetail(
@@ -437,6 +441,7 @@ class UserRepositoryImpl @Inject constructor(
                 if (beforeId != afterId) {
                     OrderUiModel.OrderOfShop( //copy lại
                         after.orderOfShop.shopId,
+                        after.orderOfShop.shopGhnId,
                         after.orderOfShop.shopName,
                         after.orderOfShop.shopAvt
                     )
@@ -450,6 +455,7 @@ class UserRepositoryImpl @Inject constructor(
                 ) {
                     return@insertSeparators OrderUiModel.Order(
                         after.order.orderId,
+                        after.order.ghnOrderId,
                         after.order.orderStatus
                     )
                 }
@@ -460,26 +466,30 @@ class UserRepositoryImpl @Inject constructor(
                 ) {
                     return@insertSeparators OrderUiModel.Order(
                         after.order.orderId,
+                        after.order.ghnOrderId,
                         after.order.orderStatus
                     )
                 }
                 null
             }.insertSeparators { before, after ->
+                //add nút review
                 if (after == null &&
                     before != null &&
                     before is OrderUiModel.OrderItemUser
-                ) return@insertSeparators OrderUiModel.OrderReview(
-                    before.order.orderId,
-                    before.order.orderStatus
+                ) return@insertSeparators OrderUiModel.OrderReviewOrCancel(
+                    before.orderOfShop.shopId,
+                    before.orderOfShop.shopGhnId,
+                    before.order
                 )
                 if (after != null &&
                     before != null &&
                     before is OrderUiModel.OrderItemUser &&
                     after is OrderUiModel.OrderOfShop
                 ) {
-                    OrderUiModel.OrderReview(
-                        before.order.orderId,
-                        before.order.orderStatus
+                    OrderUiModel.OrderReviewOrCancel(
+                        before.orderOfShop.shopId,
+                        before.orderOfShop.shopGhnId,
+                        before.order
                     )
                 } else if (
                     after != null &&
@@ -487,13 +497,31 @@ class UserRepositoryImpl @Inject constructor(
                     before is OrderUiModel.OrderItemUser &&
                     after is OrderUiModel.Order
                 ) {
-                    OrderUiModel.OrderReview(
-                        before.order.orderId,
-                        before.order.orderStatus
+                    OrderUiModel.OrderReviewOrCancel(
+                        before.orderOfShop.shopId,
+                        before.orderOfShop.shopGhnId,
+                        before.order
                     )
                 } else null
             }
         }
+    }
+
+    override suspend fun cancelOrder(
+        orderId: String,
+        cancelOrderRequest: CancelOrderRequest
+    ): StateListener<CancelOrder> = try {
+        NetworkHelper.callApi(
+            apiCall = {
+                orderAPI.cancelOrder(orderId, cancelOrderRequest)
+            },
+            mapper = { cancelOrderDto ->
+                OrderMapper.mapToCancelOrder(cancelOrderDto)
+            },
+            moshi
+        )
+    } catch (e: Exception) {
+        StateListener.Error(e)
     }
 
 }

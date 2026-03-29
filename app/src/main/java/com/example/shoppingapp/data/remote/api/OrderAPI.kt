@@ -1,8 +1,10 @@
 package com.example.shoppingapp.data.remote.api
 
+import com.example.shoppingapp.data.remote.dto.get.CancelOrderDTO
 import com.example.shoppingapp.data.remote.dto.get.OrderDTO
 import com.example.shoppingapp.data.remote.dto.get.OrderDetailDTO
 import com.example.shoppingapp.data.remote.dto.get.PageResponse
+import com.example.shoppingapp.data.remote.dto.request.CancelOrderRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -32,5 +34,11 @@ interface OrderAPI {
         @Query("status") status: String,
         @Query("page") page: Int
     ): Response<PageResponse<OrderDetailDTO>>
+
+    @POST("order/cancel/{orderId}")
+    suspend fun cancelOrder(
+        @Path("orderId") orderId: String,
+        @Body cancelOrderRequest: CancelOrderRequest
+    ): Response<CancelOrderDTO>
 
 }

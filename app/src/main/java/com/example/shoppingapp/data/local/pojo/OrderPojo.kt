@@ -10,6 +10,7 @@ data class OrderPojo(
     val userPhone: String,
     val address: String,
     val shopId: Int,
+    val shopGhnId: Int,
     val shopName: String,
     val shopAvt: String,
     val totalAmount: Int,
