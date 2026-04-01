@@ -75,6 +75,7 @@ object OrderMapper {
             orderDetailDTO.ngayDat,
             orderDetailDTO.ngayDuKienToi,
             orderDetailDTO.ngayHoanThanh,
+            orderDetailDTO.ngayChinhSua,
             orderDetailDTO.ghnOrderId,
             orderDetailDTO.userNote
         )

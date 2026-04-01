@@ -27,6 +27,7 @@
     <string name="number_cart">10</string>
     <string name="popular_categories">Popular Categories</string>
     <string name="search">Search</string>
+    <string name="search_order">Search your order…</string>
     <string name="home">Home</string>
     <string name="store">Store</string>
     <string name="wishlist">Wishlist</string>

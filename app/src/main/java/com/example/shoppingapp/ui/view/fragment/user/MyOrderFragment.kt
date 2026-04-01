@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.fragment.user
 
+import android.animation.ValueAnimator
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -47,15 +49,19 @@ class MyOrderFragment : Fragment() {
             R.id.bottom_navigation_view
         )
     }
+    private val density by lazy {
+        requireContext().resources.displayMetrics.density
+    }
+    private val linearParams by lazy { binding.linearAppBar.layoutParams as LinearLayout.LayoutParams }
     private val statusOrderAdapter by lazy {
         StatusOrderAdapter(
             listOf(
-                StatusOrder(1, "Pending Payment", true),
-                StatusOrder(2, "Await Confirmation", false),
-                StatusOrder(3, "Processing", false),
-                StatusOrder(4, "Shipping", false),
-                StatusOrder(5, "Completed", false),
-                StatusOrder(6, "Cancelled", false),
+                StatusOrder(1, StringConstants.STATUS_PENDING_PAYMENT, true),
+                StatusOrder(2, StringConstants.STATUS_AWAIT_CONFIRMATION, false),
+                StatusOrder(3, StringConstants.STATUS_PROCESSING, false),
+                StatusOrder(4, StringConstants.STATUS_SHIPPING, false),
+                StatusOrder(5, StringConstants.STATUS_COMPLETED, false),
+                StatusOrder(6, StringConstants.STATUS_CANCELLED, false),
             )
         ) { status, isSelected ->
             if (!isSelected) {
@@ -89,10 +95,12 @@ class MyOrderFragment : Fragment() {
             }
         })
     }
+    private var appBarAnimator: ValueAnimator? = null
+    private var edtSearchAnimator: ValueAnimator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getOrderViaStatus("Pending Payment")
+        viewModel.getOrderViaStatus(StringConstants.STATUS_PENDING_PAYMENT)
     }
 
     override fun onCreateView(
@@ -157,12 +165,46 @@ class MyOrderFragment : Fragment() {
                 ViewPagerUtils.enableViewPager(viewPager2, controller)
             }
 
+            tvMyOrder.setOnClickListener {
+                handleSearchView(this)
+            }
+
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun handleSearchView(binding: FragmentMyOrderBinding) {
+        binding.apply {
+            if (tvMyOrder.isVisible) {
+                if (appBarAnimator?.isRunning == true) return
+                appBarAnimator?.cancel()
+                tvMyOrder.isVisible = false
+                edtSearch.isVisible = true
+                appBarAnimator = ValueAnimator.ofInt(
+                    linearAppBar.height,
+                    (linearAppBar.height + 30 * density).toInt()
+                ).apply {
+                    duration = 500
+                    addUpdateListener { valueAnimator ->
+                        val heightIncrease = valueAnimator.animatedValue as Int
+                        linearParams.height = heightIncrease
+                        linearAppBar.requestLayout()
+                    }
+                    start()
+                }
+                edtSearch.scaleX = 0f
+                edtSearch.animate().apply {
+                    scaleX(1f)
+                    duration = 500
+                    start()
+                }
+
+            }
+        }
     }
 
 }

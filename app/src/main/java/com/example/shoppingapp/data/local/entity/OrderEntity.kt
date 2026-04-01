@@ -32,6 +32,7 @@ data class OrderEntity(
     val ngayDat: String,
     val ngayDuKienToi: String,
     val ngayHoanThanh: String,
+    val ngayChinhSua: Long,
     val ghnOrderId: String,
     val userNote: String,
 )

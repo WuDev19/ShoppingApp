@@ -24,6 +24,19 @@ interface OrderDAO {
         status: String
     ): PagingSource<Int, OrderWithOrderItemAndProduct>
 
+    @Query("""
+        SELECT * FROM orders od
+        JOIN order_item oi ON od.orderId = oi.orderId
+        JOIN product_details pd ON pd.maSanPhamDeTail = oi.maSanPhamDeTail
+        WHERE od.userId = :userId 
+        AND od.orderStatus = :status 
+        ORDER BY od.ngayChinhSua DESC
+    """)
+    fun getPagingSourceOrderViaStatusCancel(
+        userId: String,
+        status: String
+    ): PagingSource<Int, OrderWithOrderItemAndProduct>
+
     @Insert
     suspend fun insertAll(orderEntities: List<OrderEntity>)
 

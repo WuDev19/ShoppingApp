@@ -97,4 +97,10 @@ object StringConstants {
     const val SELECT_END_DATE = "Select end date"
     const val PURCHASE_TO_ADDRESS = "purchase_to_address"
     const val ORDER_ID = "order_id"
+    const val STATUS_PENDING_PAYMENT = "Pending Payment"
+    const val STATUS_AWAIT_CONFIRMATION = "Await Confirmation"
+    const val STATUS_PROCESSING = "Processing"
+    const val STATUS_SHIPPING = "Shipping"
+    const val STATUS_COMPLETED = "Completed"
+    const val STATUS_CANCELLED = "Cancelled"
 }

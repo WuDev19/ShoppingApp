@@ -10,6 +10,7 @@ data class OrderRequest(
     val totalAmount: Long,
     val voucherId: Int,
     val note: String,
+    val modifyTime: Long,
     val createOrderGhnRequest: CreateOrderGhnRequest,
     val orderDetailRequests: List<OrderDetailRequest>
 )

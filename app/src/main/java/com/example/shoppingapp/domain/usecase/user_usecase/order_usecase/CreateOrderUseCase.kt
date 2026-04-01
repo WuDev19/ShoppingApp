@@ -1,5 +1,6 @@
 package com.example.shoppingapp.domain.usecase.user_usecase.order_usecase
 
+import android.annotation.SuppressLint
 import com.example.shoppingapp.data.remote.dto.request.OrderDetailRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
 import com.example.shoppingapp.data.remote.dto.request.ghn.CreateOrderGhnRequest
@@ -15,12 +16,15 @@ import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.utils.CalculateUtils
 import com.google.firebase.auth.FirebaseAuth
+import java.time.Instant
+import java.util.Date
 import javax.inject.Inject
 
 class CreateOrderUseCase @Inject constructor(
     private val repo: UserRepository,
     private val auth: FirebaseAuth,
 ) {
+    @SuppressLint("NewApi")
     suspend operator fun invoke(
         shopGhnId: Int,
         orderFromBuyNow: OrderFromBuyNow? = null,
@@ -96,6 +100,7 @@ class CreateOrderUseCase @Inject constructor(
                 totalAmount,
                 voucherOrder?.voucherId ?: -1,
                 note[shopGhnId] ?: "",
+                Instant.now().toEpochMilli(),
                 createOrderGhnRequest,
                 listOf(orderDetailRequest)
             )
@@ -162,6 +167,7 @@ class CreateOrderUseCase @Inject constructor(
                 totalAmount,
                 voucherOrder?.voucherId ?: -1,
                 note[shopGhnId] ?: "",
+                Instant.now().toEpochMilli(),
                 createOrderGhnRequest,
                 listOrderDetailRequest
             )

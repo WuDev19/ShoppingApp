@@ -1,5 +1,6 @@
 package com.example.shoppingapp.data.repository.impl
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.util.Log
 import androidx.paging.ExperimentalPagingApi
@@ -51,6 +52,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.tasks.await
+import java.time.Instant
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor(
@@ -349,9 +351,11 @@ class UserRepositoryImpl @Inject constructor(
             StateListener.Error(e)
         }
 
+    @SuppressLint("NewApi")
     override suspend fun updateStatusOrder(orderId: String): StateListener<Order> =
         try {
-            val response = orderAPI.updateStatusOrder(orderId)
+            val modifyTime = Instant.now().toEpochMilli()
+            val response = orderAPI.updateStatusOrder(orderId, modifyTime)
             if (response.isSuccessful) {
                 val result = response.body()
                 result?.let {
@@ -404,7 +408,15 @@ class UserRepositoryImpl @Inject constructor(
                 initialLoadSize = StringConstants.PAGE_SIZE
             ),
             pagingSourceFactory = {
-                appDatabase.orderDao().getPagingSourceOrderViaStatus(userId, status)
+                if(status != StringConstants.STATUS_CANCELLED){
+                    appDatabase.orderDao().getPagingSourceOrderViaStatus(
+                        userId,
+                        status
+                    ) //viết thêm paging source cho trạng thái cancel (sắp xếp theo time cancel)
+                }
+                else {
+                    appDatabase.orderDao().getPagingSourceOrderViaStatusCancel(userId, status)
+                }
             },
             remoteMediator = OrderViaStatusMediator(
                 orderAPI = orderAPI,

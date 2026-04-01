@@ -23,7 +23,10 @@ interface OrderAPI {
     ): Response<OrderDTO>
 
     @PATCH("order/update-order/{orderId}")
-    suspend fun updateStatusOrder(@Path("orderId") orderId: String): Response<OrderDTO>
+    suspend fun updateStatusOrder(
+        @Path("orderId") orderId: String,
+        @Query("modifyTime") modifyTime: Long
+    ): Response<OrderDTO>
 
     @GET("order/details/{orderId}")
     suspend fun getOrderDetail(@Path("orderId") orderId: String): Response<OrderDetailDTO>
