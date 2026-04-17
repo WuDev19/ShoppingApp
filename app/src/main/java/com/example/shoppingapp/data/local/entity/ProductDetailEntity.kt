@@ -1,9 +1,15 @@
 package com.example.shoppingapp.data.local.entity
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "product_details")
+@Entity(
+    tableName = "product_details",
+    indices = [
+        Index("tenDetail", name = "index_product_details_tenDetail")
+    ]
+)
 data class ProductDetailEntity(
     @PrimaryKey val maSanPhamDeTail: Int,
     val tenDetail: String,

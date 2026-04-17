@@ -1,6 +1,7 @@
 package com.example.shoppingapp.ui.view.fragment.user
 
 import android.animation.ValueAnimator
+import android.content.Context
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
@@ -66,7 +68,7 @@ class MyOrderFragment : Fragment() {
         ) { status, isSelected ->
             if (!isSelected) {
                 Log.e(TAG, "click: ")
-                viewModel.getOrderViaStatus(status)
+                viewModel.setStatus(status)
             }
         }
     }
@@ -96,11 +98,10 @@ class MyOrderFragment : Fragment() {
         })
     }
     private var appBarAnimator: ValueAnimator? = null
-    private var edtSearchAnimator: ValueAnimator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getOrderViaStatus(StringConstants.STATUS_PENDING_PAYMENT)
+        viewModel.setStatus(StringConstants.STATUS_PENDING_PAYMENT)
     }
 
     override fun onCreateView(
@@ -142,6 +143,11 @@ class MyOrderFragment : Fragment() {
                         }
                     }
                 }
+                launch {
+                    viewModel.searchOrderState.collectLatest {
+                        orderViaStatusAdapter.submitData(it)
+                    }
+                }
             }
 
         }
@@ -167,6 +173,15 @@ class MyOrderFragment : Fragment() {
 
             tvMyOrder.setOnClickListener {
                 handleSearchView(this)
+            }
+
+            imgSearch.setOnClickListener {
+                val keyword = edtSearch.text.toString().trim()
+                if (edtSearch.isVisible) {
+                    viewModel.setKeyword(keyword)
+                } else {
+                    viewModel.setKeyword(null)
+                }
             }
 
         }
@@ -200,6 +215,12 @@ class MyOrderFragment : Fragment() {
                 edtSearch.animate().apply {
                     scaleX(1f)
                     duration = 500
+                    withEndAction {
+                        edtSearch.requestFocus()
+                        val keyboard =
+                            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        keyboard.showSoftInput(edtSearch, InputMethodManager.SHOW_IMPLICIT)
+                    }
                     start()
                 }
 

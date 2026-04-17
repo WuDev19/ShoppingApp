@@ -46,9 +46,7 @@ class OrderViaStatusMediator(
             appDatabase.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     remoteKeyDAO.clearByQueryKey(queryKey)
-                    orderItemDAO.deleteOrderItem()
-                    productDetailDAO.deleteProductDetail()
-                    orderDAO.deleteAll()
+                    orderDAO.deleteByStatus(userId, status)
                 }
                 val prevKey = if (page == 0) null else page - 1
                 val nextKey = if (endOfPagination) null else page + 1

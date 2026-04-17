@@ -12,6 +12,13 @@ import androidx.room.PrimaryKey
             "orderStatus",
             "ngayDuKienToi",
             orders = [Index.Order.ASC, Index.Order.ASC, Index.Order.DESC]
+        ),
+        Index(
+            "userId",
+            "orderStatus",
+            "ngayChinhSua",
+            orders = [Index.Order.ASC, Index.Order.ASC, Index.Order.DESC],
+            name = "index_orders_userId_orderStatus_ngayChinhSua"
         )
     ]
 )

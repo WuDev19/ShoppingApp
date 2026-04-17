@@ -12,7 +12,4 @@ interface OrderItemDAO {
     @Insert(onConflict = REPLACE)
     suspend fun insertAll(orderItemEntities: List<OrderItemEntity>)
 
-    @Query("DELETE FROM order_item")
-    suspend fun deleteOrderItem()
-
 }

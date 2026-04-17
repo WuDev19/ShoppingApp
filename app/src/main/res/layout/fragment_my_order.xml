@@ -26,11 +26,11 @@
                 android:id="@+id/img_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:importantForAccessibility="no"
-                android:layout_gravity="center_vertical"
                 android:src="@drawable/icon_back"
                 app:tint="@color/white" />
 
@@ -59,8 +59,8 @@
                 android:hint="@string/search_order"
                 android:padding="6dp"
                 android:textColorHint="@color/light_grey"
-                android:visibility="gone"
-                android:transformPivotX="0dp"/>
+                android:transformPivotX="0dp"
+                android:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_search"
@@ -69,7 +69,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="10dp"
                 app:srcCompat="@drawable/icon_search"
-                app:tint="@color/white"/>
+                app:tint="@color/white" />
 
         </LinearLayout>
 

@@ -26,6 +26,7 @@ import com.example.shoppingapp.data.remote.dto.request.UserDTOUpdate
 import com.example.shoppingapp.data.remote.helper.NetworkHelper
 import com.example.shoppingapp.data.remote.mapper.OrderMapper
 import com.example.shoppingapp.data.repository.mediator.OrderViaStatusMediator
+import com.example.shoppingapp.data.repository.mediator.SearchOrderViaStatusMediator
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.AvatarUploader
 import com.example.shoppingapp.domain.model.AddressItem
@@ -408,13 +409,12 @@ class UserRepositoryImpl @Inject constructor(
                 initialLoadSize = StringConstants.PAGE_SIZE
             ),
             pagingSourceFactory = {
-                if(status != StringConstants.STATUS_CANCELLED){
+                if (status != StringConstants.STATUS_CANCELLED) {
                     appDatabase.orderDao().getPagingSourceOrderViaStatus(
                         userId,
                         status
                     ) //viết thêm paging source cho trạng thái cancel (sắp xếp theo time cancel)
-                }
-                else {
+                } else {
                     appDatabase.orderDao().getPagingSourceOrderViaStatusCancel(userId, status)
                 }
             },
@@ -534,6 +534,126 @@ class UserRepositoryImpl @Inject constructor(
         )
     } catch (e: Exception) {
         StateListener.Error(e)
+    }
+
+    @OptIn(ExperimentalPagingApi::class)
+    override fun searchOrder(
+        userId: String,
+        status: String,
+        keyword: String,
+    ): Flow<PagingData<OrderUiModel>> {
+        Log.e(StringConstants.ORDER_ID, "searchOrder: ")
+        val queryKey = "search_order:userId:$userId:status:$status:keyword:$keyword"
+        return Pager(
+            config = PagingConfig(
+                pageSize = 6
+            ),
+            pagingSourceFactory = {
+                if (status == StringConstants.STATUS_CANCELLED)
+                    appDatabase.orderDao().searchOrderCancelPagingSource(userId, status, keyword)
+                else
+                    appDatabase.orderDao().searchOrderPagingSource(userId, status, keyword)
+            },
+            remoteMediator = SearchOrderViaStatusMediator(
+                orderAPI,
+                appDatabase,
+                queryKey,
+                userId,
+                status,
+                keyword
+            )
+        ).flow.map { pagingData ->
+            pagingData.map { order ->
+                Log.e("search", "searchOrder: $order", )
+                OrderUiModel.OrderItemUser(
+                    OrderUiModel.OrderOfShop( //tạo sẵn orderitem có hết thông tin của order với shop, vì sau khi map ở đây rồi thì sẽ bị mất info nếu ko lưu lại
+                        order.orderPojo.shopId,
+                        order.orderPojo.shopGhnId,
+                        order.orderPojo.shopName,
+                        order.orderPojo.shopAvt
+                    ),
+                    OrderUiModel.Order(
+                        order.orderPojo.orderId,
+                        order.orderPojo.ghnOrderId,
+                        order.orderPojo.orderStatus,
+                    ),
+                    com.example.shoppingapp.data.local.mapper.OrderMapper.mapToOrderItemDetail(
+                        order.orderItemPojo,
+                        order.productDetailPojo
+                    )
+                )
+            }.insertSeparators { before, after -> //logic them cai phan cach giua cac item
+                //add shop
+                if (after == null) return@insertSeparators null
+                val beforeId = before?.orderOfShop?.shopId
+                val afterId = after.orderOfShop.shopId
+                if (beforeId != afterId) {
+                    OrderUiModel.OrderOfShop( //copy lại
+                        after.orderOfShop.shopId,
+                        after.orderOfShop.shopGhnId,
+                        after.orderOfShop.shopName,
+                        after.orderOfShop.shopAvt
+                    )
+                } else null
+            }.insertSeparators { before, after ->
+                //add order
+                if (after == null) return@insertSeparators null
+                if (before != null &&
+                    before is OrderUiModel.OrderOfShop &&
+                    after is OrderUiModel.OrderItemUser
+                ) {
+                    return@insertSeparators OrderUiModel.Order(
+                        after.order.orderId,
+                        after.order.ghnOrderId,
+                        after.order.orderStatus
+                    )
+                }
+                if (before != null &&
+                    before is OrderUiModel.OrderItemUser &&
+                    after is OrderUiModel.OrderItemUser &&
+                    before.order.orderId != after.order.orderId
+                ) {
+                    return@insertSeparators OrderUiModel.Order(
+                        after.order.orderId,
+                        after.order.ghnOrderId,
+                        after.order.orderStatus
+                    )
+                }
+                null
+            }.insertSeparators { before, after ->
+                //add nút review
+                if (after == null &&
+                    before != null &&
+                    before is OrderUiModel.OrderItemUser
+                ) return@insertSeparators OrderUiModel.OrderReviewOrCancel(
+                    before.orderOfShop.shopId,
+                    before.orderOfShop.shopGhnId,
+                    before.order
+                )
+                if (after != null &&
+                    before != null &&
+                    before is OrderUiModel.OrderItemUser &&
+                    after is OrderUiModel.OrderOfShop
+                ) {
+                    OrderUiModel.OrderReviewOrCancel(
+                        before.orderOfShop.shopId,
+                        before.orderOfShop.shopGhnId,
+                        before.order
+                    )
+                } else if (
+                    after != null &&
+                    before != null &&
+                    before is OrderUiModel.OrderItemUser &&
+                    after is OrderUiModel.Order
+                ) {
+                    OrderUiModel.OrderReviewOrCancel(
+                        before.orderOfShop.shopId,
+                        before.orderOfShop.shopGhnId,
+                        before.order
+                    )
+                } else null
+            }
+        }
     }
 
 }

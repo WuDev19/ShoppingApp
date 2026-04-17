@@ -53,4 +53,6 @@ interface UserRepository {
         cancelOrderRequest: CancelOrderRequest
     ): StateListener<CancelOrder>
 
+    fun searchOrder(userId: String, status: String, keyword: String): Flow<PagingData<OrderUiModel>>
+
 }

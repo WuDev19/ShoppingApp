@@ -44,4 +44,12 @@ interface OrderAPI {
         @Body cancelOrderRequest: CancelOrderRequest
     ): Response<CancelOrderDTO>
 
+    @GET("order/search/{userId}")
+    suspend fun searchOrder(
+        @Path("userId") userId: String,
+        @Query("status") status: String,
+        @Query("page") page: Int,
+        @Query("keyword") keyword: String
+    ): Response<PageResponse<OrderDetailDTO>>
+
 }

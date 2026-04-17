@@ -57,4 +57,20 @@ object DatabaseMigrations {
         }
     }
 
+    val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE INDEX IF NOT EXISTS index_product_details_tenDetail ON product_details(tenDetail)
+            """.trimIndent()
+            )
+            db.execSQL(
+                """
+                CREATE INDEX IF NOT EXISTS index_orders_userId_orderStatus_ngayChinhSua 
+                ON orders(userId, orderStatus, ngayChinhSua DESC)
+            """.trimIndent()
+            )
+        }
+    }
+
 }
