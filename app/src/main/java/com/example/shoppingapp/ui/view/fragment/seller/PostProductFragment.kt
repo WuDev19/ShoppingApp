@@ -16,11 +16,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.shoppingapp.R
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.databinding.FragmentPostProductBinding
+import com.example.shoppingapp.domain.model.Category
+import com.example.shoppingapp.ui.view.adapter.CategoryAdapter
 import com.example.shoppingapp.ui.view.adapter.ImageDescriptionAdapter
 import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 
@@ -48,6 +51,23 @@ class PostProductFragment : Fragment() {
             }
         }
 
+    private val categories by lazy {
+        listOf(
+            Category(1, StringConstants.SPORT, false),
+            Category(2, StringConstants.FURNITURE, false),
+            Category(3, StringConstants.ELECTRONIC, false),
+            Category(4, StringConstants.CLOTH, false),
+            Category(5, StringConstants.SHOE, false),
+            Category(6, StringConstants.COSMETIC, false),
+            Category(7, StringConstants.MOBILE, false),
+            Category(8, StringConstants.LAPTOP, false),
+        )
+    }
+
+    private val choseCategory by lazy { mutableListOf<Category>() }
+
+    private lateinit var categoryAdapter: CategoryAdapter
+
     private val controller by lazy { findNavController() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,6 +87,14 @@ class PostProductFragment : Fragment() {
                 imageDescriptionAdapter.submitList(listUri.toList())
             }
         )
+        categoryAdapter = CategoryAdapter(requireActivity(), categories) { category ->
+            if(category.selected){
+                choseCategory.add(category)
+            }
+            else {
+                choseCategory.remove(category)
+            }
+        }
     }
 
     override fun onCreateView(
@@ -83,6 +111,12 @@ class PostProductFragment : Fragment() {
         binding.apply {
 
             buildRecyclerView(this)
+
+            recyclerViewCategory.apply {
+                adapter = categoryAdapter
+                layoutManager =
+                    LinearLayoutManager(requireActivity(), LinearLayoutManager.HORIZONTAL, false)
+            }
 
             imgBack.setOnClickListener {
                 controller.popBackStack()
