@@ -70,10 +70,12 @@ class MyOrderFragment : Fragment() {
                 Log.e(TAG, "click: ")
                 viewModel.setStatus(status)
             }
+            hideSearch(binding)
         }
     }
     private val orderViaStatusAdapter by lazy {
         OrderViaStatusAdapter(onDetailOrder = { orderId ->
+            hideSearch(binding)
             val bundle = bundleOf(
                 StringConstants.ORDER_ID to orderId
             )
@@ -98,6 +100,9 @@ class MyOrderFragment : Fragment() {
         })
     }
     private var appBarAnimator: ValueAnimator? = null
+    private val keyboard by lazy {
+        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -217,13 +222,45 @@ class MyOrderFragment : Fragment() {
                     duration = 500
                     withEndAction {
                         edtSearch.requestFocus()
-                        val keyboard =
-                            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         keyboard.showSoftInput(edtSearch, InputMethodManager.SHOW_IMPLICIT)
                     }
                     start()
                 }
 
+            }
+        }
+    }
+
+    private fun hideSearch(binding: FragmentMyOrderBinding) {
+        binding.apply {
+            if (edtSearch.isVisible) {
+                if (appBarAnimator?.isRunning == true) return
+                appBarAnimator?.cancel()
+                appBarAnimator = ValueAnimator.ofInt(
+                    linearAppBar.height,
+                    (linearAppBar.height - 30 * density).toInt()
+                ).apply {
+                    duration = 500
+                    addUpdateListener { valueAnimator ->
+                        val heightIncrease = valueAnimator.animatedValue as Int
+                        linearParams.height = heightIncrease
+                        linearAppBar.requestLayout()
+                    }
+                    start()
+                }
+                edtSearch.animate().apply {
+                    scaleX(0f)
+                    duration = 500
+                    withEndAction {
+                        tvMyOrder.isVisible = true
+                        edtSearch.isVisible = false
+                        keyboard.hideSoftInputFromWindow(
+                            view?.windowToken, //trong fragment thì lấy token như này
+                            0
+                        )
+                    }
+                    start()
+                }
             }
         }
     }
