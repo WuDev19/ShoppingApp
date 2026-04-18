@@ -206,6 +206,11 @@
             app:argType="string[]"
             app:nullable="false" />
 
+        <argument
+            android:name="choseCategory"
+            app:argType="integer[]"
+            app:nullable="false"/>
+
     </fragment>
     <fragment
         android:id="@+id/imageDescriptionProductFragment3"
@@ -226,7 +231,7 @@
         android:id="@+id/myOrderFragment"
         android:name="com.example.shoppingapp.ui.view.fragment.user.MyOrderFragment"
         android:label="fragment_my_order"
-        tools:layout="@layout/fragment_my_order" >
+        tools:layout="@layout/fragment_my_order">
         <action
             android:id="@+id/action_myOrderFragment_to_orderDetailFragment3"
             app:destination="@id/orderDetailFragment3" />

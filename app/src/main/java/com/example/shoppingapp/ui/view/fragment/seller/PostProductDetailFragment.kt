@@ -25,6 +25,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
+import com.example.shoppingapp.data.remote.dto.request.ChoseCategoryRequest
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.data.remote.dto.request.PostProductDetailRequest
@@ -56,6 +57,11 @@ class PostProductDetailFragment : Fragment() {
     private val uriList by lazy {
         args.uriList.map {
             it.toUri()
+        }
+    }
+    private val choseCategory: List<ChoseCategoryRequest> by lazy {
+        args.choseCategory.toList().map {
+            ChoseCategoryRequest(it)
         }
     }
     private val listImageDetail by lazy { mutableListOf<Uri?>() }
@@ -245,7 +251,8 @@ class PostProductDetailFragment : Fragment() {
                 if (listPostProductDetailRequest.isEmpty() ||
                     description.isEmpty() ||
                     generalPrice == -1 ||
-                    uriList.isEmpty()
+                    uriList.isEmpty() ||
+                    choseCategory.isEmpty()
                 ) {
                     ToastUtils.showToast(
                         requireContext(),
@@ -261,7 +268,8 @@ class PostProductDetailFragment : Fragment() {
                     discount,
                     introduction,
                     listPostProductDetailRequest,
-                    null
+                    null,
+                    choseCategory
                 )
                 viewModel.postProduct(uriList, postProductRequest)
             }

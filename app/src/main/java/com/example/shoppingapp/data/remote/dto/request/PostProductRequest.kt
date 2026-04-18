@@ -7,5 +7,6 @@ data class PostProductRequest(
     val discount: Int?,
     val introduction: String?,
     var productDetails: List<PostProductDetailRequest>,
-    var imageDescriptionProducts: List<ImageDescriptionProduct>?
+    var imageDescriptionProducts: List<ImageDescriptionProduct>?,
+    val choseCategoryRequests: List<ChoseCategoryRequest>
 )

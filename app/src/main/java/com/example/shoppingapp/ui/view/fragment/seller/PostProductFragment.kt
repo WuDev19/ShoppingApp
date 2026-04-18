@@ -29,6 +29,7 @@ import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 
 //dùng imageDecoder để chuyển uri sang bitmap
 class PostProductFragment : Fragment() {
+    private val TAG = PostProductFragment::class.simpleName
     private var _binding: FragmentPostProductBinding? = null
     private val binding
         get() = _binding!!
@@ -64,7 +65,7 @@ class PostProductFragment : Fragment() {
         )
     }
 
-    private val choseCategory by lazy { mutableListOf<Category>() }
+    private val choseCategory by lazy { mutableListOf<Int>() }
 
     private lateinit var categoryAdapter: CategoryAdapter
 
@@ -88,12 +89,12 @@ class PostProductFragment : Fragment() {
             }
         )
         categoryAdapter = CategoryAdapter(requireActivity(), categories) { category ->
-            if(category.selected){
-                choseCategory.add(category)
+            if (category.selected) {
+                choseCategory.add(category.id)
+            } else {
+                choseCategory.remove(category.id)
             }
-            else {
-                choseCategory.remove(category)
-            }
+            Log.e(TAG, "onCreate: $choseCategory")
         }
     }
 
@@ -196,7 +197,7 @@ class PostProductFragment : Fragment() {
                     .isNotEmpty()
             ) edtIntroduction.text.toString().trim() else null
 
-            if (description.isEmpty() || price.isEmpty() || listUri.isEmpty()) {
+            if (description.isEmpty() || price.isEmpty() || listUri.isEmpty() || choseCategory.isEmpty()) {
                 ToastUtils.showToast(requireContext(), "Vui lòng điềm đầy đủ thông tin")
                 return
             }
@@ -208,6 +209,7 @@ class PostProductFragment : Fragment() {
                     introduction = introduction,
                     discount = discount,
                     uriList = uriList.toTypedArray(),
+                    choseCategory = choseCategory.toIntArray()
                 )
             clearDataOnView(binding)
             controller.navigate(action)

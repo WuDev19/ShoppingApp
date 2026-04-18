@@ -15,7 +15,6 @@ class CategoryAdapter(
     private val onChooseCategory: (Category) -> Unit
 ) :
     RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
-    private val density by lazy { context.resources.displayMetrics.density }
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
