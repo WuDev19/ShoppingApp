@@ -252,6 +252,7 @@ class MyOrderFragment : Fragment() {
                     scaleX(0f)
                     duration = 500
                     withEndAction {
+                        edtSearch.setText("")
                         tvMyOrder.isVisible = true
                         edtSearch.isVisible = false
                         keyboard.hideSoftInputFromWindow(
