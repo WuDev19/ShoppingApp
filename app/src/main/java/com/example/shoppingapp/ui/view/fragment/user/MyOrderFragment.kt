@@ -23,6 +23,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.FragmentMyOrderBinding
 import com.example.shoppingapp.domain.model.CancelOrder
+import com.example.shoppingapp.domain.model.OrderSearchOrNot
 import com.example.shoppingapp.domain.model.StatusOrder
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.OrderViaStatusAdapter
@@ -55,6 +56,7 @@ class MyOrderFragment : Fragment() {
         requireContext().resources.displayMetrics.density
     }
     private val linearParams by lazy { binding.linearAppBar.layoutParams as LinearLayout.LayoutParams }
+    private var status: String? = null
     private val statusOrderAdapter by lazy {
         StatusOrderAdapter(
             listOf(
@@ -68,36 +70,46 @@ class MyOrderFragment : Fragment() {
         ) { status, isSelected ->
             if (!isSelected) {
                 Log.e(TAG, "click: ")
-                viewModel.setStatus(status)
+                this.status = status
+                if (!binding.edtSearch.isVisible) {
+                    viewModel.setOrderSearchOrNot(OrderSearchOrNot(status, ""))
+                } else {
+                    viewModel.setOrderSearchOrNot(
+                        OrderSearchOrNot(
+                            status,
+                            binding.edtSearch.text.toString().trim()
+                        )
+                    )
+                }
             }
-            hideSearch(binding)
         }
     }
     private val orderViaStatusAdapter by lazy {
-        OrderViaStatusAdapter(onDetailOrder = { orderId ->
-            hideSearch(binding)
-            val bundle = bundleOf(
-                StringConstants.ORDER_ID to orderId
-            )
-            findNavController().navigate(
-                R.id.action_myOrderFragment_to_orderDetailFragment3,
-                bundle
-            )
-        }, onCancelOrder = { orderId, orderGhnId, shopGhnId ->
-            val dialog = AlertDialog.Builder(requireContext())
-                .setTitle("ShoppingApp")
-                .setMessage("Are you sure you want to cancel?")
-                .setNegativeButton("No") { _, _ ->
+        OrderViaStatusAdapter(
+            onDetailOrder = { orderId ->
+                hideSearch(binding)
+                val bundle = bundleOf(
+                    StringConstants.ORDER_ID to orderId
+                )
+                findNavController().navigate(
+                    R.id.action_myOrderFragment_to_orderDetailFragment3,
+                    bundle
+                )
+            }, onCancelOrder = { orderId, orderGhnId, shopGhnId ->
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle("ShoppingApp")
+                    .setMessage("Are you sure you want to cancel?")
+                    .setNegativeButton("No") { _, _ ->
+                    }
+                    .setPositiveButton("Sure") { _, _ ->
+                        viewModel.cancelOrder(orderId, shopGhnId, orderGhnId)
+                    }
+                    .create()
+                dialog.show()
+                dialog.window?.apply {
+                    setBackgroundDrawableResource(R.drawable.custom_dialog)
                 }
-                .setPositiveButton("Sure") { _, _ ->
-                    viewModel.cancelOrder(orderId, shopGhnId, orderGhnId)
-                }
-                .create()
-            dialog.show()
-            dialog.window?.apply {
-                setBackgroundDrawableResource(R.drawable.custom_dialog)
-            }
-        })
+            })
     }
     private var appBarAnimator: ValueAnimator? = null
     private val keyboard by lazy {
@@ -106,7 +118,7 @@ class MyOrderFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.setStatus(StringConstants.STATUS_PENDING_PAYMENT)
+        viewModel.setOrderSearchOrNot(OrderSearchOrNot(StringConstants.STATUS_PENDING_PAYMENT, ""))
     }
 
     override fun onCreateView(
@@ -123,7 +135,7 @@ class MyOrderFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    viewModel.orderStatusState.collectLatest {
+                    viewModel.orderStatusSearchOrNotState.collectLatest {
                         orderViaStatusAdapter.submitData(it)
                     }
                 }
@@ -148,13 +160,7 @@ class MyOrderFragment : Fragment() {
                         }
                     }
                 }
-                launch {
-                    viewModel.searchOrderState.collectLatest {
-                        orderViaStatusAdapter.submitData(it)
-                    }
-                }
             }
-
         }
 
         binding.apply {
@@ -183,9 +189,9 @@ class MyOrderFragment : Fragment() {
             imgSearch.setOnClickListener {
                 val keyword = edtSearch.text.toString().trim()
                 if (edtSearch.isVisible) {
-                    viewModel.setKeyword(keyword)
+                    viewModel.setOrderSearchOrNot(OrderSearchOrNot(status!!, keyword))
                 } else {
-                    viewModel.setKeyword(null)
+                    viewModel.setOrderSearchOrNot(null)
                 }
             }
 
@@ -234,6 +240,7 @@ class MyOrderFragment : Fragment() {
     private fun hideSearch(binding: FragmentMyOrderBinding) {
         binding.apply {
             if (edtSearch.isVisible) {
+                edtSearch.setText("")
                 if (appBarAnimator?.isRunning == true) return
                 appBarAnimator?.cancel()
                 appBarAnimator = ValueAnimator.ofInt(
@@ -252,7 +259,6 @@ class MyOrderFragment : Fragment() {
                     scaleX(0f)
                     duration = 500
                     withEndAction {
-                        edtSearch.setText("")
                         tvMyOrder.isVisible = true
                         edtSearch.isVisible = false
                         keyboard.hideSoftInputFromWindow(

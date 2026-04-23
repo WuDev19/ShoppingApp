@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import com.example.shoppingapp.domain.model.CancelOrder
+import com.example.shoppingapp.domain.model.OrderSearchOrNot
 import com.example.shoppingapp.domain.model.SearchOrder
 import com.example.shoppingapp.domain.usecase.user_usecase.order_usecase.CancelOrderUseCase
 import com.example.shoppingapp.domain.usecase.user_usecase.order_usecase.GetOrderViaStatusUseCase
@@ -32,32 +33,25 @@ class MyOrderViewModel @Inject constructor(
 ) : ViewModel() {
     private val _cancelOrderState = Channel<StateListener<CancelOrder>>()
     val cancelOrderState = _cancelOrderState.receiveAsFlow()
-    private val _searchOrderKeyword = MutableStateFlow<String?>(null)
-    private val _orderStatusState = MutableStateFlow<String?>(null)
+    private val _orderStatusSearchOrNotState = MutableStateFlow<OrderSearchOrNot?>(null)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val searchOrderState = combine(_orderStatusState, _searchOrderKeyword) { status, keyword ->
-        Log.e(StringConstants.ORDER_ID, "$status: $keyword")
-        if (status == null || keyword == null) null
-        else SearchOrder(status, keyword)
-    }.filterNotNull()
-        .flatMapLatest { searchOrder ->
-            searchOrderUseCase(
-                userId,
-                searchOrder.status,
-                searchOrder.keyword
-            )
-        }.cachedIn(viewModelScope)
-
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val orderStatusState = _orderStatusState
+    val orderStatusSearchOrNotState = _orderStatusSearchOrNotState
         .filterNotNull()
-        .flatMapLatest { status ->
-            getOrderViaStatusUseCase(status)
+        .flatMapLatest { order ->
+            if (order.keyword.isEmpty()) {
+                getOrderViaStatusUseCase(order.status)
+            } else {
+                searchOrderUseCase(
+                    userId,
+                    order.status,
+                    order.keyword
+                )
+            }
         }.cachedIn(viewModelScope)
 
-    fun setStatus(status: String) {
-        _orderStatusState.value = status
+    fun setOrderSearchOrNot(orderSearchOrNot: OrderSearchOrNot?) {
+        _orderStatusSearchOrNotState.value = orderSearchOrNot
     }
 
     fun cancelOrder(orderId: String, shopGhnId: Int, orderGhnId: String) {
@@ -66,10 +60,6 @@ class MyOrderViewModel @Inject constructor(
             val result = cancelOrderUseCase(orderId, shopGhnId, orderGhnId)
             _cancelOrderState.send(result)
         }
-    }
-
-    fun setKeyword(keyword: String?) {
-        _searchOrderKeyword.value = keyword
     }
 
 }
