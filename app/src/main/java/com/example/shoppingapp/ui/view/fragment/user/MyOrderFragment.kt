@@ -5,10 +5,12 @@ import android.content.Context
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
@@ -56,7 +58,7 @@ class MyOrderFragment : Fragment() {
         requireContext().resources.displayMetrics.density
     }
     private val linearParams by lazy { binding.linearAppBar.layoutParams as LinearLayout.LayoutParams }
-    private var status: String? = null
+    private var status: String = StringConstants.STATUS_PENDING_PAYMENT
     private val statusOrderAdapter by lazy {
         StatusOrderAdapter(
             listOf(
@@ -195,6 +197,17 @@ class MyOrderFragment : Fragment() {
                 }
             }
 
+            edtSearch.setOnEditorActionListener { _, actionId, keyEvent ->
+                if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                    (keyEvent != null && keyEvent.keyCode == KeyEvent.KEYCODE_ENTER)
+                ) {
+                    val keyword = edtSearch.text.toString().trim()
+                    if (edtSearch.isVisible) {
+                        viewModel.setOrderSearchOrNot(OrderSearchOrNot(status!!, keyword))
+                    }
+                }
+                true
+            }
         }
     }
 

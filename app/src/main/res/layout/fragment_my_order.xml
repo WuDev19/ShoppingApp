@@ -58,6 +58,8 @@
                 android:backgroundTint="@color/white"
                 android:hint="@string/search_order"
                 android:padding="6dp"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
                 android:textColorHint="@color/light_grey"
                 android:transformPivotX="0dp"
                 android:visibility="gone" />
