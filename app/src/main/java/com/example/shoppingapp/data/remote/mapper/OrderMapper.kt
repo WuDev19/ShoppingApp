@@ -6,11 +6,13 @@ import com.example.shoppingapp.data.local.entity.ProductDetailEntity
 import com.example.shoppingapp.data.remote.dto.get.CancelOrderDTO
 import com.example.shoppingapp.data.remote.dto.get.OrderDetailDTO
 import com.example.shoppingapp.data.remote.dto.get.OrderItemDetailDTO
+import com.example.shoppingapp.data.remote.dto.get.OrderStatusDTO
 import com.example.shoppingapp.data.remote.dto.get.ProductChiTietDTO
 import com.example.shoppingapp.domain.model.CancelOrder
 import com.example.shoppingapp.domain.model.OrderDetail
 import com.example.shoppingapp.domain.model.OrderItemDetail
 import com.example.shoppingapp.domain.model.OrderStatus
+import com.example.shoppingapp.domain.model.user.OrderUpdateStatus
 
 object OrderMapper {
     fun mapToOrderStatus(orderDetailDTO: OrderDetailDTO): OrderStatus {
@@ -113,4 +115,8 @@ object OrderMapper {
 
     fun mapToCancelOrder(cancelOrderDTO: CancelOrderDTO): CancelOrder =
         CancelOrder(cancelOrderDTO.orderId, cancelOrderDTO.orderGhnCode)
+
+    fun mapToOrderUpdateStatus(orderStatusDTO: OrderStatusDTO): OrderUpdateStatus {
+        return OrderUpdateStatus(orderStatusDTO.orderId, orderStatusDTO.status)
+    }
 }

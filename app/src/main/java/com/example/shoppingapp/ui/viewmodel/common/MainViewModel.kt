@@ -4,7 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.domain.model.Order
-import com.example.shoppingapp.domain.usecase.user_usecase.order_usecase.UpdateStatusOrderUseCase
+import com.example.shoppingapp.domain.usecase.user_usecase.order_usecase.UpdateStatusOrderWhenPaymentSuccess
 import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.ConfirmChangeEmailUseCase
 import com.example.shoppingapp.domain.usecase.user_usecase.profile_usecase.LogoutUseCase
 import com.example.shoppingapp.ui.state.StateListener
@@ -30,7 +30,7 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val confirmChangeEmailUseCase: ConfirmChangeEmailUseCase,
     private val logoutUseCase: LogoutUseCase,
-    private val updateStatusOrderUseCase: UpdateStatusOrderUseCase,
+    private val updateStatusOrderWhenPaymentSuccess: UpdateStatusOrderWhenPaymentSuccess,
     val auth: FirebaseAuth,
     private val sharedPreferences: SharedPreferences,
 ) : ViewModel() {
@@ -80,7 +80,7 @@ class MainViewModel @Inject constructor(
     fun updateStatusOrder(orderId: String) {
         viewModelScope.launch {
             _updateStatusOrderState.send(StateListener.Loading)
-            val result = updateStatusOrderUseCase(orderId)
+            val result = updateStatusOrderWhenPaymentSuccess(orderId)
             if (result is StateListener.Error) {
                 _updateStatusOrderState.send(StateListener.Error(result.e))
             } else if (result is StateListener.Success) {
@@ -97,7 +97,7 @@ class MainViewModel @Inject constructor(
             val listResult = orderIds.asFlow()
                 .flatMapMerge(concurrency = 5) { orderId ->
                     flow {
-                        emit(updateStatusOrderUseCase(orderId))
+                        emit(updateStatusOrderWhenPaymentSuccess(orderId))
                     }
                 }.filterIsInstance<StateListener.Success<Order>>()
                 .toList()

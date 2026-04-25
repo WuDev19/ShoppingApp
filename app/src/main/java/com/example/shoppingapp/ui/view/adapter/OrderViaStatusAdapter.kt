@@ -14,10 +14,12 @@ import com.example.shoppingapp.databinding.OrderLayoutBinding
 import com.example.shoppingapp.databinding.OrderOfShopLayoutBinding
 import com.example.shoppingapp.databinding.OrderReviewOrCancelButtonBinding
 import com.example.shoppingapp.domain.model.OrderUiModel
+import com.example.shoppingapp.utils.StringConstants
 
 class OrderViaStatusAdapter(
     private val onDetailOrder: (String) -> Unit,
-    private val onCancelOrder: (String, String, Int) -> Unit
+    private val onCancelOrder: (String, String, Int) -> Unit,
+    private val onConfirmOrder: (String) -> Unit
 ) :
     PagingDataAdapter<OrderUiModel, RecyclerView.ViewHolder>(diffCallback) {
     companion object {
@@ -147,6 +149,9 @@ class OrderViaStatusAdapter(
                     btnCancel.setOnClickListener {
                         onCancelOrder(item.order.orderId, item.order.ghnOrderId, item.shopGhnId)
                     }
+                    btnConfirm.setOnClickListener {
+                        onConfirmOrder(item.order.orderId)
+                    }
                 }
             }
 
@@ -218,18 +223,24 @@ class OrderViaStatusAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(orderReviewOrCancel: OrderUiModel.OrderReviewOrCancel) {
             binding.apply {
-                if (orderReviewOrCancel.order.orderStatus == "Completed") {
+                if (orderReviewOrCancel.order.orderStatus == StringConstants.STATUS_COMPLETED) {
                     btnReview.isVisible = true
                 } else {
                     btnReview.isVisible = false
                 }
 
-                if (orderReviewOrCancel.order.orderStatus == "Pending Payment" ||
-                    orderReviewOrCancel.order.orderStatus == "Await Confirmation"
+                if (orderReviewOrCancel.order.orderStatus == StringConstants.STATUS_PENDING_PAYMENT ||
+                    orderReviewOrCancel.order.orderStatus == StringConstants.STATUS_AWAIT_CONFIRMATION
                 ) {
                     btnCancel.isVisible = true
                 } else {
                     btnCancel.isVisible = false
+                }
+
+                if (orderReviewOrCancel.order.orderStatus == StringConstants.STATUS_SHIPPED) {
+                    btnConfirm.isVisible = true
+                } else {
+                    btnConfirm.isVisible = false
                 }
             }
         }

@@ -15,6 +15,7 @@ import com.example.shoppingapp.domain.model.OrderDetail
 import com.example.shoppingapp.domain.model.OrderStatus
 import com.example.shoppingapp.domain.model.OrderUiModel
 import com.example.shoppingapp.domain.model.user.BaseUser
+import com.example.shoppingapp.domain.model.user.OrderUpdateStatus
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
@@ -44,7 +45,12 @@ interface UserRepository {
     fun deleteUserAddress(idUser: String, idAddress: Int): Flow<StateListener<Int>>
     suspend fun createOrder(shopGhnId: Int, orderRequest: OrderRequest): StateListener<Order>
     suspend fun createPayment(orderPaymentRequest: OrderPaymentRequest): StateListener<AfterPayment>
-    suspend fun updateStatusOrder(orderId: String): StateListener<Order>
+    suspend fun updateStatusOrderWhenPaymentSuccess(orderId: String): StateListener<Order>
+    suspend fun updateStatusOrderWhenConfirm(
+        orderId: String,
+        status: String
+    ): StateListener<OrderUpdateStatus>
+
     suspend fun getOrderStatus(orderId: String): StateListener<OrderStatus>
     suspend fun getOrderDetail(orderId: String): StateListener<OrderDetail>
     fun getOrderViaStatus(userId: String, status: String): Flow<PagingData<OrderUiModel>>

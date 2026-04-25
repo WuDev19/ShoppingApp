@@ -75,6 +75,7 @@ class OrderDetailFragment : Fragment() {
                                 tvTotal.setTypeface(null, Typeface.BOLD)
                                 tvOrderStatus.text = orderDetail.orderStatus
                                 tvShippingCode.text = orderDetail.ghnOrderId
+                                tvPaymentMethod.text = orderDetail.paymentMethod
                                 tvOrderDate.text = orderDetail.ngayDat
                                 tvExpectedDate.text = orderDetail.ngayDuKienToi
                                 tvUsername.text = orderDetail.userName

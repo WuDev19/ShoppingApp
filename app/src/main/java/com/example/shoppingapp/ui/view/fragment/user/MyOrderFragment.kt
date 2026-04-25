@@ -27,6 +27,7 @@ import com.example.shoppingapp.databinding.FragmentMyOrderBinding
 import com.example.shoppingapp.domain.model.CancelOrder
 import com.example.shoppingapp.domain.model.OrderSearchOrNot
 import com.example.shoppingapp.domain.model.StatusOrder
+import com.example.shoppingapp.domain.model.user.OrderUpdateStatus
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.ui.view.adapter.OrderViaStatusAdapter
 import com.example.shoppingapp.ui.view.adapter.StatusOrderAdapter
@@ -66,6 +67,7 @@ class MyOrderFragment : Fragment() {
                 StatusOrder(2, StringConstants.STATUS_AWAIT_CONFIRMATION, false),
                 StatusOrder(3, StringConstants.STATUS_PROCESSING, false),
                 StatusOrder(4, StringConstants.STATUS_SHIPPING, false),
+                StatusOrder(7, StringConstants.STATUS_SHIPPED, false),
                 StatusOrder(5, StringConstants.STATUS_COMPLETED, false),
                 StatusOrder(6, StringConstants.STATUS_CANCELLED, false),
             )
@@ -77,10 +79,7 @@ class MyOrderFragment : Fragment() {
                     viewModel.setOrderSearchOrNot(OrderSearchOrNot(status, ""))
                 } else {
                     viewModel.setOrderSearchOrNot(
-                        OrderSearchOrNot(
-                            status,
-                            binding.edtSearch.text.toString().trim()
-                        )
+                        OrderSearchOrNot(status, binding.edtSearch.text.toString().trim())
                     )
                 }
             }
@@ -97,21 +96,14 @@ class MyOrderFragment : Fragment() {
                     R.id.action_myOrderFragment_to_orderDetailFragment3,
                     bundle
                 )
-            }, onCancelOrder = { orderId, orderGhnId, shopGhnId ->
-                val dialog = AlertDialog.Builder(requireContext())
-                    .setTitle("ShoppingApp")
-                    .setMessage("Are you sure you want to cancel?")
-                    .setNegativeButton("No") { _, _ ->
-                    }
-                    .setPositiveButton("Sure") { _, _ ->
-                        viewModel.cancelOrder(orderId, shopGhnId, orderGhnId)
-                    }
-                    .create()
-                dialog.show()
-                dialog.window?.apply {
-                    setBackgroundDrawableResource(R.drawable.custom_dialog)
-                }
-            })
+            },
+            onCancelOrder = { orderId, orderGhnId, shopGhnId ->
+                showDialog(orderId, shopGhnId, orderGhnId)
+            },
+            onConfirmOrder = { orderId ->
+                showDialog(orderId)
+            }
+        )
     }
     private var appBarAnimator: ValueAnimator? = null
     private val keyboard by lazy {
@@ -162,6 +154,27 @@ class MyOrderFragment : Fragment() {
                         }
                     }
                 }
+                launch {
+                    viewModel.updateConfirmStatus.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> {
+                                binding.layoutShimmer.frameShimmer.isVisible = true
+                            }
+
+                            is StateListener.Error -> {
+                                Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                                binding.layoutShimmer.frameShimmer.isVisible = false
+                            }
+
+                            is StateListener.Success<OrderUpdateStatus> -> {
+                                Log.e(TAG, "onViewCreated: ${it.result}")
+                                binding.layoutShimmer.frameShimmer.isVisible = false
+                                orderViaStatusAdapter.refresh()
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -191,7 +204,7 @@ class MyOrderFragment : Fragment() {
             imgSearch.setOnClickListener {
                 val keyword = edtSearch.text.toString().trim()
                 if (edtSearch.isVisible) {
-                    viewModel.setOrderSearchOrNot(OrderSearchOrNot(status!!, keyword))
+                    viewModel.setOrderSearchOrNot(OrderSearchOrNot(status, keyword))
                 } else {
                     viewModel.setOrderSearchOrNot(null)
                 }
@@ -203,7 +216,7 @@ class MyOrderFragment : Fragment() {
                 ) {
                     val keyword = edtSearch.text.toString().trim()
                     if (edtSearch.isVisible) {
-                        viewModel.setOrderSearchOrNot(OrderSearchOrNot(status!!, keyword))
+                        viewModel.setOrderSearchOrNot(OrderSearchOrNot(status, keyword))
                     }
                 }
                 true
@@ -282,6 +295,38 @@ class MyOrderFragment : Fragment() {
                     start()
                 }
             }
+        }
+    }
+
+    private fun showDialog(orderId: String, shopGhnId: Int, orderGhnId: String) {
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("ShoppingApp")
+            .setMessage("Are you sure you want to cancel?")
+            .setNegativeButton("No") { _, _ ->
+            }
+            .setPositiveButton("Sure") { _, _ ->
+                viewModel.cancelOrder(orderId, shopGhnId, orderGhnId)
+            }
+            .create()
+        dialog.show()
+        dialog.window?.apply {
+            setBackgroundDrawableResource(R.drawable.custom_dialog)
+        }
+    }
+
+    private fun showDialog(orderId: String) {
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("ShoppingApp")
+            .setMessage("Have you received your order?")
+            .setNegativeButton("No") { _, _ ->
+            }
+            .setPositiveButton("Confirm") { _, _ ->
+                viewModel.confirmReceivedOrder(orderId, StringConstants.STATUS_COMPLETED)
+            }
+            .create()
+        dialog.show()
+        dialog.window?.apply {
+            setBackgroundDrawableResource(R.drawable.custom_dialog)
         }
     }
 

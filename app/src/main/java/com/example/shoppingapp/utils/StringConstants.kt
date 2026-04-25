@@ -103,4 +103,5 @@ object StringConstants {
     const val STATUS_SHIPPING = "Shipping"
     const val STATUS_COMPLETED = "Completed"
     const val STATUS_CANCELLED = "Cancelled"
+    const val STATUS_SHIPPED = "Shipped"
 }

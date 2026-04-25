@@ -199,4 +199,6 @@
     <string name="my_order">My Order</string>
     <string name="review">Review</string>
     <string name="select_category">Select category</string>
+    <string name="received">Received</string>
+    <string name="paymentmethod">Payment method:</string>
 </resources>

@@ -3,6 +3,7 @@ package com.example.shoppingapp.data.remote.api
 import com.example.shoppingapp.data.remote.dto.get.CancelOrderDTO
 import com.example.shoppingapp.data.remote.dto.get.OrderDTO
 import com.example.shoppingapp.data.remote.dto.get.OrderDetailDTO
+import com.example.shoppingapp.data.remote.dto.get.OrderStatusDTO
 import com.example.shoppingapp.data.remote.dto.get.PageResponse
 import com.example.shoppingapp.data.remote.dto.request.CancelOrderRequest
 import com.example.shoppingapp.data.remote.dto.request.OrderRequest
@@ -23,10 +24,16 @@ interface OrderAPI {
     ): Response<OrderDTO>
 
     @PATCH("order/update-order/{orderId}")
-    suspend fun updateStatusOrder(
+    suspend fun updateStatusOrderWhenPaymentSuccess(
         @Path("orderId") orderId: String,
         @Query("modifyTime") modifyTime: Long
     ): Response<OrderDTO>
+
+    @PATCH("order/status/{orderId}")
+    suspend fun updateStatusOrderWhenConfirm(
+        @Path("orderId") orderId: String,
+        @Query("status") status: String
+    ): Response<OrderStatusDTO>
 
     @GET("order/details/{orderId}")
     suspend fun getOrderDetail(@Path("orderId") orderId: String): Response<OrderDetailDTO>

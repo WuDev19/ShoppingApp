@@ -37,6 +37,7 @@ import com.example.shoppingapp.domain.model.OrderDetail
 import com.example.shoppingapp.domain.model.OrderStatus
 import com.example.shoppingapp.domain.model.OrderUiModel
 import com.example.shoppingapp.domain.model.user.BaseUser
+import com.example.shoppingapp.domain.model.user.OrderUpdateStatus
 import com.example.shoppingapp.domain.model.user.UserProfile
 import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
@@ -353,10 +354,10 @@ class UserRepositoryImpl @Inject constructor(
         }
 
     @SuppressLint("NewApi")
-    override suspend fun updateStatusOrder(orderId: String): StateListener<Order> =
+    override suspend fun updateStatusOrderWhenPaymentSuccess(orderId: String): StateListener<Order> =
         try {
             val modifyTime = Instant.now().toEpochMilli()
-            val response = orderAPI.updateStatusOrder(orderId, modifyTime)
+            val response = orderAPI.updateStatusOrderWhenPaymentSuccess(orderId, modifyTime)
             if (response.isSuccessful) {
                 val result = response.body()
                 result?.let {
@@ -564,7 +565,7 @@ class UserRepositoryImpl @Inject constructor(
             )
         ).flow.map { pagingData ->
             pagingData.map { order ->
-                Log.e("search", "searchOrder: $order", )
+                Log.e("search", "searchOrder: $order")
                 OrderUiModel.OrderItemUser(
                     OrderUiModel.OrderOfShop( //tạo sẵn orderitem có hết thông tin của order với shop, vì sau khi map ở đây rồi thì sẽ bị mất info nếu ko lưu lại
                         order.orderPojo.shopId,
@@ -656,4 +657,20 @@ class UserRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updateStatusOrderWhenConfirm(
+        orderId: String,
+        status: String
+    ): StateListener<OrderUpdateStatus> = try {
+        NetworkHelper.callApi(
+            apiCall = {
+                orderAPI.updateStatusOrderWhenConfirm(orderId, status)
+            },
+            mapper = { orderStatusDTO ->
+                OrderMapper.mapToOrderUpdateStatus(orderStatusDTO)
+            },
+            moshi = moshi
+        )
+    } catch (e: Exception) {
+        StateListener.Error(e)
+    }
 }
