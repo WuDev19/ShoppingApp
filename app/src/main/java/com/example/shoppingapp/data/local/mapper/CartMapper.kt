@@ -84,7 +84,8 @@ object CartMapper {
             cartItemDTO.detailProduct.maSp!!,
             cartItemDTO.soLuong!!,
             cartItemDTO.giamGia!!,
-            cartItemDTO.cartId!!
+            cartItemDTO.cartId!!,
+            cartItemDTO.updateTime!!
         )
     }
 }

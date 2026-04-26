@@ -34,5 +34,6 @@ data class CartItemEntity(
     val maSp: Int,
     val soLuong: Int,
     val giamGia: Int,
-    val cartId: Int
+    val cartId: Int,
+    val updateTime: Long
 )

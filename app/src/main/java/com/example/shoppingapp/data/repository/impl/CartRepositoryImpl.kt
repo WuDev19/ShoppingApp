@@ -71,9 +71,11 @@ class CartRepositoryImpl @Inject constructor(
             pagingData.map {
                 val listUiModel = mutableListOf<CartUiModel>()
                 listUiModel.add(CartMapper.mapToCartDomain(it.cartEntity))
-                it.cartItems.forEach { cartItemEntity ->
-                    listUiModel.add(CartMapper.mapCartItemEntityToCartItem(cartItemEntity))
-                }
+                it.cartItems
+                    .sortedByDescending { cartItemEntity -> cartItemEntity.updateTime }
+                    .forEach { cartItemEntity ->
+                        listUiModel.add(CartMapper.mapCartItemEntityToCartItem(cartItemEntity))
+                    }
                 listUiModel
             }.flatMap { it }
         }
