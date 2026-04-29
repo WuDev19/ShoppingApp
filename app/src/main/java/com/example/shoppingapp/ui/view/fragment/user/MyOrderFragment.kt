@@ -104,7 +104,8 @@ class MyOrderFragment : Fragment() {
                 showDialog(orderId)
             },
             onReviewOrder = {
-
+                val writeReviewFragment = WriteReviewFragment()
+                writeReviewFragment.show(childFragmentManager, TAG)
             }
         )
     }

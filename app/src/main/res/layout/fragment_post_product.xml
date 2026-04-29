@@ -168,44 +168,11 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp" />
 
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:text="@string/add_product_images"
-                android:textColor="@color/black"
-                android:textStyle="bold" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:orientation="horizontal">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/img_take_photo"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    app:srcCompat="@drawable/icon_photo_camera" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/img_gallery"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="20dp"
-                    app:srcCompat="@drawable/icon_from_gallery" />
-
-            </LinearLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view_image"
+            <include
+                android:id="@+id/layout_add_image"
+                layout="@layout/layout_add_image"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="10dp" />
+                android:layout_height="wrap_content" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"

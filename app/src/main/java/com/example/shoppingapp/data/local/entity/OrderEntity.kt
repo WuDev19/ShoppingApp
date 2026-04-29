@@ -3,6 +3,8 @@ package com.example.shoppingapp.data.local.entity
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.example.shoppingapp.data.local.converters.Converters
 
 @Entity(
     tableName = "orders",
@@ -22,6 +24,7 @@ import androidx.room.PrimaryKey
         )
     ]
 )
+@TypeConverters(Converters::class)
 data class OrderEntity(
     @PrimaryKey val orderId: String,
     val orderStatus: String,

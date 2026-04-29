@@ -123,12 +123,12 @@ class PostProductFragment : Fragment() {
                 controller.popBackStack()
             }
 
-            imgTakePhoto.setOnClickListener {
+            layoutAddImage.imgTakePhoto.setOnClickListener {
                 uri = createUri()
                 takePictureResult.launch(uri)
             }
 
-            imgGallery.setOnClickListener {
+            layoutAddImage.imgGallery.setOnClickListener {
                 resultGallery.launch("image/*")
             }
 
@@ -163,13 +163,13 @@ class PostProductFragment : Fragment() {
     private fun buildRecyclerView(binding: FragmentPostProductBinding) {
         binding.apply {
 
-            recyclerViewImage.apply {
+            layoutAddImage.recyclerViewImage.apply {
                 adapter = imageDescriptionAdapter
                 layoutManager = GridLayoutManager(requireContext(), 3)
                 addItemDecoration(MarginItemDecoration(5))
             }
 
-            recyclerViewImage.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+            layoutAddImage.recyclerViewImage.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
                 override fun onInterceptTouchEvent(
                     rv: RecyclerView,
                     e: MotionEvent

@@ -152,6 +152,9 @@ class OrderViaStatusAdapter(
                     btnConfirm.setOnClickListener {
                         onConfirmOrder(item.order.orderId)
                     }
+                    btnReview.setOnClickListener {
+                        onReviewOrder()
+                    }
                 }
             }
 
