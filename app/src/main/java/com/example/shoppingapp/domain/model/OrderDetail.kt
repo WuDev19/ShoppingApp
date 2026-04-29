@@ -19,5 +19,6 @@ data class OrderDetail(
     val ngayHoanThanh: String,
     val ghnOrderId: String,
     val userNote: String,
-    val orderItems: List<OrderItemDetail>
+    val orderItems: List<OrderItemDetail>,
+    val productIds: Set<Int>
 )

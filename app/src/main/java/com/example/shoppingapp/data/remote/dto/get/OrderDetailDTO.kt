@@ -20,5 +20,6 @@ data class OrderDetailDTO(
     val ngayChinhSua: Long,
     val ghnOrderId: String,
     val userNote: String,
-    val orderItems: List<OrderItemDetailDTO>
+    val orderItems: List<OrderItemDetailDTO>,
+    val productIds: Set<Int>
 )

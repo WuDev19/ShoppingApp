@@ -102,6 +102,9 @@ class MyOrderFragment : Fragment() {
             },
             onConfirmOrder = { orderId ->
                 showDialog(orderId)
+            },
+            onReviewOrder = {
+
             }
         )
     }

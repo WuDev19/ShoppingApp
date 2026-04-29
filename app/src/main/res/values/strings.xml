@@ -201,4 +201,6 @@
     <string name="select_category">Select category</string>
     <string name="received">Received</string>
     <string name="paymentmethod">Payment method:</string>
+    <string name="enter_comment">Enter comment ...</string>
+    <string name="post">Post</string>
 </resources>

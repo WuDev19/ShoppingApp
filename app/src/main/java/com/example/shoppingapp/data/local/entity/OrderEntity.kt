@@ -42,4 +42,5 @@ data class OrderEntity(
     val ngayChinhSua: Long,
     val ghnOrderId: String,
     val userNote: String,
+    val productIds: Set<Int>
 )

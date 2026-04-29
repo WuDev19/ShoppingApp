@@ -55,7 +55,8 @@ object OrderMapper {
             orderDetailDTO.userNote,
             orderDetailDTO.orderItems.map { orderItemDetailDTO ->
                 mapToOrderItemDetail(orderItemDetailDTO)
-            }
+            },
+            orderDetailDTO.productIds
         )
     }
 
@@ -79,7 +80,8 @@ object OrderMapper {
             orderDetailDTO.ngayHoanThanh,
             orderDetailDTO.ngayChinhSua,
             orderDetailDTO.ghnOrderId,
-            orderDetailDTO.userNote
+            orderDetailDTO.userNote,
+            orderDetailDTO.productIds
         )
     }
 

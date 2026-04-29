@@ -19,9 +19,9 @@ import com.example.shoppingapp.utils.StringConstants
 class OrderViaStatusAdapter(
     private val onDetailOrder: (String) -> Unit,
     private val onCancelOrder: (String, String, Int) -> Unit,
-    private val onConfirmOrder: (String) -> Unit
-) :
-    PagingDataAdapter<OrderUiModel, RecyclerView.ViewHolder>(diffCallback) {
+    private val onConfirmOrder: (String) -> Unit,
+    private val onReviewOrder: () -> Unit
+) : PagingDataAdapter<OrderUiModel, RecyclerView.ViewHolder>(diffCallback) {
     companion object {
         val diffCallback = object : DiffUtil.ItemCallback<OrderUiModel>() {
             override fun areItemsTheSame(
