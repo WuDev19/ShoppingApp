@@ -4,12 +4,12 @@ import android.annotation.SuppressLint
 import com.example.shoppingapp.data.remote.dto.request.CancelOrderRequest
 import com.example.shoppingapp.data.remote.dto.request.ghn.CancelOrderGhnRequest
 import com.example.shoppingapp.domain.model.CancelOrder
-import com.example.shoppingapp.domain.repository.user.UserRepository
+import com.example.shoppingapp.domain.repository.order.OrderRepository
 import com.example.shoppingapp.ui.state.StateListener
 import java.time.Instant
 import javax.inject.Inject
 
-class CancelOrderUseCase @Inject constructor(private val repo: UserRepository) {
+class CancelOrderUseCase @Inject constructor(private val repo: OrderRepository) {
 
     @SuppressLint("NewApi")
     suspend operator fun invoke(

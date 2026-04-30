@@ -12,16 +12,15 @@ import com.example.shoppingapp.domain.model.OrderFromBuyNow
 import com.example.shoppingapp.domain.model.OrderFromCart
 import com.example.shoppingapp.domain.model.VoucherOrder
 import com.example.shoppingapp.domain.model.ghn.ShippingMethod
-import com.example.shoppingapp.domain.repository.user.UserRepository
+import com.example.shoppingapp.domain.repository.order.OrderRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.utils.CalculateUtils
 import com.google.firebase.auth.FirebaseAuth
 import java.time.Instant
-import java.util.Date
 import javax.inject.Inject
 
 class CreateOrderUseCase @Inject constructor(
-    private val repo: UserRepository,
+    private val repo: OrderRepository,
     private val auth: FirebaseAuth,
 ) {
     @SuppressLint("NewApi")
