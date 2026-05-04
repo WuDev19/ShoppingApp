@@ -4,14 +4,18 @@ import com.example.shoppingapp.data.repository.impl.AuthRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.CartRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.CategoryRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.GhnRepositoryImpl
+import com.example.shoppingapp.data.repository.impl.OrderRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.ProductRepositoryImpl
+import com.example.shoppingapp.data.repository.impl.ReviewRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.SellerRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.UserRepositoryImpl
 import com.example.shoppingapp.domain.repository.auth.AuthRepository
 import com.example.shoppingapp.domain.repository.cart.CartRepository
 import com.example.shoppingapp.domain.repository.category.CategoryRepository
 import com.example.shoppingapp.domain.repository.ghn.GhnRepository
+import com.example.shoppingapp.domain.repository.order.OrderRepository
 import com.example.shoppingapp.domain.repository.product.ProductRepository
+import com.example.shoppingapp.domain.repository.review.ReviewRepository
 import com.example.shoppingapp.domain.repository.seller.SellerRepository
 import com.example.shoppingapp.domain.repository.user.UserRepository
 import dagger.Binds
@@ -64,5 +68,17 @@ abstract class RepositoryBindModule {
     abstract fun bindGhnRepository(
         impl: GhnRepositoryImpl
     ): GhnRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindOrderRepository(
+        impl: OrderRepositoryImpl
+    ): OrderRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReviewRepository(
+        impl: ReviewRepositoryImpl
+    ): ReviewRepository
 
 }

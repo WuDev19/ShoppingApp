@@ -45,7 +45,7 @@ import com.example.shoppingapp.data.local.entity.WardGhnEntity
         OrderItemEntity::class,
         ProductDetailEntity::class
     ],
-    version = 7
+    version = 8
 )
 abstract class AppDatabase : RoomDatabase() {
 

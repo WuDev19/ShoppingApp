@@ -14,7 +14,8 @@ object OrderMapper {
             orderItemPojo.orderItemId,
             ProductEntityMapper.mapToProductChiTiet(productDetailPojo),
             orderItemPojo.number,
-            orderItemPojo.price
+            orderItemPojo.price,
+            orderItemPojo.reviewId
         )
     }
 

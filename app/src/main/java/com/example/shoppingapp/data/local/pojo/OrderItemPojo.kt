@@ -4,4 +4,5 @@ data class OrderItemPojo(
     val orderItemId: Int,
     val number: Int,
     val price: Int,
+    val reviewId: Int
 )

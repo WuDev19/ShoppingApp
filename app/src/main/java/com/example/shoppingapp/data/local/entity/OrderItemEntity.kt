@@ -33,4 +33,5 @@ data class OrderItemEntity(
     val number: Int,
     val price: Int,
     val orderId: String,
+    val reviewId: Int?
 )

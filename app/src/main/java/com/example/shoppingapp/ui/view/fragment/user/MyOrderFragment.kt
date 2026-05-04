@@ -103,8 +103,13 @@ class MyOrderFragment : Fragment() {
             onConfirmOrder = { orderId ->
                 showDialog(orderId)
             },
-            onReviewOrder = {
+            onReviewOrder = { orderItemId, productId, reviewId ->
+                val bundle = bundleOf(
+                    StringConstants.ORDER_ITEM_ID to orderItemId,
+                    StringConstants.ID_PRODUCT to productId,
+                )
                 val writeReviewFragment = WriteReviewFragment()
+                writeReviewFragment.arguments = bundle
                 writeReviewFragment.show(childFragmentManager, TAG)
             }
         )

@@ -7,8 +7,10 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.LayoutStarItemBinding
 import com.example.shoppingapp.domain.model.SelectedStar
 
-class StarAdapter(private val listStar: List<SelectedStar>) :
-    RecyclerView.Adapter<StarAdapter.StarViewHolder>() {
+class StarAdapter(
+    private val listStar: List<SelectedStar>,
+    private val onChooseStar: (Int) -> Unit
+) : RecyclerView.Adapter<StarAdapter.StarViewHolder>() {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -34,11 +36,16 @@ class StarAdapter(private val listStar: List<SelectedStar>) :
             }
             imgStar.setOnClickListener {
                 if (item.selected && position + 1 < itemCount && listStar[position + 1].selected) {
-                    for (i in itemCount - 1 downTo position) {
+                    for (i in itemCount - 1 downTo position + 1) {
                         listStar[i].selected = false
                         notifyItemChanged(i)
                     }
                 } else if (item.selected && position + 1 < itemCount && !listStar[position + 1].selected) {
+                    for (i in 0..position) {
+                        listStar[i].selected = false
+                        notifyItemChanged(i)
+                    }
+                } else if (item.selected && position == itemCount - 1) {
                     for (i in 0..position) {
                         listStar[i].selected = false
                         notifyItemChanged(i)
@@ -48,6 +55,9 @@ class StarAdapter(private val listStar: List<SelectedStar>) :
                         listStar[i].selected = true
                         notifyItemChanged(i)
                     }
+                }
+                if(item.selected){
+                    onChooseStar(position + 1)
                 }
             }
         }

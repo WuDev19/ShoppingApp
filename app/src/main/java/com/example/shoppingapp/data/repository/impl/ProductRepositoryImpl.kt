@@ -22,7 +22,9 @@ import com.example.shoppingapp.data.repository.mediator.AllProductOfShopRemoteMe
 import com.example.shoppingapp.data.repository.mediator.BestSellerProductShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.CategoryAndProductShopRemoteMediator
 import com.example.shoppingapp.data.repository.mediator.SearchProductInShopRemoteMediator
+import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.data.source.cloudinary.impl.CloudinaryImageProductUploader
+import com.example.shoppingapp.di.qualifier.ImageProductUploader
 import com.example.shoppingapp.domain.model.product.ProductDisplay
 import com.example.shoppingapp.domain.model.product.ProductChiTiet
 import com.example.shoppingapp.domain.model.product.ProductDetail
@@ -40,7 +42,7 @@ class ProductRepositoryImpl @Inject constructor(
     private val getProductAPI: GetProductAPI,
     private val modifyProductAPI: ModifyProductAPI,
     private val appDatabase: AppDatabase,
-    private val uploader: CloudinaryImageProductUploader
+    @param:ImageProductUploader private val uploader: CloudinaryUploader
 ) :
     ProductRepository {
 

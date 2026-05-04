@@ -6,5 +6,6 @@ data class OrderItemDetail(
     val orderItemId: Int,
     val detailProduct: ProductChiTiet,
     val number: Int,
-    val price: Int
+    val price: Int,
+    val reviewId: Int?
 )

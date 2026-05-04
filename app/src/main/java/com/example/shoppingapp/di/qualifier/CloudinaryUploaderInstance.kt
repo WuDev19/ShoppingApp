@@ -15,3 +15,7 @@ annotation class VideoProductUploader
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class AvatarUploader
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class ImageReviewUploader

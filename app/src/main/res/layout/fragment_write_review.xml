@@ -6,59 +6,71 @@
     android:layout_height="match_parent"
     tools:context=".ui.view.fragment.user.WriteReviewFragment">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/corner_bottom_sheet"
-        android:orientation="vertical">
+        android:background="@drawable/corner_bottom_sheet">
 
-        <View
-            android:layout_width="80dp"
-            android:layout_height="1dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:background="@color/black" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_star"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp" />
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/edt_comment"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/border_view"
-            android:backgroundTint="@color/light_grey"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:hint="@string/enter_comment"
-            android:inputType="textMultiLine"
-            android:gravity="top|start"
-            android:padding="12dp"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <View
+                android:layout_width="80dp"
+                android:layout_height="1dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:background="@color/black" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_star"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp" />
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/edt_comment"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:background="@drawable/border_view"
+                android:backgroundTint="@color/light_grey"
+                android:gravity="top|start"
+                android:hint="@string/enter_comment"
+                android:inputType="textMultiLine"
+                android:padding="12dp" />
+
+            <include
+                android:id="@+id/layout_add_image"
+                layout="@layout/layout_add_image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_post_comment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:text="@string/post"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/button_color"
+                app:cornerRadius="10dp" />
+
+        </LinearLayout>
 
         <include
-            android:id="@+id/layout_add_image"
-            layout="@layout/layout_add_image"
+            android:id="@+id/layout_shimmer"
+            layout="@layout/layout_shimmer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_post_comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/post"
-            android:textColor="@color/white"
-            app:backgroundTint="@color/button_color"
-            app:cornerRadius="10dp" />
-
-    </LinearLayout>
+    </FrameLayout>
 
 </androidx.core.widget.NestedScrollView>

@@ -24,6 +24,6 @@ sealed class OrderUiModel {
     data class OrderReviewOrCancel(
         val shopId: Int,
         val shopGhnId: Int,
-        val order: Order
+        val orderItem: OrderItemUser
     ) : OrderUiModel()
 }

@@ -1,5 +1,6 @@
 package com.example.shoppingapp.data.remote.mapper
 
+import android.util.Log
 import com.example.shoppingapp.data.local.entity.OrderEntity
 import com.example.shoppingapp.data.local.entity.OrderItemEntity
 import com.example.shoppingapp.data.local.entity.ProductDetailEntity
@@ -25,11 +26,13 @@ object OrderMapper {
     }
 
     fun mapToOrderItemDetail(orderItemDetailDTO: OrderItemDetailDTO): OrderItemDetail {
+        Log.e("ORDER_DETAIL", "mapToOrderItemDetail: $orderItemDetailDTO", )
         return OrderItemDetail(
             orderItemDetailDTO.orderItemId,
             ProductDTOMapper.mapToProductChiTiet(orderItemDetailDTO.detailProduct),
             orderItemDetailDTO.number,
-            orderItemDetailDTO.price
+            orderItemDetailDTO.price,
+            orderItemDetailDTO.reviewId
         )
     }
 
@@ -94,7 +97,8 @@ object OrderMapper {
             orderItemDetailDTO.detailProduct.maSanPhamDeTail!!,
             orderItemDetailDTO.number,
             orderItemDetailDTO.price,
-            orderId
+            orderId,
+            orderItemDetailDTO.reviewId
         )
     }
 

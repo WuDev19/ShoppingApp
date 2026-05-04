@@ -1,6 +1,7 @@
 package com.example.shoppingapp.ui.view.adapter
 
 import android.text.TextPaint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
@@ -20,7 +21,7 @@ class OrderViaStatusAdapter(
     private val onDetailOrder: (String) -> Unit,
     private val onCancelOrder: (String, String, Int) -> Unit,
     private val onConfirmOrder: (String) -> Unit,
-    private val onReviewOrder: () -> Unit
+    private val onReviewOrder: (Int, Int, Int?) -> Unit
 ) : PagingDataAdapter<OrderUiModel, RecyclerView.ViewHolder>(diffCallback) {
     companion object {
         val diffCallback = object : DiffUtil.ItemCallback<OrderUiModel>() {
@@ -42,7 +43,7 @@ class OrderViaStatusAdapter(
 
                     oldItem is OrderUiModel.OrderReviewOrCancel &&
                             newItem is OrderUiModel.OrderReviewOrCancel -> {
-                        oldItem.order.orderId == newItem.order.orderId
+                        oldItem.orderItem.order.orderId == newItem.orderItem.order.orderId
                     }
 
                     else -> false
@@ -147,13 +148,21 @@ class OrderViaStatusAdapter(
                 (holder as OrderReviewOrCancelButtonViewHolder).bind(item)
                 holder.binding.apply {
                     btnCancel.setOnClickListener {
-                        onCancelOrder(item.order.orderId, item.order.ghnOrderId, item.shopGhnId)
+                        onCancelOrder(
+                            item.orderItem.order.orderId,
+                            item.orderItem.order.ghnOrderId,
+                            item.shopGhnId
+                        )
                     }
                     btnConfirm.setOnClickListener {
-                        onConfirmOrder(item.order.orderId)
+                        onConfirmOrder(item.orderItem.order.orderId)
                     }
                     btnReview.setOnClickListener {
-                        onReviewOrder()
+                        onReviewOrder(
+                            item.orderItem.orderItemDetail.orderItemId,
+                            item.orderItem.orderItemDetail.detailProduct.maSp!!,
+                            item.orderItem.orderItemDetail.reviewId
+                        )
                     }
                 }
             }
@@ -226,21 +235,21 @@ class OrderViaStatusAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(orderReviewOrCancel: OrderUiModel.OrderReviewOrCancel) {
             binding.apply {
-                if (orderReviewOrCancel.order.orderStatus == StringConstants.STATUS_COMPLETED) {
+                if (orderReviewOrCancel.orderItem.order.orderStatus == StringConstants.STATUS_COMPLETED) {
                     btnReview.isVisible = true
                 } else {
                     btnReview.isVisible = false
                 }
 
-                if (orderReviewOrCancel.order.orderStatus == StringConstants.STATUS_PENDING_PAYMENT ||
-                    orderReviewOrCancel.order.orderStatus == StringConstants.STATUS_AWAIT_CONFIRMATION
+                if (orderReviewOrCancel.orderItem.order.orderStatus == StringConstants.STATUS_PENDING_PAYMENT ||
+                    orderReviewOrCancel.orderItem.order.orderStatus == StringConstants.STATUS_AWAIT_CONFIRMATION
                 ) {
                     btnCancel.isVisible = true
                 } else {
                     btnCancel.isVisible = false
                 }
 
-                if (orderReviewOrCancel.order.orderStatus == StringConstants.STATUS_SHIPPED) {
+                if (orderReviewOrCancel.orderItem.order.orderStatus == StringConstants.STATUS_SHIPPED) {
                     btnConfirm.isVisible = true
                 } else {
                     btnConfirm.isVisible = false
