@@ -122,7 +122,7 @@ class PostProductFragment : Fragment() {
             }
 
             layoutAddImage.imgTakePhoto.setOnClickListener {
-                uri = UriHelper.createUri(requireContext())
+                uri = UriHelper.createImageUri(requireContext())
                 takePictureResult.launch(uri)
             }
 

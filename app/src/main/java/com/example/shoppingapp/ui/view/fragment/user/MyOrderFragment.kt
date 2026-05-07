@@ -44,6 +44,9 @@ import kotlinx.coroutines.launch
 class MyOrderFragment : Fragment() {
 
     private val TAG = MyOrderFragment::class.simpleName
+    private val WRITE_FRAGMENT_TAG = WriteReviewFragment::class.simpleName
+    private val MY_REVIEW_FRAGMENT_TAG = MyReviewFragment::class.simpleName
+
     private val viewModel: MyOrderViewModel by viewModels()
     private var _binding: FragmentMyOrderBinding? = null
     private val binding
@@ -104,13 +107,23 @@ class MyOrderFragment : Fragment() {
                 showDialog(orderId)
             },
             onReviewOrder = { orderItemId, productId, reviewId ->
-                val bundle = bundleOf(
-                    StringConstants.ORDER_ITEM_ID to orderItemId,
-                    StringConstants.ID_PRODUCT to productId,
-                )
-                val writeReviewFragment = WriteReviewFragment()
-                writeReviewFragment.arguments = bundle
-                writeReviewFragment.show(childFragmentManager, TAG)
+                Log.e(TAG, " review $reviewId: ", )
+                reviewId?.let { revId ->
+                    val bundle = bundleOf(
+                        StringConstants.REVIEW_ID to revId
+                    )
+                    val myReviewFragment = MyReviewFragment()
+                    myReviewFragment.arguments = bundle
+                    myReviewFragment.show(childFragmentManager, MY_REVIEW_FRAGMENT_TAG)
+                } ?: run {
+                    val bundle = bundleOf(
+                        StringConstants.ORDER_ITEM_ID to orderItemId,
+                        StringConstants.ID_PRODUCT to productId,
+                    )
+                    val writeReviewFragment = WriteReviewFragment()
+                    writeReviewFragment.arguments = bundle
+                    writeReviewFragment.show(childFragmentManager, WRITE_FRAGMENT_TAG)
+                }
             }
         )
     }

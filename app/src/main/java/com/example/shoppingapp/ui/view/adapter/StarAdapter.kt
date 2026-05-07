@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,9 +9,15 @@ import com.example.shoppingapp.databinding.LayoutStarItemBinding
 import com.example.shoppingapp.domain.model.SelectedStar
 
 class StarAdapter(
-    private val listStar: List<SelectedStar>,
+    private var listStar: List<SelectedStar>,
     private val onChooseStar: (Int) -> Unit
 ) : RecyclerView.Adapter<StarAdapter.StarViewHolder>() {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateStarFromServer(newListStar: List<SelectedStar>){
+        this.listStar = newListStar
+        notifyDataSetChanged()
+    }
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -56,7 +63,7 @@ class StarAdapter(
                         notifyItemChanged(i)
                     }
                 }
-                if(item.selected){
+                if (item.selected) {
                     onChooseStar(position + 1)
                 }
             }

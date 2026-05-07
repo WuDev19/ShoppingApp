@@ -4,8 +4,10 @@ import android.net.Uri
 import com.example.shoppingapp.data.remote.api.ReviewAPI
 import com.example.shoppingapp.data.remote.dto.request.CreateReviewRequest
 import com.example.shoppingapp.data.remote.helper.NetworkHelper
+import com.example.shoppingapp.data.remote.mapper.ReviewMapper
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.ImageReviewUploader
+import com.example.shoppingapp.domain.model.ProductReview
 import com.example.shoppingapp.domain.repository.review.ReviewRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.squareup.moshi.Moshi
@@ -43,4 +45,18 @@ class ReviewRepositoryImpl @Inject constructor(
     }.catch {
         emit(StateListener.Error(Exception(it.message)))
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun getProductReviewDetail(reviewId: Int): StateListener<ProductReview> = try {
+        NetworkHelper.callApi(
+            apiCall = {
+                reviewAPI.getProductReviewDetail(reviewId)
+            },
+            mapper = { productReviewResponse ->
+                ReviewMapper.mapToProductReview(productReviewResponse)
+            },
+            moshi
+        )
+    } catch (e: Exception) {
+        StateListener.Error(e)
+    }
 }

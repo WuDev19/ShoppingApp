@@ -22,11 +22,17 @@ class ProductAdapter(private val onItemClick: (productId: Int, sellerId: Int) ->
     companion object {
 
         val DiffCallBack = object : DiffUtil.ItemCallback<ProductDisplay>() {
-            override fun areItemsTheSame(oldItem: ProductDisplay, newItem: ProductDisplay): Boolean {
+            override fun areItemsTheSame(
+                oldItem: ProductDisplay,
+                newItem: ProductDisplay
+            ): Boolean {
                 return oldItem.maSp == newItem.maSp
             }
 
-            override fun areContentsTheSame(oldItem: ProductDisplay, newItem: ProductDisplay): Boolean {
+            override fun areContentsTheSame(
+                oldItem: ProductDisplay,
+                newItem: ProductDisplay
+            ): Boolean {
                 return oldItem == newItem
             }
         }
