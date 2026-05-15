@@ -4,13 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/corner_bottom_sheet"
+    android:clipToOutline="true"
     android:orientation="vertical"
-    tools:context=".ui.view.fragment.user.MyReviewFragment">
-
+    tools:context=".ui.view.fragment.user.MyReviewFragment"
+    tools:targetApi="31">
+    <!--fillViewport: ép cho thằng con giãn ra cho bằng thằng cha-->
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/custom_bottom_nav">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -105,7 +107,6 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="10dp"
-                android:enabled="false"
                 android:text="@string/save"
                 android:textColor="@color/white"
                 app:backgroundTint="@color/button_color"
@@ -118,8 +119,7 @@
             layout="@layout/layout_shimmer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone"
-            android:layout_marginTop="0dp"/>
+            android:visibility="gone" />
 
     </FrameLayout>
 

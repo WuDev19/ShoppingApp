@@ -159,7 +159,6 @@ class MyReviewFragment : BottomSheetDialogFragment() {
                                 Log.e(TAG, "onViewCreated: ${it.result}")
                                 this@MyReviewFragment.star = productReview.rating
                                 binding.apply {
-                                    btnEditReview.isEnabled = true
                                     edtReview.setText(productReview.comment)
                                     for (i in 0..<productReview.rating) {
                                         listStar[i].selected = true
