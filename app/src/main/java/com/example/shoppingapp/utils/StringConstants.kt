@@ -111,4 +111,5 @@ object StringConstants {
     const val REVIEW_ID = "review_id"
     const val IMAGE_VIDEO_UPLOAD_ERROR = "Can't upload image or video"
     const val IMAGE_VIDEO_UPLOAD_EMPTY = "You need to have at least one photo or video"
+    const val LAUNCH_IMAGE = "image/*"
 }

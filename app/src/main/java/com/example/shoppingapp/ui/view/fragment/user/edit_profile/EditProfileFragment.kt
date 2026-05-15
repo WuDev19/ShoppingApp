@@ -161,7 +161,7 @@ class EditProfileFragment : Fragment() {
             }
 
             imgChangeAvt.setOnClickListener {
-                resultLauncher.launch("image/*")
+                resultLauncher.launch(StringConstants.LAUNCH_IMAGE)
             }
 
             imgAvt.setOnClickListener {

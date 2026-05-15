@@ -6,6 +6,8 @@ import com.example.shoppingapp.domain.repository.user.UserRepository
 import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
+
+// TODO: refractor model
 class AddUserAddressUseCase @Inject constructor(private val repo: UserRepository) {
 
     operator fun invoke(

@@ -1,5 +1,7 @@
 package com.example.shoppingapp.ui.view.adapter
 
+import android.annotation.SuppressLint
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -8,8 +10,18 @@ import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.LayoutImageShowItemBinding
 import com.example.shoppingapp.domain.model.ReviewImage
 
-class ImageShowAdapter(val listReviewImage: List<ReviewImage>) :
+class ImageShowAdapter(
+    private var listReviewImage: List<ReviewImage>,
+    private val callback: () -> Unit,
+    private val delete: (ReviewImage) -> Unit
+) :
     RecyclerView.Adapter<ImageShowAdapter.ImageShowViewHolder>() {
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateImages(listReviewImage: List<ReviewImage>) {
+        this.listReviewImage = listReviewImage
+        notifyDataSetChanged()
+    }
 
     var widthDevice = 0
 
@@ -34,10 +46,15 @@ class ImageShowAdapter(val listReviewImage: List<ReviewImage>) :
         holder.binding.apply {
             Glide.with(root.context)
                 .load(item.imageUrl)
-                .override(widthDevice * 33 / 100, 150)
                 .error(R.drawable.icon_not_found)
                 .placeholder(R.drawable.place_holder)
                 .into(imgImage)
+            imgImage.setOnClickListener {
+                callback()
+            }
+            imgDelete.setOnClickListener {
+                delete(item)
+            }
         }
     }
 

@@ -6,6 +6,7 @@ import com.example.shoppingapp.domain.repository.order.OrderRepository
 import com.example.shoppingapp.ui.state.StateListener
 import javax.inject.Inject
 
+// TODO: refractor model
 class CreatePaymentUseCase @Inject constructor(private val repo: OrderRepository) {
 
     suspend operator fun invoke(orderPaymentRequest: OrderPaymentRequest): StateListener<AfterPayment> =

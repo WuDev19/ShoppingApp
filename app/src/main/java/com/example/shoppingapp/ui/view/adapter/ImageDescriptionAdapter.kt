@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.example.shoppingapp.R
 import com.example.shoppingapp.databinding.ImageDescriptionItemBinding
 
-class ImageDescriptionAdapter(val callback: () -> Unit, val delete: (Uri) -> Unit) :
+class ImageDescriptionAdapter(private val callback: () -> Unit, private val delete: (Uri) -> Unit) :
     ListAdapter<Uri, ImageDescriptionAdapter.ImageDescriptionViewHolder>(diffCallBack) {
 
     companion object {
@@ -41,8 +41,7 @@ class ImageDescriptionAdapter(val callback: () -> Unit, val delete: (Uri) -> Uni
         position: Int
     ) {
         val item = getItem(position)
-        item?.let {
-            uri ->
+        item?.let { uri ->
             holder.binding.apply {
                 Glide.with(holder.itemView)
                     .load(uri)

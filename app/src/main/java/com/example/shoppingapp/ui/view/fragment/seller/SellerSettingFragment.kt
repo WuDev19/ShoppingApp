@@ -80,7 +80,7 @@ class SellerSettingFragment : Fragment() {
                 }
             },
             {
-                galleryResult.launch("image/*")
+                galleryResult.launch(StringConstants.LAUNCH_IMAGE)
             },
             { url ->
                 showPreviewAvatar(url)

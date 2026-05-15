@@ -9,6 +9,7 @@ import com.example.shoppingapp.ui.state.StateListener
 import java.time.Instant
 import javax.inject.Inject
 
+// TODO: refractor model
 class CancelOrderUseCase @Inject constructor(private val repo: OrderRepository) {
 
     @SuppressLint("NewApi")

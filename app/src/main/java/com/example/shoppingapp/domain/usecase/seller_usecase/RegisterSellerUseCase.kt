@@ -7,6 +7,7 @@ import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+// TODO: refractor model
 class RegisterSellerUseCase @Inject constructor(private val repo: SellerRepository) {
 
     operator fun invoke(sellerRequest: SellerRequest): Flow<StateListener<AuthResponse>> =

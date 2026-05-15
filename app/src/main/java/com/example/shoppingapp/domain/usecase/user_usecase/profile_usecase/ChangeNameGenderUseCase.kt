@@ -7,6 +7,7 @@ import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+// TODO: refractor model
 class ChangeNameGenderUseCase @Inject constructor(private val repo: UserRepository) {
 
     operator fun invoke(userDTOUpdate: UserDTOUpdate): Flow<StateListener<Unit>> {

@@ -6,6 +6,7 @@ import com.example.shoppingapp.ui.state.StateListener
 import com.example.shoppingapp.utils.TokenManager
 import javax.inject.Inject
 
+// TODO: refractor model
 class CreateShopVoucherUseCase @Inject constructor(
     private val repo: SellerRepository,
     private val tokenManager: TokenManager

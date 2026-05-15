@@ -8,6 +8,7 @@ import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+// TODO: refractor model
 class CalculateFeeUseCase @Inject constructor(private val repo: GhnRepository) {
 
     operator fun invoke(

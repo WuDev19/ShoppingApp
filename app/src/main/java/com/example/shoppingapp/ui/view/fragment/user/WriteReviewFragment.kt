@@ -167,7 +167,7 @@ class WriteReviewFragment : BottomSheetDialogFragment() {
             }
 
             layoutAddImage.imgGallery.setOnClickListener {
-                resultGallery.launch("image/*")
+                resultGallery.launch(StringConstants.LAUNCH_IMAGE)
             }
 
             btnPostComment.setOnClickListener {

@@ -127,7 +127,7 @@ class PostProductFragment : Fragment() {
             }
 
             layoutAddImage.imgGallery.setOnClickListener {
-                resultGallery.launch("image/*")
+                resultGallery.launch(StringConstants.LAUNCH_IMAGE)
             }
 
             btAddProductDetail.setOnClickListener {

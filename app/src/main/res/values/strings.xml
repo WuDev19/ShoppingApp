@@ -204,6 +204,8 @@
     <string name="enter_comment">Enter comment ...</string>
     <string name="post">Post</string>
     <string name="your_review">Your review</string>
-    <string name="your_images">Your images</string>
+    <string name="your_images">Your current images</string>
     <string name="edit_underline"><u>Edit</u></string>
+    <string name="your_additional_images">Your additional images</string>
+    <string name="nothing_to_show">Nothing to show</string>
 </resources>

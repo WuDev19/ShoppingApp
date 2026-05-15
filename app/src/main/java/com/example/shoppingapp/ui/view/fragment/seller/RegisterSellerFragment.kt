@@ -244,7 +244,7 @@ class RegisterSellerFragment : Fragment() {
 //            }
 
             linearAddAvt.setOnClickListener {
-                resultLauncher.launch("image/*")
+                resultLauncher.launch(StringConstants.LAUNCH_IMAGE)
             }
 
             imgAvt.setOnClickListener {

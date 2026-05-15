@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import java.time.Instant
 import javax.inject.Inject
 
+// TODO: refractor model
 class CreateOrderUseCase @Inject constructor(
     private val repo: OrderRepository,
     private val auth: FirebaseAuth,

@@ -1,13 +1,15 @@
 package com.example.shoppingapp.data.repository.impl
 
 import android.net.Uri
+import android.util.Log
 import com.example.shoppingapp.data.remote.api.ReviewAPI
-import com.example.shoppingapp.data.remote.dto.request.CreateReviewRequest
 import com.example.shoppingapp.data.remote.helper.NetworkHelper
 import com.example.shoppingapp.data.remote.mapper.ReviewMapper
 import com.example.shoppingapp.data.source.cloudinary.CloudinaryUploader
 import com.example.shoppingapp.di.qualifier.ImageReviewUploader
+import com.example.shoppingapp.domain.model.CreateReview
 import com.example.shoppingapp.domain.model.ProductReview
+import com.example.shoppingapp.domain.model.UpdateReview
 import com.example.shoppingapp.domain.repository.review.ReviewRepository
 import com.example.shoppingapp.ui.state.StateListener
 import com.squareup.moshi.Moshi
@@ -17,15 +19,17 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
+import javax.inject.Named
 
 class ReviewRepositoryImpl @Inject constructor(
     private val reviewAPI: ReviewAPI,
     private val moshi: Moshi,
-    @param:ImageReviewUploader private val uploader: CloudinaryUploader
-
+    @param:ImageReviewUploader private val uploader: CloudinaryUploader,
+    @param:Named("userId") private val userId: String
 ) : ReviewRepository {
-    override suspend fun postReview(createReviewRequest: CreateReviewRequest): StateListener<Unit> =
-        try {
+    override suspend fun postReview(createReview: CreateReview): StateListener<Unit> {
+        val createReviewRequest = ReviewMapper.mapToCreateReviewRequest(userId, createReview)
+        return try {
             NetworkHelper.callApi(
                 apiCall = {
                     reviewAPI.postReview(createReviewRequest)
@@ -37,6 +41,7 @@ class ReviewRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             StateListener.Error(e)
         }
+    }
 
     override fun uploadImageReview(uri: Uri): Flow<StateListener<String>> = flow {
         emit(StateListener.Loading)
@@ -58,5 +63,25 @@ class ReviewRepositoryImpl @Inject constructor(
         )
     } catch (e: Exception) {
         StateListener.Error(e)
+    }
+
+    override suspend fun updateReview(
+        reviewId: Int,
+        updateReview: UpdateReview
+    ): StateListener<String> {
+        val updateRequest = ReviewMapper.mapToUpdateReviewRequest(updateReview)
+        return try {
+            NetworkHelper.callApi(
+                apiCall = {
+                    reviewAPI.updateReview(reviewId, updateRequest)
+                },
+                mapper = { updateResponse ->
+                    updateResponse.updated_at
+                },
+                moshi = moshi
+            )
+        } catch (e: Exception) {
+            StateListener.Error(e)
+        }
     }
 }

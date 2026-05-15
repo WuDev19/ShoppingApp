@@ -6,6 +6,7 @@ import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+// TODO: refractor model
 class CreateCartUseCase @Inject constructor(private val repo: CartRepository) {
 
     operator fun invoke(cartAndCartItemRequest: CartAndCartItemRequest): Flow<StateListener<Any>> =

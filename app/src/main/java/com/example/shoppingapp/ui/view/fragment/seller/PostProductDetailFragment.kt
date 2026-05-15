@@ -280,7 +280,7 @@ class PostProductDetailFragment : Fragment() {
             }
 
             imgGallery.setOnClickListener {
-                galleryResult.launch("image/*")
+                galleryResult.launch(StringConstants.LAUNCH_IMAGE)
             }
 
             imgBack.setOnClickListener {
