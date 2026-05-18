@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shoppingapp.domain.model.ProductReview
 import com.example.shoppingapp.domain.model.UpdateReview
+import com.example.shoppingapp.domain.usecase.review_usecase.DeleteReviewUseCase
 import com.example.shoppingapp.domain.usecase.review_usecase.GetProductReviewDetailUseCase
 import com.example.shoppingapp.domain.usecase.review_usecase.UpdateReviewUseCase
 import com.example.shoppingapp.domain.usecase.review_usecase.UploadImageReviewUseCase
@@ -25,13 +26,16 @@ import javax.inject.Inject
 class MyReviewViewModel @Inject constructor(
     private val getProductReviewDetailUseCase: GetProductReviewDetailUseCase,
     private val updateReviewUseCase: UpdateReviewUseCase,
-    private val uploadImageReviewUseCase: UploadImageReviewUseCase
+    private val uploadImageReviewUseCase: UploadImageReviewUseCase,
+    private val deleteReviewUseCase: DeleteReviewUseCase
 ) : ViewModel() {
 
     private val _productReviewDetailState = Channel<StateListener<ProductReview>>()
     val productReviewDetailState = _productReviewDetailState.receiveAsFlow()
     private val _updateReviewState = Channel<StateListener<String>>()
     val updateReviewState = _updateReviewState.receiveAsFlow()
+    private val _deleteReviewState = Channel<StateListener<String>>()
+    val deleteReviewState = _deleteReviewState.receiveAsFlow()
 
     fun getProductReviewDetail(reviewId: Int) {
         viewModelScope.launch {
@@ -85,8 +89,14 @@ class MyReviewViewModel @Inject constructor(
                 }
             }
         }
-
     }
 
+    fun deleteReview(reviewId: Int){
+        viewModelScope.launch {
+            _deleteReviewState.send(StateListener.Loading)
+            val result = deleteReviewUseCase(reviewId)
+            _deleteReviewState.send(result)
+        }
+    }
 
 }

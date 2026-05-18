@@ -1,6 +1,7 @@
 package com.example.shoppingapp.utils
 
 object StringConstants {
+    const val APP_NAME = "Shopping App"
     const val NO_ACCOUNT_EXCEPTION = "This device has no google account"
     const val HAS_ERROR = "Something went wrong"
     const val CHECK_EMAIL = "Please check your email"
@@ -110,6 +111,6 @@ object StringConstants {
     const val ORDER_ITEM_ID = "order_item_id"
     const val REVIEW_ID = "review_id"
     const val IMAGE_VIDEO_UPLOAD_ERROR = "Can't upload image or video"
-    const val IMAGE_VIDEO_UPLOAD_EMPTY = "You need to have at least one photo or video"
+    const val IMAGE_VIDEO_UPLOAD_EMPTY = "You need to have at least one photo"
     const val LAUNCH_IMAGE = "image/*"
 }

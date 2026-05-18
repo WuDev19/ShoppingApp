@@ -25,7 +25,7 @@ class ReviewRepositoryImpl @Inject constructor(
     private val reviewAPI: ReviewAPI,
     private val moshi: Moshi,
     @param:ImageReviewUploader private val uploader: CloudinaryUploader,
-    @param:Named("userId") private val userId: String
+    @param:Named("userId") private val userId: String,
 ) : ReviewRepository {
     override suspend fun postReview(createReview: CreateReview): StateListener<Unit> {
         val createReviewRequest = ReviewMapper.mapToCreateReviewRequest(userId, createReview)
@@ -83,5 +83,20 @@ class ReviewRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             StateListener.Error(e)
         }
+    }
+
+    override suspend fun deleteReview(reviewId: Int): StateListener<String> = try {
+
+        NetworkHelper.callApi(
+            apiCall = {
+                reviewAPI.deleteReview(reviewId)
+            },
+            mapper = { deleteResponse ->
+                deleteResponse.deleted_at
+            },
+            moshi
+        )
+    } catch (e: Exception) {
+        StateListener.Error(e)
     }
 }

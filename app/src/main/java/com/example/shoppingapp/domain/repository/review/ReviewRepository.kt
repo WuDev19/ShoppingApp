@@ -16,4 +16,5 @@ interface ReviewRepository {
         reviewId: Int,
         updateReview: UpdateReview
     ): StateListener<String>
+    suspend fun deleteReview(reviewId: Int): StateListener<String>
 }

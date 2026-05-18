@@ -34,6 +34,7 @@ import com.example.shoppingapp.ui.view.adapter.StatusOrderAdapter
 import com.example.shoppingapp.ui.viewmodel.user.MyOrderViewModel
 import com.example.shoppingapp.utils.BottomNavigationUtils
 import com.example.shoppingapp.utils.StringConstants
+import com.example.shoppingapp.utils.ToastUtils
 import com.example.shoppingapp.utils.ViewPagerUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
@@ -88,8 +89,17 @@ class MyOrderFragment : Fragment() {
             }
         }
     }
-    private val orderViaStatusAdapter by lazy {
-        OrderViaStatusAdapter(
+    private lateinit var orderViaStatusAdapter: OrderViaStatusAdapter
+    private var appBarAnimator: ValueAnimator? = null
+    private val keyboard by lazy {
+        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
+
+    // TODO: xem lại cho refresh sau khi xóa với cập nhật
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.setOrderSearchOrNot(OrderSearchOrNot(StringConstants.STATUS_PENDING_PAYMENT, ""))
+        orderViaStatusAdapter = OrderViaStatusAdapter(
             onDetailOrder = { orderId ->
                 hideSearch(binding)
                 val bundle = bundleOf(
@@ -112,7 +122,11 @@ class MyOrderFragment : Fragment() {
                     val bundle = bundleOf(
                         StringConstants.REVIEW_ID to revId
                     )
-                    val myReviewFragment = MyReviewFragment()
+                    val myReviewFragment = MyReviewFragment{
+                        binding.apply {
+                            searchOrGetOrder(this)
+                        }
+                    }
                     myReviewFragment.arguments = bundle
                     myReviewFragment.show(childFragmentManager, MY_REVIEW_FRAGMENT_TAG)
                 } ?: run {
@@ -126,15 +140,6 @@ class MyOrderFragment : Fragment() {
                 }
             }
         )
-    }
-    private var appBarAnimator: ValueAnimator? = null
-    private val keyboard by lazy {
-        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.setOrderSearchOrNot(OrderSearchOrNot(StringConstants.STATUS_PENDING_PAYMENT, ""))
     }
 
     override fun onCreateView(
@@ -224,12 +229,7 @@ class MyOrderFragment : Fragment() {
             }
 
             imgSearch.setOnClickListener {
-                val keyword = edtSearch.text.toString().trim()
-                if (edtSearch.isVisible) {
-                    viewModel.setOrderSearchOrNot(OrderSearchOrNot(status, keyword))
-                } else {
-                    viewModel.setOrderSearchOrNot(null)
-                }
+                searchOrGetOrder(this)
             }
 
             edtSearch.setOnEditorActionListener { _, actionId, keyEvent ->
@@ -251,6 +251,16 @@ class MyOrderFragment : Fragment() {
         _binding = null
     }
 
+    private fun searchOrGetOrder(binding: FragmentMyOrderBinding){
+        binding.apply {
+            val keyword = edtSearch.text.toString().trim()
+            if (edtSearch.isVisible) {
+                viewModel.setOrderSearchOrNot(OrderSearchOrNot(status, keyword))
+            } else {
+                viewModel.setOrderSearchOrNot(null)
+            }
+        }
+    }
     private fun handleSearchView(binding: FragmentMyOrderBinding) {
         binding.apply {
             if (tvMyOrder.isVisible) {
@@ -322,7 +332,7 @@ class MyOrderFragment : Fragment() {
 
     private fun showDialog(orderId: String, shopGhnId: Int, orderGhnId: String) {
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("ShoppingApp")
+            .setTitle(StringConstants.APP_NAME)
             .setMessage("Are you sure you want to cancel?")
             .setNegativeButton("No") { _, _ ->
             }
@@ -338,7 +348,7 @@ class MyOrderFragment : Fragment() {
 
     private fun showDialog(orderId: String) {
         val dialog = AlertDialog.Builder(requireContext())
-            .setTitle("ShoppingApp")
+            .setTitle(StringConstants.APP_NAME)
             .setMessage("Have you received your order?")
             .setNegativeButton("No") { _, _ ->
             }

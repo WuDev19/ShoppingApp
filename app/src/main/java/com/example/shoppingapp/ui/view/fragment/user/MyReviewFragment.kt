@@ -1,5 +1,6 @@
 package com.example.shoppingapp.ui.view.fragment.user
 
+import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -12,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -41,7 +43,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MyReviewFragment : BottomSheetDialogFragment() {
+class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFragment() {
     private val TAG = MyReviewFragment::class.simpleName
     private var _binding: FragmentMyReviewBinding? = null
     private val binding
@@ -189,6 +191,32 @@ class MyReviewFragment : BottomSheetDialogFragment() {
                                 Log.e(TAG, "onViewCreated: ${it.result}")
                                 binding.layoutShimmer.frameShimmer.isVisible = false
                                 this@MyReviewFragment.isCancelable = true
+                                onUpdate()
+                                this@MyReviewFragment.dismiss()
+                            }
+                        }
+                    }
+                }
+                launch {
+                    viewModel.deleteReviewState.collectLatest {
+                        when (it) {
+                            is StateListener.Idle -> Unit
+                            is StateListener.Loading -> {
+                                binding.layoutShimmer.frameShimmer.isVisible = true
+                                this@MyReviewFragment.isCancelable = false
+                            }
+
+                            is StateListener.Error -> {
+                                Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                                binding.layoutShimmer.frameShimmer.isVisible = false
+                                this@MyReviewFragment.isCancelable = true
+                            }
+
+                            is StateListener.Success<String> -> {
+                                Log.e(TAG, "onViewCreated: ${it.result}")
+                                binding.layoutShimmer.frameShimmer.isVisible = false
+                                this@MyReviewFragment.isCancelable = true
+                                onUpdate()
                                 this@MyReviewFragment.dismiss()
                             }
                         }
@@ -229,6 +257,21 @@ class MyReviewFragment : BottomSheetDialogFragment() {
                 val star = star
                 Log.e(TAG, "onViewCreated: $reviewId")
                 viewModel.updateReview(reviewId, comment, star!!, listUri, listDeleteReviewImages)
+            }
+            tvDelete.setOnClickListener {
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setTitle(StringConstants.APP_NAME)
+                    .setMessage("Are you sure to delete this review?")
+                    .setNegativeButton(
+                        "No"
+                    ) { _, _ -> }
+                    .setPositiveButton("Yes") { _, _ ->
+                        reviewId?.let { viewModel.deleteReview(it) }
+                    }.create()
+                dialog.show()
+                dialog.window?.apply {
+                    setBackgroundDrawableResource(R.drawable.custom_dialog)
+                }
             }
         }
 

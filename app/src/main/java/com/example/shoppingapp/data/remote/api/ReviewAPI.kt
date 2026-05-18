@@ -1,12 +1,14 @@
 package com.example.shoppingapp.data.remote.api
 
 import com.example.shoppingapp.data.remote.dto.get.CreateReviewResponse
+import com.example.shoppingapp.data.remote.dto.get.DeleteReviewResponse
 import com.example.shoppingapp.data.remote.dto.get.ProductReviewResponse
 import com.example.shoppingapp.data.remote.dto.get.UpdateReviewResponse
 import com.example.shoppingapp.data.remote.dto.request.CreateReviewRequest
 import com.example.shoppingapp.data.remote.dto.request.UpdateReviewRequest
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -26,4 +28,6 @@ interface ReviewAPI {
         @Body updateReviewRequest: UpdateReviewRequest
     ): Response<UpdateReviewResponse>
 
+    @DELETE("reviews/{reviewId}")
+    suspend fun deleteReview(@Path("reviewId") reviewId: Int): Response<DeleteReviewResponse>
 }
