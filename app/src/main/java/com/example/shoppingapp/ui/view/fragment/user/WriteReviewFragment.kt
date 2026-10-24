@@ -3,7 +3,6 @@ package com.example.shoppingapp.ui.view.fragment.user
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +27,7 @@ import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.user.WriteReviewViewModel
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.ToastUtils
-import com.example.shoppingapp.utils.UriHelper
+import com.example.shoppingapp.utils.ReviewImageUris
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -36,7 +35,6 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class WriteReviewFragment : BottomSheetDialogFragment() {
-    private val TAG by lazy { WriteReviewFragment::class.simpleName }
     private var _binding: FragmentWriteReviewBinding? = null
     private val binding
         get() = _binding!!
@@ -68,22 +66,37 @@ class WriteReviewFragment : BottomSheetDialogFragment() {
     private val controller by lazy {
         requireParentFragment().findNavController()
     }
+    private var draftComment = ""
     private var star: Int? = null
-    private val resultGallery: ActivityResultLauncher<String> =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { result ->
-            listUri.addAll(result)
+    private val resultGallery: ActivityResultLauncher<Array<String>> =
+        registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { result ->
+            val remaining = (StringConstants.REVIEW_MAX_IMAGES - listUri.size).coerceAtLeast(0)
+            val selected = result.distinct().filterNot { it in listUri }
+            if (selected.size > remaining) ToastUtils.showToast(requireContext(), getString(R.string.review_invalid))
+            selected.take(remaining).forEach { selectedUri ->
+                if (ReviewImageUris.keepReadAccess(requireContext(), selectedUri)) listUri.add(selectedUri)
+                else ToastUtils.showToast(requireContext(), getString(R.string.review_image_access_error))
+            }
             imageDescriptionAdapter.submitList(listUri.toList())
         }
     private val takePictureResult: ActivityResultLauncher<Uri?> =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { result ->
-            if (result) {
-                listUri.add(uri!!)
+            val captured = uri
+            if (result && captured != null && listUri.size < StringConstants.REVIEW_MAX_IMAGES) {
+                listUri.add(captured)
                 imageDescriptionAdapter.submitList(listUri.toList())
+            } else if (captured != null) {
+                ReviewImageUris.discardCameraUri(requireContext(), captured)
             }
+            uri = null
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        star = savedInstanceState?.getInt(StringConstants.REVIEW_DRAFT_STAR)?.takeIf { it in 1..5 }
+        savedInstanceState?.getStringArrayList(StringConstants.REVIEW_DRAFT_IMAGES)?.mapTo(listUri) { Uri.parse(it) }
+        uri = savedInstanceState?.getString(StringConstants.REVIEW_CAMERA_URI)?.let(Uri::parse)
+        draftComment = savedInstanceState?.getString(StringConstants.REVIEW_DRAFT_COMMENT).orEmpty()
         imageDescriptionAdapter = ImageDescriptionAdapter(
             callback = {
                 val bundle = bundleOf(
@@ -96,6 +109,7 @@ class WriteReviewFragment : BottomSheetDialogFragment() {
             },
             delete = { uri ->
                 listUri.remove(uri)
+                ReviewImageUris.discardCameraUri(requireContext(), uri)
                 imageDescriptionAdapter.submitList(listUri.toList())
             }
         )
@@ -111,6 +125,9 @@ class WriteReviewFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.edtComment.setText(draftComment)
+        listStar.forEachIndexed { index, selected -> selected.selected = index < (star ?: 0) }
+        imageDescriptionAdapter.submitList(listUri.toList())
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -118,12 +135,13 @@ class WriteReviewFragment : BottomSheetDialogFragment() {
                     when (it) {
                         is StateListener.Idle -> Unit
                         is StateListener.Loading -> {
+                            binding.btnPostComment.isEnabled = false
                             binding.layoutShimmer.frameShimmer.isVisible = true
                             this@WriteReviewFragment.isCancelable = false
                         }
 
                         is StateListener.Error -> {
-                            Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                            binding.btnPostComment.isEnabled = true
                             binding.layoutShimmer.frameShimmer.isVisible = false
                             this@WriteReviewFragment.isCancelable = true
                             ToastUtils.showToast(
@@ -133,7 +151,10 @@ class WriteReviewFragment : BottomSheetDialogFragment() {
                         }
 
                         is StateListener.Success<Unit> -> {
-                            ToastUtils.showToast(requireContext(), "Post successfully")
+                            listUri.forEach { image -> ReviewImageUris.discardCameraUri(requireContext(), image) }
+                            parentFragmentManager.setFragmentResult(StringConstants.REVIEW_CHANGED, bundleOf())
+                            ToastUtils.showToast(requireContext(), getString(R.string.review_success))
+                            binding.btnPostComment.isEnabled = true
                             binding.layoutShimmer.frameShimmer.isVisible = false
                             this@WriteReviewFragment.isCancelable = true
                             this@WriteReviewFragment.dismiss()
@@ -158,25 +179,38 @@ class WriteReviewFragment : BottomSheetDialogFragment() {
             }
 
             layoutAddImage.imgTakePhoto.setOnClickListener {
-                uri = UriHelper.createImageUri(requireContext())
+                if (listUri.size >= StringConstants.REVIEW_MAX_IMAGES) {
+                    ToastUtils.showToast(requireContext(), getString(R.string.review_invalid))
+                    return@setOnClickListener
+                }
+                uri = ReviewImageUris.createCameraUri(requireContext())
                 if (uri == null) {
                     ToastUtils.showToast(requireContext(), StringConstants.HAS_ERROR)
                     return@setOnClickListener
                 }
-                takePictureResult.launch(uri)
+                try { takePictureResult.launch(uri) }
+                catch (_: android.content.ActivityNotFoundException) {
+                    uri?.let { ReviewImageUris.discardCameraUri(requireContext(), it) }
+                    uri = null
+                    ToastUtils.showToast(requireContext(), getString(R.string.review_camera_unavailable))
+                }
             }
 
             layoutAddImage.imgGallery.setOnClickListener {
-                resultGallery.launch(StringConstants.LAUNCH_IMAGE)
+                resultGallery.launch(arrayOf("image/jpeg", "image/png"))
             }
 
             btnPostComment.setOnClickListener {
-                if (productId == null || orderItemId == null) return@setOnClickListener
+                val product = productId?.takeIf { it > 0 }
+                val orderItem = orderItemId?.takeIf { it > 0 }
+                val rating = star?.takeIf { it in 1..5 }
                 val comment = edtComment.text.toString().trim()
-                val createReview = CreateReview(
-                    null, productId!!, orderItemId!!, star,
-                    comment.ifEmpty { null }, emptyList()
-                )
+                if (product == null || orderItem == null || rating == null || comment.length > StringConstants.REVIEW_MAX_COMMENT_LENGTH || listUri.size > StringConstants.REVIEW_MAX_IMAGES) {
+                    ToastUtils.showToast(requireContext(), getString(R.string.review_invalid))
+                    return@setOnClickListener
+                }
+                val createReview = CreateReview(null, product, orderItem, rating,
+                    comment.ifEmpty { null }, emptyList())
                 viewModel.postReview(createReview, listUri)
             }
 
@@ -184,7 +218,16 @@ class WriteReviewFragment : BottomSheetDialogFragment() {
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt(StringConstants.REVIEW_DRAFT_STAR, star ?: 0)
+        outState.putString(StringConstants.REVIEW_DRAFT_COMMENT, _binding?.edtComment?.text?.toString() ?: draftComment)
+        outState.putStringArrayList(StringConstants.REVIEW_DRAFT_IMAGES, ArrayList(listUri.map { it.toString() }))
+        outState.putString(StringConstants.REVIEW_CAMERA_URI, uri?.toString())
+    }
+
     override fun onDestroyView() {
+        draftComment = binding.edtComment.text.toString()
         super.onDestroyView()
         _binding = null
     }

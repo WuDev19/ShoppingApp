@@ -1,20 +1,14 @@
 package com.example.shoppingapp.ui.view.fragment.user
 
-import android.content.DialogInterface
-import android.content.res.ColorStateList
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import androidx.fragment.app.viewModels
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
@@ -36,15 +30,14 @@ import com.example.shoppingapp.ui.view.decoration.MarginItemDecoration
 import com.example.shoppingapp.ui.viewmodel.user.MyReviewViewModel
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.ToastUtils
-import com.example.shoppingapp.utils.UriHelper
+import com.example.shoppingapp.utils.ReviewImageUris
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFragment() {
-    private val TAG = MyReviewFragment::class.simpleName
+class MyReviewFragment : BottomSheetDialogFragment() {
     private var _binding: FragmentMyReviewBinding? = null
     private val binding
         get() = _binding!!
@@ -64,6 +57,8 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
             SelectedStar(false)
         )
     }
+    private var draftComment: String? = null
+    private var detailApplied = false
     private var star: Int? = null
     private val starAdapter by lazy {
         StarAdapter(listStar = listStar) { star ->
@@ -76,24 +71,38 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
     private val listReviewImages: MutableList<ReviewImage> by lazy { mutableListOf() }
     private val listDeleteReviewImages: MutableList<Int> by lazy { mutableListOf() }
     private var uri: Uri? = null
-    private val resultGallery: ActivityResultLauncher<String> =
-        registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { result ->
-            binding.tvNtts2.isVisible = false
-            listUri.addAll(result)
+    private val resultGallery: ActivityResultLauncher<Array<String>> =
+        registerForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) { result ->
+            val remaining = (StringConstants.REVIEW_MAX_IMAGES - listUri.size - listReviewImages.size).coerceAtLeast(0)
+            val selected = result.distinct().filterNot { it in listUri }
+            if (selected.size > remaining) ToastUtils.showToast(requireContext(), getString(R.string.review_invalid))
+            selected.take(remaining).forEach { selectedUri ->
+                if (ReviewImageUris.keepReadAccess(requireContext(), selectedUri)) listUri.add(selectedUri)
+                else ToastUtils.showToast(requireContext(), getString(R.string.review_image_access_error))
+            }
             imageDescriptionAdapter.submitList(listUri.toList())
+            _binding?.tvNtts2?.isVisible = listUri.isEmpty()
         }
     private val takePictureResult: ActivityResultLauncher<Uri?> =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { result ->
-            if (result) {
-                binding.tvNtts2.isVisible = false
-                listUri.add(uri!!)
+            val captured = uri
+            if (result && captured != null && listUri.size + listReviewImages.size < StringConstants.REVIEW_MAX_IMAGES) {
+                listUri.add(captured)
                 imageDescriptionAdapter.submitList(listUri.toList())
+            } else if (captured != null) {
+                ReviewImageUris.discardCameraUri(requireContext(), captured)
             }
+            uri = null
+            _binding?.tvNtts2?.isVisible = listUri.isEmpty()
         }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        draftComment = savedInstanceState?.getString(StringConstants.REVIEW_DRAFT_COMMENT)
+        star = savedInstanceState?.getInt(StringConstants.REVIEW_DRAFT_STAR)?.takeIf { it in 1..5 }
+        uri = savedInstanceState?.getString(StringConstants.REVIEW_CAMERA_URI)?.let(Uri::parse)
+        savedInstanceState?.getStringArrayList(StringConstants.REVIEW_DRAFT_IMAGES)?.mapTo(listUri) { Uri.parse(it) }
+        savedInstanceState?.getIntegerArrayList(StringConstants.REVIEW_DELETED_IMAGES)?.let { listDeleteReviewImages.addAll(it) }
         reviewId?.let { viewModel.getProductReviewDetail(it) }
         imageShowAdapter = ImageShowAdapter(
             emptyList(),
@@ -124,6 +133,7 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
             },
             delete = { uri ->
                 listUri.remove(uri)
+                ReviewImageUris.discardCameraUri(requireContext(), uri)
                 imageDescriptionAdapter.submitList(listUri.toList())
                 binding.tvNtts2.isVisible = listUri.isEmpty()
             }
@@ -141,6 +151,10 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
     // TODO: xem lại cái reviewId
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        draftComment?.let { binding.edtReview.setText(it) }
+        imageDescriptionAdapter.submitList(listUri.toList())
+        listStar.forEachIndexed { index, selected -> selected.selected = index < (star ?: 0) }
+        starAdapter.updateStarFromServer(listStar)
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -148,25 +162,33 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
                     viewModel.productReviewDetailState.collectLatest {
                         when (it) {
                             is StateListener.Idle -> Unit
-                            is StateListener.Loading -> Unit
+                            is StateListener.Loading -> {
+                                binding.btnEditReview.isEnabled = false
+                                binding.tvDelete.isEnabled = false
+                            }
                             is StateListener.Error -> {
-                                Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                                binding.btnEditReview.isEnabled = true
+                                binding.btnEditReview.setText(R.string.review_retry)
+                                binding.tvDelete.isEnabled = false
+                                ToastUtils.showToast(requireContext(), it.e?.message ?: StringConstants.HAS_ERROR)
                             }
 
                             is StateListener.Success<ProductReview> -> {
                                 val productReview = it.result
+                                binding.btnEditReview.setText(R.string.save)
+                                binding.btnEditReview.isEnabled = !viewModel.busy
+                                binding.tvDelete.isEnabled = !viewModel.busy
+                                if (detailApplied) return@collectLatest
+                                detailApplied = true
                                 listReviewImages.clear()
-                                listReviewImages.addAll(productReview.images)
+                                listReviewImages.addAll(productReview.images.filterNot { image -> image.reviewImageId in listDeleteReviewImages })
                                 binding.tvNtts1.isVisible = listReviewImages.isEmpty()
-                                Log.e(TAG, "onViewCreated: ${it.result}")
-                                this@MyReviewFragment.star = productReview.rating
+                                this@MyReviewFragment.star = star ?: productReview.rating
                                 binding.apply {
-                                    edtReview.setText(productReview.comment)
-                                    for (i in 0..<productReview.rating) {
-                                        listStar[i].selected = true
-                                    }
+                                    edtReview.setText(draftComment ?: productReview.comment)
+                                    listStar.forEachIndexed { index, selected -> selected.selected = index < (star ?: 0) }
                                     starAdapter.updateStarFromServer(listStar)
-                                    imageShowAdapter.updateImages(productReview.images)
+                                    imageShowAdapter.updateImages(listReviewImages.toList())
                                 }
                             }
                         }
@@ -177,21 +199,27 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
                         when (it) {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> {
+                                binding.btnEditReview.isEnabled = false
+                                binding.tvDelete.isEnabled = false
                                 binding.layoutShimmer.frameShimmer.isVisible = true
                                 this@MyReviewFragment.isCancelable = false
                             }
 
                             is StateListener.Error -> {
-                                Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                                ToastUtils.showToast(requireContext(), it.e?.message ?: StringConstants.HAS_ERROR)
+                                binding.btnEditReview.isEnabled = detailApplied
+                                binding.tvDelete.isEnabled = detailApplied
                                 binding.layoutShimmer.frameShimmer.isVisible = false
                                 this@MyReviewFragment.isCancelable = true
                             }
 
                             is StateListener.Success<String> -> {
-                                Log.e(TAG, "onViewCreated: ${it.result}")
+                                binding.btnEditReview.isEnabled = detailApplied
+                                binding.tvDelete.isEnabled = detailApplied
                                 binding.layoutShimmer.frameShimmer.isVisible = false
                                 this@MyReviewFragment.isCancelable = true
-                                onUpdate()
+                                listUri.forEach { image -> ReviewImageUris.discardCameraUri(requireContext(), image) }
+                                parentFragmentManager.setFragmentResult(StringConstants.REVIEW_CHANGED, bundleOf())
                                 this@MyReviewFragment.dismiss()
                             }
                         }
@@ -202,21 +230,27 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
                         when (it) {
                             is StateListener.Idle -> Unit
                             is StateListener.Loading -> {
+                                binding.btnEditReview.isEnabled = false
+                                binding.tvDelete.isEnabled = false
                                 binding.layoutShimmer.frameShimmer.isVisible = true
                                 this@MyReviewFragment.isCancelable = false
                             }
 
                             is StateListener.Error -> {
-                                Log.e(TAG, "onViewCreated: ${it.e?.message}")
+                                ToastUtils.showToast(requireContext(), it.e?.message ?: StringConstants.HAS_ERROR)
+                                binding.btnEditReview.isEnabled = detailApplied
+                                binding.tvDelete.isEnabled = detailApplied
                                 binding.layoutShimmer.frameShimmer.isVisible = false
                                 this@MyReviewFragment.isCancelable = true
                             }
 
                             is StateListener.Success<String> -> {
-                                Log.e(TAG, "onViewCreated: ${it.result}")
+                                binding.btnEditReview.isEnabled = detailApplied
+                                binding.tvDelete.isEnabled = detailApplied
                                 binding.layoutShimmer.frameShimmer.isVisible = false
                                 this@MyReviewFragment.isCancelable = true
-                                onUpdate()
+                                listUri.forEach { image -> ReviewImageUris.discardCameraUri(requireContext(), image) }
+                                parentFragmentManager.setFragmentResult(StringConstants.REVIEW_CHANGED, bundleOf())
                                 this@MyReviewFragment.dismiss()
                             }
                         }
@@ -242,30 +276,47 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
                 addItemDecoration(MarginItemDecoration(5))
             }
             layoutAddImage.imgTakePhoto.setOnClickListener {
-                uri = UriHelper.createImageUri(requireContext())
+                if (listUri.size + listReviewImages.size >= StringConstants.REVIEW_MAX_IMAGES) {
+                    ToastUtils.showToast(requireContext(), getString(R.string.review_invalid))
+                    return@setOnClickListener
+                }
+                uri = ReviewImageUris.createCameraUri(requireContext())
                 if (uri == null) {
                     ToastUtils.showToast(requireContext(), StringConstants.HAS_ERROR)
                     return@setOnClickListener
                 }
-                takePictureResult.launch(uri)
+                try { takePictureResult.launch(uri) }
+                catch (_: android.content.ActivityNotFoundException) {
+                    uri?.let { ReviewImageUris.discardCameraUri(requireContext(), it) }
+                    uri = null
+                    ToastUtils.showToast(requireContext(), getString(R.string.review_camera_unavailable))
+                }
             }
             layoutAddImage.imgGallery.setOnClickListener {
-                resultGallery.launch(StringConstants.LAUNCH_IMAGE)
+                resultGallery.launch(arrayOf("image/jpeg", "image/png"))
             }
             btnEditReview.setOnClickListener {
+                if (!detailApplied) {
+                    reviewId?.takeIf { it > 0 }?.let { viewModel.getProductReviewDetail(it) }
+                    return@setOnClickListener
+                }
                 val comment = edtReview.text.toString().trim()
-                val star = star
-                Log.e(TAG, "onViewCreated: $reviewId")
-                viewModel.updateReview(reviewId, comment, star!!, listUri, listDeleteReviewImages)
+                val rating = star?.takeIf { it in 1..5 }
+                val id = reviewId?.takeIf { it > 0 }
+                if (id == null || rating == null || !detailApplied || comment.length > StringConstants.REVIEW_MAX_COMMENT_LENGTH || listUri.size + listReviewImages.size > StringConstants.REVIEW_MAX_IMAGES) {
+                    ToastUtils.showToast(requireContext(), getString(R.string.review_invalid))
+                    return@setOnClickListener
+                }
+                viewModel.updateReview(id, comment, rating, listUri, listDeleteReviewImages)
             }
             tvDelete.setOnClickListener {
                 val dialog = AlertDialog.Builder(requireContext())
                     .setTitle(StringConstants.APP_NAME)
-                    .setMessage("Are you sure to delete this review?")
+                    .setMessage(R.string.review_delete_question)
                     .setNegativeButton(
-                        "No"
+                        getString(R.string.review_delete_no)
                     ) { _, _ -> }
-                    .setPositiveButton("Yes") { _, _ ->
+                    .setPositiveButton(R.string.review_delete_yes) { _, _ ->
                         reviewId?.let { viewModel.deleteReview(it) }
                     }.create()
                 dialog.show()
@@ -277,7 +328,20 @@ class MyReviewFragment(private val onUpdate: () -> Unit) : BottomSheetDialogFrag
 
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        if (detailApplied || draftComment != null) {
+            outState.putString(StringConstants.REVIEW_DRAFT_COMMENT, _binding?.edtReview?.text?.toString() ?: draftComment)
+        }
+        outState.putInt(StringConstants.REVIEW_DRAFT_STAR, star ?: 0)
+        outState.putStringArrayList(StringConstants.REVIEW_DRAFT_IMAGES, ArrayList(listUri.map { it.toString() }))
+        outState.putIntegerArrayList(StringConstants.REVIEW_DELETED_IMAGES, ArrayList(listDeleteReviewImages))
+        outState.putString(StringConstants.REVIEW_CAMERA_URI, uri?.toString())
+    }
+
     override fun onDestroyView() {
+        if (detailApplied) draftComment = binding.edtReview.text.toString()
+        detailApplied = false
         super.onDestroyView()
         _binding = null
     }

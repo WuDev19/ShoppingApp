@@ -1,5 +1,7 @@
 package com.example.shoppingapp.ui.view.fragment.product
 
+import com.example.shoppingapp.ui.viewmodel.product.ProductReviewsViewModel
+import com.example.shoppingapp.ui.view.adapter.ProductReviewsAdapter
 import androidx.fragment.app.viewModels
 import android.os.Bundle
 import android.util.Log
@@ -49,6 +51,7 @@ class DetailProductFragment : Fragment() {
         arguments?.getInt(StringConstants.ID_SELLER) ?: -1
     }
     private val viewModel: DetailProductViewModel by viewModels()
+    private val reviewsViewModel: ProductReviewsViewModel by viewModels()
     private var _binding: FragmentDetailProductBinding? = null
     private val binding get() = _binding!!
     private val controller by lazy { findNavController() }
@@ -86,6 +89,7 @@ class DetailProductFragment : Fragment() {
             )
         }
     }
+    private var restoringReviews = false
     private lateinit var productDetail: ProductDetail
 
     @Inject
@@ -94,6 +98,7 @@ class DetailProductFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        restoringReviews = savedInstanceState != null
 
         viewModel.getProductDetail(idProduct)
 
@@ -148,6 +153,22 @@ class DetailProductFragment : Fragment() {
                     )
                 }
             )
+        val reviewsAdapter = ProductReviewsAdapter(
+            loadMore = { reviewsViewModel.loadMore() },
+            refresh = { reviewsViewModel.refresh(idProduct) },
+            showImages = { urls ->
+                CheckNavigation.navigateTo(controller,
+                    R.id.action_detailProductFragment_to_imageDescriptionProductFragment,
+                    R.id.action_detailProductFragment2_to_imageDescriptionProductFragment2,
+                    bundleOf(StringConstants.IMAGE_DESCRIPTION_SLIDER to urls))
+            }
+        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch { reviewsViewModel.state.collectLatest { reviewsAdapter.render(it) } }
+                launch { reviewsViewModel.stats.collectLatest { reviewsAdapter.renderStats(it) } }
+            }
+        }
         val concatAdapter = ConcatAdapter(
             headerDetailAdapter,
             TitleDetailAdapter(
@@ -158,14 +179,7 @@ class DetailProductFragment : Fragment() {
                 null
             ),
             HorizontalAdapterInsideConcatAdapter(otherProductOfShopAdapter),
-            TitleDetailAdapter(
-                "4.9",
-                StringConstants.TITLE_PRODUCT_REVIEWS,
-                StringConstants.ALL,
-                idProduct
-            ) { it1 ->
-                Log.e(StringConstants.DEBUG, "onViewCreated: $it1")
-            },
+            reviewsAdapter,
             TitleDetailAdapter(
                 "",
                 StringConstants.TITLE_RELATED_PRODUCT,
@@ -261,7 +275,14 @@ class DetailProductFragment : Fragment() {
         )
     }
 
+    override fun onResume() {
+        super.onResume()
+        reviewsViewModel.refresh(idProduct, keepExisting = restoringReviews)
+        restoringReviews = false
+    }
+
     override fun onDestroyView() {
+        binding.recyclerViewConcat.adapter = null
         super.onDestroyView()
         _binding = null
     }

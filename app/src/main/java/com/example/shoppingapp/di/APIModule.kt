@@ -1,5 +1,6 @@
 package com.example.shoppingapp.di
 
+import com.example.shoppingapp.BuildConfig
 import com.example.shoppingapp.utils.SessionManager
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.TokenManager
@@ -95,7 +96,8 @@ object APIModule {
         @Named(StringConstants.OKHTTP_NO_INTERCEPTOR) client: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(StringConstants.BASE_URL)
+            .baseUrl(if (BuildConfig.DEBUG && BuildConfig.REVIEW_TEST_BASE_URL.isNotBlank())
+                BuildConfig.REVIEW_TEST_BASE_URL else StringConstants.BASE_URL)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
@@ -109,7 +111,8 @@ object APIModule {
         @Named(StringConstants.OKHTTP_INTERCEPTOR) client: OkHttpClient
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(StringConstants.BASE_URL)
+            .baseUrl(if (BuildConfig.DEBUG && BuildConfig.REVIEW_TEST_BASE_URL.isNotBlank())
+                BuildConfig.REVIEW_TEST_BASE_URL else StringConstants.BASE_URL)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()

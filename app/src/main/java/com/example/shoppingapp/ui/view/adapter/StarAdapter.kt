@@ -34,38 +34,18 @@ class StarAdapter(
         holder: StarViewHolder,
         position: Int
     ) {
-        val item = listStar[position]
         holder.binding.apply {
-            if (item.selected) {
+            if (listStar[position].selected) {
                 imgStar.setImageResource(R.drawable.icon_star)
             } else {
                 imgStar.setImageResource(R.drawable.icon_star_unchoose)
             }
             imgStar.setOnClickListener {
-                if (item.selected && position + 1 < itemCount && listStar[position + 1].selected) {
-                    for (i in itemCount - 1 downTo position + 1) {
-                        listStar[i].selected = false
-                        notifyItemChanged(i)
-                    }
-                } else if (item.selected && position + 1 < itemCount && !listStar[position + 1].selected) {
-                    for (i in 0..position) {
-                        listStar[i].selected = false
-                        notifyItemChanged(i)
-                    }
-                } else if (item.selected && position == itemCount - 1) {
-                    for (i in 0..position) {
-                        listStar[i].selected = false
-                        notifyItemChanged(i)
-                    }
-                } else {
-                    for (i in 0..position) {
-                        listStar[i].selected = true
-                        notifyItemChanged(i)
-                    }
+                listStar.forEachIndexed { index, selectedStar ->
+                    selectedStar.selected = index <= position
                 }
-                if (item.selected) {
-                    onChooseStar(position + 1)
-                }
+                notifyItemRangeChanged(0, itemCount)
+                onChooseStar(position + 1)
             }
         }
     }

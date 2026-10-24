@@ -113,4 +113,19 @@ object StringConstants {
     const val IMAGE_VIDEO_UPLOAD_ERROR = "Can't upload image or video"
     const val IMAGE_VIDEO_UPLOAD_EMPTY = "You need to have at least one photo"
     const val LAUNCH_IMAGE = "image/*"
+    const val REVIEW_MAX_IMAGES = 5
+    const val REVIEW_MAX_COMMENT_LENGTH = 2000
+    const val REVIEW_MAX_IMAGE_BYTES = 5 * 1024 * 1024
+    const val REVIEW_CHANGED = "review_changed"
+    const val REVIEW_DRAFT_STAR = "draft_star"
+    const val REVIEW_DRAFT_COMMENT = "draft_comment"
+    const val REVIEW_DRAFT_IMAGES = "draft_images"
+    const val REVIEW_CAMERA_URI = "camera_uri"
+    const val REVIEW_DELETED_IMAGES = "deleted_images"
+    const val REVIEW_CAMERA_DIRECTORY = "review-captures"
+    const val REVIEW_FILE_AUTHORITY_SUFFIX = ".reviewfiles"
+    const val REVIEW_IMAGE_BUFFER_BYTES = 8192
+    const val REVIEW_MAX_IMAGE_DIMENSION = 12000
+    const val REVIEW_IMAGE_PUBLIC_ID_PREFIX = "reviews/"
+    const val REVIEW_UPLOAD_TIMEOUT_MS = 45000L
 }

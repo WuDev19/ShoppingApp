@@ -122,11 +122,7 @@ class MyOrderFragment : Fragment() {
                     val bundle = bundleOf(
                         StringConstants.REVIEW_ID to revId
                     )
-                    val myReviewFragment = MyReviewFragment{
-                        binding.apply {
-                            searchOrGetOrder(this)
-                        }
-                    }
+                    val myReviewFragment = MyReviewFragment()
                     myReviewFragment.arguments = bundle
                     myReviewFragment.show(childFragmentManager, MY_REVIEW_FRAGMENT_TAG)
                 } ?: run {
@@ -152,6 +148,9 @@ class MyOrderFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        childFragmentManager.setFragmentResultListener(StringConstants.REVIEW_CHANGED, viewLifecycleOwner) { _, _ ->
+            orderViaStatusAdapter.refresh()
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

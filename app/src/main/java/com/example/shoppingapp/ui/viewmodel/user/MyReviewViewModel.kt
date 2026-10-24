@@ -10,15 +10,11 @@ import com.example.shoppingapp.domain.usecase.review_usecase.GetProductReviewDet
 import com.example.shoppingapp.domain.usecase.review_usecase.UpdateReviewUseCase
 import com.example.shoppingapp.domain.usecase.review_usecase.UploadImageReviewUseCase
 import com.example.shoppingapp.ui.state.StateListener
-import com.example.shoppingapp.utils.StringConstants
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,74 +25,53 @@ class MyReviewViewModel @Inject constructor(
     private val uploadImageReviewUseCase: UploadImageReviewUseCase,
     private val deleteReviewUseCase: DeleteReviewUseCase
 ) : ViewModel() {
-
-    private val _productReviewDetailState = Channel<StateListener<ProductReview>>()
-    val productReviewDetailState = _productReviewDetailState.receiveAsFlow()
-    private val _updateReviewState = Channel<StateListener<String>>()
-    val updateReviewState = _updateReviewState.receiveAsFlow()
-    private val _deleteReviewState = Channel<StateListener<String>>()
-    val deleteReviewState = _deleteReviewState.receiveAsFlow()
+    private val _productReviewDetailState = MutableStateFlow<StateListener<ProductReview>>(StateListener.Idle)
+    val productReviewDetailState = _productReviewDetailState.asStateFlow()
+    private val _updateReviewState = MutableStateFlow<StateListener<String>>(StateListener.Idle)
+    val updateReviewState = _updateReviewState.asStateFlow()
+    private val _deleteReviewState = MutableStateFlow<StateListener<String>>(StateListener.Idle)
+    val deleteReviewState = _deleteReviewState.asStateFlow()
+    private val uploaded = mutableMapOf<Uri, String>()
+    val busy: Boolean get() = _updateReviewState.value is StateListener.Loading || _deleteReviewState.value is StateListener.Loading
 
     fun getProductReviewDetail(reviewId: Int) {
+        if (_productReviewDetailState.value is StateListener.Loading || _productReviewDetailState.value is StateListener.Success) return
+        _productReviewDetailState.value = StateListener.Loading
         viewModelScope.launch {
-            _productReviewDetailState.send(StateListener.Loading)
-            val result = getProductReviewDetailUseCase(reviewId)
-            _productReviewDetailState.send(result)
+            _productReviewDetailState.value = getProductReviewDetailUseCase(reviewId)
         }
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun updateReview(
-        reviewId: Int?,
-        comment: String,
-        star: Int,
-        listUri: List<Uri>,
-        deleteImages: List<Int>
-    ) {
-        reviewId?.let { revId ->
-            viewModelScope.launch {
-                try {
-                    _updateReviewState.send(StateListener.Loading)
-                    val listUrl = mutableListOf<String>()
-                    if (!listUri.isEmpty()) {
-                        //upload ảnh trước
-                        listUri.asFlow()
-                            .flatMapMerge(concurrency = 3) { uri ->
-                                uploadImageReviewUseCase(uri)
-                            }
-                            .map { state ->
-                                when (state) {
-                                    is StateListener.Success -> state.result
-                                    is StateListener.Error -> throw state.e
-                                        ?: Exception("Upload failed")
-
-                                    else -> null
-                                }
-                            }
-                            .filterNotNull()
-                            .collect { url ->
-                                listUrl.add(url)
-                            }
-                        if (listUrl.size != listUri.size) {
-                            throw Exception(StringConstants.IMAGE_VIDEO_UPLOAD_ERROR)
-                        }
+    fun updateReview(reviewId: Int, comment: String, star: Int, listUri: List<Uri>, deleteImages: List<Int>) {
+        if (busy) return
+        _updateReviewState.value = StateListener.Loading
+        val snapshot = listUri.toList()
+        val deleting = deleteImages.toList()
+        viewModelScope.launch {
+            try {
+                val urls = snapshot.map { uri ->
+                    uploaded[uri] ?: when (val result = uploadImageReviewUseCase(uri).first {
+                        it is StateListener.Success || it is StateListener.Error
+                    }) {
+                        is StateListener.Success -> result.result.also { uploaded[uri] = it }
+                        is StateListener.Error -> throw result.e ?: IllegalStateException("Image upload failed")
+                        else -> error("Image upload failed")
                     }
-                    val updateReview = UpdateReview(comment, star, deleteImages, listUrl)
-                    val result = updateReviewUseCase(revId, updateReview)
-                    _updateReviewState.send(result)
-                } catch (e: Exception) {
-                    _updateReviewState.send(StateListener.Error(e))
                 }
+                _updateReviewState.value = updateReviewUseCase(reviewId, UpdateReview(comment, star, deleting, urls))
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                _updateReviewState.value = StateListener.Error(e)
             }
         }
     }
 
-    fun deleteReview(reviewId: Int){
+    fun deleteReview(reviewId: Int) {
+        if (busy) return
+        _deleteReviewState.value = StateListener.Loading
         viewModelScope.launch {
-            _deleteReviewState.send(StateListener.Loading)
-            val result = deleteReviewUseCase(reviewId)
-            _deleteReviewState.send(result)
+            _deleteReviewState.value = deleteReviewUseCase(reviewId)
         }
     }
-
 }

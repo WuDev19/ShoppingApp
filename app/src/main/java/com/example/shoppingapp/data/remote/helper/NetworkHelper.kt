@@ -26,6 +26,8 @@ object NetworkHelper {
                     StateListener.Error(Exception(adapter.fromJson(it)?.message))
                 } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             StateListener.Error(e)
         }
@@ -54,6 +56,8 @@ object NetworkHelper {
                     StateListener.Error(Exception(adapter.fromJson(it)?.message))
                 } ?: StateListener.Error(Exception(StringConstants.API_ERROR))
             }
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
         } catch (e: Exception) {
             StateListener.Error(e)
         }

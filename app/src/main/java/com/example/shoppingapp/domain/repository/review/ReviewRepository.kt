@@ -1,5 +1,7 @@
 package com.example.shoppingapp.domain.repository.review
 
+import com.example.shoppingapp.domain.model.ProductReviewPage
+import com.example.shoppingapp.domain.model.ProductRatingStats
 import android.net.Uri
 import com.example.shoppingapp.domain.model.CreateReview
 import com.example.shoppingapp.domain.model.ProductReview
@@ -8,6 +10,8 @@ import com.example.shoppingapp.ui.state.StateListener
 import kotlinx.coroutines.flow.Flow
 
 interface ReviewRepository {
+    suspend fun getProductReviews(productId: Int, page: Int): StateListener<ProductReviewPage>
+    suspend fun getProductRatingStats(productId: Int): StateListener<ProductRatingStats>
 
     suspend fun postReview(createReview: CreateReview): StateListener<Unit>
     fun uploadImageReview(uri: Uri): Flow<StateListener<String>>

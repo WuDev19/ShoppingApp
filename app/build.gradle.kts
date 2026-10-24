@@ -23,6 +23,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    buildFeatures { buildConfig = true }
+    defaultConfig {
+        // Explicit opt-in for instrumented tests; release clients keep the configured production URL.
+        buildConfigField("String", "REVIEW_TEST_BASE_URL",
+            "\"${providers.gradleProperty("reviewTestBaseUrl").orElse("").get()}\"")
+    }
+
     viewBinding {
         enable = true
     }

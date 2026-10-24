@@ -183,7 +183,7 @@
     <string name="if_you_use_percent_enter_from_1_to_100">(If you use percent, enter from 1 to 100)</string>
     <string name="if_you_use_fixed_it_equals_the_voucher_value_otherwise_enter_your_decision">(If you use fixed, it equals the voucher value, otherwise enter your decision)</string>
     <string name="find">Find</string>
-    <string name="gi_m_gi_10_t_i_thi_u_149k">Giảm giá 10% tối thiểu 149k</string>
+    <string name="gi_m_gi_10_t_i_thi_u_149k" formatted="false">Giảm giá 10% tối thiểu 149k</string>
     <string name="apply">Apply</string>
     <string name="select_address">Select address</string>
     <string name="vnpay">VNPay</string>
@@ -208,4 +208,23 @@
     <string name="edit_underline"><u>Edit</u></string>
     <string name="your_additional_images">Your additional images</string>
     <string name="nothing_to_show">Nothing to show</string>
+    <string name="review_title">Đánh giá sản phẩm</string>
+    <string name="review_stats">%1$.1f/5 · %2$d đánh giá\n5★: %3$d · 4★: %4$d · 3★: %5$d · 2★: %6$d · 1★: %7$d</string>
+    <string name="review_stats_error">Không tải được thống kê đánh giá.</string>
+    <string name="review_loading">Đang tải đánh giá...</string>
+    <string name="review_buyer">Người mua</string>
+    <string name="review_image">Xem ảnh đánh giá</string>
+    <string name="review_load_error">Không tải được đánh giá. Vui lòng thử lại.</string>
+    <string name="review_empty">Sản phẩm chưa có đánh giá.</string>
+    <string name="review_retry">Thử lại</string>
+    <string name="review_more">Xem thêm đánh giá</string>
+    <string name="review_invalid">Chọn từ 1–5 sao, nội dung tối đa 2.000 ký tự và tối đa 5 ảnh.</string>
+    <string name="review_success">Đã lưu đánh giá.</string>
+    <string name="review_delete_question">Bạn muốn xóa đánh giá này?</string>
+    <string name="review_delete_yes">Xóa</string>
+    <string name="review_delete_no">Hủy</string>
+    <string name="review_image_invalid">Please select a JPEG or PNG image up to 5 MB.</string>
+    <string name="review_image_access_error">Cannot keep access to this image. Please select it from the document picker again.</string>
+    <string name="review_camera_unavailable">No camera app is available.</string>
+    <string name="review_image_upload_error">Could not upload the image. Check your connection and try again.</string>
 </resources>

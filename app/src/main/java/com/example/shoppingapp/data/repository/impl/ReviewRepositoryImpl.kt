@@ -1,7 +1,8 @@
 package com.example.shoppingapp.data.repository.impl
 
+import com.example.shoppingapp.domain.model.ProductReviewPage
+import kotlinx.coroutines.CancellationException
 import android.net.Uri
-import android.util.Log
 import com.example.shoppingapp.data.remote.api.ReviewAPI
 import com.example.shoppingapp.data.remote.helper.NetworkHelper
 import com.example.shoppingapp.data.remote.mapper.ReviewMapper
@@ -27,6 +28,19 @@ class ReviewRepositoryImpl @Inject constructor(
     @param:ImageReviewUploader private val uploader: CloudinaryUploader,
     @param:Named("userId") private val userId: String,
 ) : ReviewRepository {
+    override suspend fun getProductReviews(productId: Int, page: Int) = NetworkHelper.callApi(
+        apiCall = { reviewAPI.getProductReviews(productId, page) },
+        mapper = { response ->
+            ProductReviewPage(response.pageNumber,
+                response.contents.orEmpty().map(ReviewMapper::mapToProductReviewItem))
+        }, moshi = moshi
+    )
+
+    override suspend fun getProductRatingStats(productId: Int) = NetworkHelper.callApi(
+        apiCall = { reviewAPI.getProductRatingStats(productId) },
+        mapper = ReviewMapper::mapToProductRatingStats, moshi = moshi
+    )
+
     override suspend fun postReview(createReview: CreateReview): StateListener<Unit> {
         val createReviewRequest = ReviewMapper.mapToCreateReviewRequest(userId, createReview)
         return try {
@@ -38,6 +52,8 @@ class ReviewRepositoryImpl @Inject constructor(
                 },
                 moshi = moshi
             )
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             StateListener.Error(e)
         }
@@ -48,6 +64,7 @@ class ReviewRepositoryImpl @Inject constructor(
         val url = uploader.upload(uri)
         emit(StateListener.Success(url))
     }.catch {
+        if (it is CancellationException) throw it
         emit(StateListener.Error(Exception(it.message)))
     }.flowOn(Dispatchers.IO)
 
@@ -61,6 +78,8 @@ class ReviewRepositoryImpl @Inject constructor(
             },
             moshi
         )
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         StateListener.Error(e)
     }
@@ -80,6 +99,8 @@ class ReviewRepositoryImpl @Inject constructor(
                 },
                 moshi = moshi
             )
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             StateListener.Error(e)
         }
@@ -96,6 +117,8 @@ class ReviewRepositoryImpl @Inject constructor(
             },
             moshi
         )
+    } catch (e: CancellationException) {
+        throw e
     } catch (e: Exception) {
         StateListener.Error(e)
     }
