@@ -17,10 +17,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="20dp">
+            android:paddingBottom="24dp">
 
             <View
-                android:layout_width="40dp"
+                android:layout_width="44dp"
                 android:layout_height="5dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="12dp"
@@ -32,89 +32,124 @@
                 android:layout_marginTop="14dp"
                 android:gravity="center"
                 android:text="@string/write_review_title"
-                android:textColor="@color/black"
-                android:textSize="18sp"
+                android:textColor="#0F172A"
+                android:textSize="19sp"
                 android:textStyle="bold" />
 
+            <!-- Rating Card with Gold Glow -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="14dp"
-                app:cardBackgroundColor="#F8FAFC"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp"
-                app:strokeColor="#E2E8F0"
-                app:strokeWidth="1dp">
+                app:cardBackgroundColor="@color/rating_gold_light"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
+                app:strokeColor="@color/rating_gold_border"
+                app:strokeWidth="1.5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:padding="14dp">
+                    android:paddingVertical="16dp"
+                    android:paddingHorizontal="14dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/rating_prompt"
-                        android:textColor="#475569"
-                        android:textSize="13sp" />
+                        android:textColor="@color/rating_gold_dark"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recycler_view_star"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp" />
+                        android:layout_marginTop="8dp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginBottom="6dp"
-                android:text="@string/your_review"
-                android:textColor="@color/black"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-
-            <androidx.appcompat.widget.AppCompatEditText
-                android:id="@+id/edt_comment"
+            <!-- Review Input Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:background="@drawable/bg_input_box"
-                android:gravity="top|start"
-                android:hint="@string/enter_comment"
-                android:inputType="textMultiLine"
-                android:minHeight="120dp"
-                android:padding="14dp"
-                android:textColor="@color/black"
-                android:textColorHint="#94A3B8"
-                android:textSize="14sp" />
+                android:layout_marginTop="14dp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="2dp"
+                app:strokeColor="#CBD5E1"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="16dp"
+                            android:background="@color/button_color" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/your_review"
+                            android:textColor="#0F172A"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edt_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_input_box"
+                        android:gravity="top|start"
+                        android:hint="@string/enter_comment"
+                        android:inputType="textMultiLine"
+                        android:minHeight="120dp"
+                        android:padding="14dp"
+                        android:textColor="#0F172A"
+                        android:textColorHint="#94A3B8"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <include
                 android:id="@+id/layout_add_image"
                 layout="@layout/layout_add_image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp" />
+                android:layout_marginTop="4dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_post_comment"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="52dp"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="18dp"
                 android:text="@string/post"
                 android:textColor="@color/white"
-                android:textSize="15sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 app:backgroundTint="@color/button_color"
-                app:cornerRadius="12dp" />
+                app:cornerRadius="14dp"
+                app:elevation="3dp" />
 
         </LinearLayout>
 

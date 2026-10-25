@@ -54,9 +54,15 @@ class DashBoardSellerFragment : Fragment() {
         val adapter = DashBoardSellerAdapter(viewModel::retrySummary, viewModel::retryMonthly)
         viewBinding.recyclerViewDashBoard.layoutManager = LinearLayoutManager(requireContext())
         viewBinding.recyclerViewDashBoard.adapter = adapter
-        ViewCompat.setOnApplyWindowInsetsListener(view) { target, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
             val bars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            target.setPadding(bars.left, bars.top, bars.right, bars.bottom)
+            viewBinding.linearAppBar.setPadding(
+                viewBinding.linearAppBar.paddingLeft,
+                bars.top + resources.getDimensionPixelSize(R.dimen.dashboard_small_spacing),
+                viewBinding.linearAppBar.paddingRight,
+                viewBinding.linearAppBar.paddingBottom
+            )
+            view.setPadding(bars.left, 0, bars.right, bars.bottom)
             insets
         }
         ViewCompat.requestApplyInsets(view)

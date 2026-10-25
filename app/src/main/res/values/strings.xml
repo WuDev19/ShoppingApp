@@ -232,8 +232,6 @@
     <string name="rating_prompt">Chạm vào số sao để đánh giá</string>
     <string name="take_photo">Chụp ảnh</string>
     <string name="choose_gallery">Thư viện ảnh</string>
-    <string name="dashboard_subtitle">Trung tâm quản trị người bán</string>
-
     <string name="dashboard_range">Khoảng ngày: %1$s – %2$s</string>
     <string name="dashboard_year">Năm %1$d</string>
     <string name="dashboard_refresh">Tải lại</string>

@@ -77,7 +77,7 @@ class DashBoardSellerAdapter(
     }
     private fun bindSummary(binding: LayoutDashBoardSellerBinding, value: SellerDashboard) = with(binding) {
         val context = root.context
-        summaryText.text = listOf(
+        val rows = listOf(
             context.getString(R.string.dashboard_total_orders, number.format(value.totalOrders)),
             context.getString(R.string.dashboard_completed_orders, number.format(value.completedOrders)),
             context.getString(R.string.dashboard_order_value, money.format(value.completedOrderValue)),
@@ -87,7 +87,22 @@ class DashBoardSellerAdapter(
             context.getString(R.string.dashboard_products, number.format(value.totalProducts)),
             context.getString(R.string.dashboard_stock, number.format(value.totalStock)),
             context.getString(R.string.dashboard_out_of_stock, number.format(value.outOfStockVariants))
-        ).joinToString("\n")
+        )
+        val accent = ContextCompat.getColor(context, R.color.button_color)
+        val sb = android.text.SpannableStringBuilder()
+        rows.forEachIndexed { index, row ->
+            val start = sb.length
+            sb.append(row)
+            val colon = row.indexOf(':')
+            if (colon != -1 && colon + 1 < row.length) {
+                val valStart = start + colon + 1
+                val valEnd = start + row.length
+                sb.setSpan(android.text.style.StyleSpan(android.graphics.Typeface.BOLD), valStart, valEnd, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                sb.setSpan(android.text.style.ForegroundColorSpan(accent), valStart, valEnd, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+            if (index < rows.size - 1) sb.append("\n")
+        }
+        summaryText.text = sb
         summaryEmpty.isVisible = value.totalOrders == 0L
         undatedWarning.isVisible = value.undatedCompletedOrders > 0
         undatedWarning.text = context.getString(R.string.dashboard_undated, number.format(value.undatedCompletedOrders))
@@ -101,9 +116,16 @@ class DashBoardSellerAdapter(
         if (chartCategory.isVisible) {
             val entries = value.ordersByStatus.filter { it.orderCount > 0 }.map { PieEntry(it.orderCount.toFloat(), status(context, it.status)) }
             chartCategory.data = PieData(PieDataSet(entries, "").apply {
-                colors = listOf(primary, secondary,
-                    ContextCompat.getColor(context, R.color.light_blue),
-                    ContextCompat.getColor(context, R.color.red))
+                colors = listOf(
+                    ContextCompat.getColor(context, R.color.button_color),
+                    ContextCompat.getColor(context, R.color.chart_green),
+                    ContextCompat.getColor(context, R.color.chart_orange),
+                    ContextCompat.getColor(context, R.color.chart_purple),
+                    ContextCompat.getColor(context, R.color.chart_blue),
+                    ContextCompat.getColor(context, R.color.red)
+                )
+
+
                 setDrawValues(false)
             })
             chartCategory.apply {
@@ -119,13 +141,24 @@ class DashBoardSellerAdapter(
         } else chartCategory.clear()
         val daily = value.dailySales.sortedBy { it.date }
         configure(chartDaily, foreground)
-        chartDaily.xAxis.valueFormatter = IndexAxisValueFormatter(daily.map { DashboardFilter.display(it.date) })
+        val dailyLabels = daily.map { item ->
+            val parts = item.date.split("-")
+            if (parts.size == 3) "${parts[2]}/${parts[1]}" else DashboardFilter.display(item.date)
+        }
+        chartDaily.xAxis.apply {
+            valueFormatter = IndexAxisValueFormatter(dailyLabels)
+            labelRotationAngle = -35f
+            setLabelCount(minOf(daily.size, 5), false)
+        }
+        chartDaily.extraBottomOffset = 12f
+        val brandColor = ContextCompat.getColor(context, R.color.button_color)
+        val greenColor = ContextCompat.getColor(context, R.color.chart_green)
         val completed = LineDataSet(daily.mapIndexed { index, day ->
             Entry(index.toFloat(), (day.completedOrderValue / DashboardConstants.MILLION).toFloat())
-        }, context.getString(R.string.dashboard_value_legend)).apply { color = primary; setDrawCircles(daily.size == 1); setCircleColor(primary); setDrawValues(false) }
+        }, context.getString(R.string.dashboard_value_legend)).apply { color = brandColor; lineWidth = 2.5f; mode = LineDataSet.Mode.CUBIC_BEZIER; setDrawCircles(daily.size == 1); setCircleColor(brandColor); setDrawValues(false) }
         val paid = LineDataSet(daily.mapIndexed { index, day ->
             Entry(index.toFloat(), (day.onlinePaidAmount / DashboardConstants.MILLION).toFloat())
-        }, context.getString(R.string.dashboard_paid_legend)).apply { color = secondary; setDrawCircles(daily.size == 1); setCircleColor(secondary); setDrawValues(false) }
+        }, context.getString(R.string.dashboard_paid_legend)).apply { color = greenColor; lineWidth = 2.5f; mode = LineDataSet.Mode.CUBIC_BEZIER; setDrawCircles(daily.size == 1); setCircleColor(greenColor); setDrawValues(false) }
         chartDaily.data = LineData(completed, paid)
         chartDaily.invalidate()
         topEmpty.isVisible = value.topProducts.isEmpty()
@@ -136,7 +169,11 @@ class DashBoardSellerAdapter(
                     product.description?.takeIf { it.isNotBlank() } ?: context.getString(R.string.dashboard_unnamed_product, product.productId),
                     number.format(product.unitsSold))
                 setTextColor(foreground)
-                setBackgroundResource(R.drawable.bg_chip_action)
+                setBackgroundResource(when (index) {
+                    0 -> R.drawable.bg_gold_badge
+                    1 -> R.drawable.bg_silver_badge
+                    else -> R.drawable.bg_chip_action
+                })
                 setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX, resources.getDimension(R.dimen.dashboard_text_size))
                 val padH = resources.getDimensionPixelSize(R.dimen.dashboard_spacing)
                 val padV = resources.getDimensionPixelSize(R.dimen.dashboard_small_spacing)
@@ -163,12 +200,12 @@ class DashBoardSellerAdapter(
         val completed = BarDataSet(months.mapIndexed { index, month ->
             BarEntry(index.toFloat() - width / 2, (month.completedOrderValue / DashboardConstants.MILLION).toFloat())
         }, context.getString(R.string.dashboard_value_legend)).apply {
-            color = MaterialColors.getColor(root, androidx.appcompat.R.attr.colorPrimary); setDrawValues(false)
+            color = ContextCompat.getColor(context, R.color.button_color); setDrawValues(false)
         }
         val paid = BarDataSet(months.mapIndexed { index, month ->
             BarEntry(index.toFloat() + width / 2, (month.onlinePaidAmount / DashboardConstants.MILLION).toFloat())
         }, context.getString(R.string.dashboard_paid_legend)).apply {
-            color = MaterialColors.getColor(root, com.google.android.material.R.attr.colorTertiary); setDrawValues(false)
+            color = ContextCompat.getColor(context, R.color.chart_green); setDrawValues(false)
         }
         chartRevenue.data = BarData(completed, paid).apply { barWidth = width }
         chartRevenue.invalidate()
