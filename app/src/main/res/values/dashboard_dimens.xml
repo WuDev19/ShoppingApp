@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dashboard_spacing">10dp</dimen>
+    <dimen name="dashboard_small_spacing">10dp</dimen>
+    <dimen name="dashboard_chart_height">240dp</dimen>
+    <dimen name="dashboard_title_size">16sp</dimen>
+    <dimen name="dashboard_text_size">14sp</dimen>
+    <dimen name="dashboard_touch_size">48dp</dimen>
+    <dimen name="dashboard_corner_radius">10dp</dimen>
+    <dimen name="dashboard_section_spacing">20dp</dimen>
+    <dimen name="dashboard_note_line_spacing">2dp</dimen>
+    <dimen name="dashboard_value_line_spacing">4dp</dimen>
+</resources>

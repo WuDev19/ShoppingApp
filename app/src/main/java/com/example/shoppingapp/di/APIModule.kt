@@ -4,6 +4,7 @@ import com.example.shoppingapp.BuildConfig
 import com.example.shoppingapp.utils.SessionManager
 import com.example.shoppingapp.utils.StringConstants
 import com.example.shoppingapp.utils.TokenManager
+import com.example.shoppingapp.data.remote.api.seller.SellerDashboardAPI
 import com.example.shoppingapp.data.remote.api.AuthAPI
 import com.example.shoppingapp.data.remote.api.CartAPI
 import com.example.shoppingapp.data.remote.api.CategoryAPI
@@ -36,6 +37,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object APIModule {
+    @Provides
+    @Singleton
+    fun provideSellerDashboardAPI(@Named(StringConstants.NEED_AUTH) retrofit: Retrofit):
+        SellerDashboardAPI =
+        retrofit.create(SellerDashboardAPI::class.java)
+
 
     @Provides
     @Singleton

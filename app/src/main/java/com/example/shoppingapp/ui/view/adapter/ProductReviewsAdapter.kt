@@ -80,7 +80,7 @@ class ProductReviewsAdapter(
                 reviewComment.isVisible = item.comment.isNotEmpty()
                 reviewDate.text = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
                     .format(Date(if (item.updatedAt > 0) item.updatedAt else item.createdAt))
-                Glide.with(root).load(item.userAvatar).placeholder(R.drawable.place_holder).into(reviewAvatar)
+                Glide.with(root).load(item.userAvatar).placeholder(R.drawable.place_holder).circleCrop().into(reviewAvatar)
                 reviewImages.removeAllViews()
                 item.images.forEach { image ->
                     val thumbnail = android.widget.ImageView(root.context)
@@ -90,7 +90,10 @@ class ProductReviewsAdapter(
                     thumbnail.layoutParams = params
                     thumbnail.scaleType = android.widget.ImageView.ScaleType.CENTER_CROP
                     thumbnail.contentDescription = root.context.getString(R.string.review_image)
-                    Glide.with(root).load(image.imageUrl).override(size, size).into(thumbnail)
+                    val cornerRadius = (8 * root.resources.displayMetrics.density).toInt()
+                    Glide.with(root).load(image.imageUrl).override(size, size)
+                        .transform(com.bumptech.glide.load.resource.bitmap.CenterCrop(), com.bumptech.glide.load.resource.bitmap.RoundedCorners(cornerRadius))
+                        .into(thumbnail)
                     thumbnail.setOnClickListener { showImages(item.images.map { it.imageUrl }) }
                     reviewImages.addView(thumbnail)
                 }

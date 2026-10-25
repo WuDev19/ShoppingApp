@@ -1,0 +1,39 @@
+<resources>
+    <style name="ThemeOverlay.ShoppingApp.Dashboard" parent="">
+        <item name="colorPrimary">@color/button_color</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/dashboard_panel</item>
+        <item name="colorOnPrimaryContainer">@color/dashboard_on_surface</item>
+        <item name="colorSecondary">@color/button_color</item>
+        <item name="colorTertiary">@color/grey</item>
+        <item name="colorSurface">@color/dashboard_surface</item>
+        <item name="colorOnSurface">@color/dashboard_on_surface</item>
+        <item name="colorSurfaceVariant">@color/dashboard_panel</item>
+        <item name="colorOnSurfaceVariant">@color/dashboard_secondary_text</item>
+        <item name="colorOutline">@color/grey</item>
+        <item name="colorControlActivated">@color/button_color</item>
+    </style>
+    <style name="Widget.ShoppingApp.Dashboard.Button" parent="Widget.Material3.Button">
+        <item name="cornerRadius">@dimen/dashboard_corner_radius</item>
+        <item name="backgroundTint">@color/dashboard_button_tint</item>
+        <item name="android:textColor">@color/dashboard_button_text</item>
+        <item name="android:textSize">@dimen/dashboard_text_size</item>
+        <item name="android:minHeight">@dimen/dashboard_touch_size</item>
+    </style>
+    <style name="Widget.ShoppingApp.Dashboard.OutlinedButton" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="cornerRadius">@dimen/dashboard_corner_radius</item>
+        <item name="backgroundTint">@color/dashboard_surface</item>
+        <item name="strokeColor">@color/button_color</item>
+        <item name="android:textColor">@color/dashboard_outlined_text</item>
+        <item name="android:textSize">@dimen/dashboard_text_size</item>
+        <item name="android:minHeight">@dimen/dashboard_touch_size</item>
+    </style>
+    <style name="ThemeOverlay.ShoppingApp.Dashboard.Calendar" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorPrimary">@color/button_color</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSurface">@color/dashboard_surface</item>
+        <item name="colorOnSurface">@color/dashboard_on_surface</item>
+        <item name="colorControlActivated">@color/button_color</item>
+        <item name="colorAccent">@color/button_color</item>
+    </style>
+</resources>

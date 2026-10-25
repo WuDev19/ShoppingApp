@@ -1,0 +1,7 @@
+<resources>
+    <color name="dashboard_surface">#121212</color>
+    <color name="dashboard_on_surface">@color/white</color>
+    <color name="dashboard_panel">#24282E</color>
+    <color name="dashboard_secondary_text">#C8CDD2</color>
+    <color name="dashboard_filter_text">@color/light_blue</color>
+</resources>

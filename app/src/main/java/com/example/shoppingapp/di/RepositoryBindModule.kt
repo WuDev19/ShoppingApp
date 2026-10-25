@@ -1,5 +1,7 @@
 package com.example.shoppingapp.di
 
+import com.example.shoppingapp.data.repository.impl.SellerDashboardRepositoryImpl
+import com.example.shoppingapp.domain.repository.seller.SellerDashboardRepository
 import com.example.shoppingapp.data.repository.impl.AuthRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.CartRepositoryImpl
 import com.example.shoppingapp.data.repository.impl.CategoryRepositoryImpl
@@ -27,6 +29,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryBindModule {
+    @Binds
+    @Singleton
+    abstract fun bindSellerDashboardRepository(
+        impl: SellerDashboardRepositoryImpl
+    ): SellerDashboardRepository
+
     @Binds
     @Singleton
     abstract fun bindAuthRepository(

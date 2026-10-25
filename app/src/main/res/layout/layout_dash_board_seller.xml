@@ -1,52 +1,364 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/chart_category"
-        android:layout_width="match_parent"
-        android:layout_height="400dp" />
-
-    <com.google.android.material.textview.MaterialTextView
+    <ProgressBar
+        android:id="@+id/summary_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:text="@string/statistical"
-        android:textColor="@color/black"
-        android:textStyle="bold" />
+        android:indeterminateTint="@color/button_color" />
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart_revenue"
+    <TextView
+        android:id="@+id/summary_error"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:layout_marginTop="20dp" />
-
-    <com.google.android.material.textview.MaterialTextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:text="@string/doanh_thu"
-        android:textColor="@color/black"
-        android:textStyle="bold" />
+        android:layout_marginBottom="@dimen/dashboard_small_spacing"
+        android:textColor="@color/dashboard_secondary_text"
+        android:textSize="@dimen/dashboard_text_size"
+        android:lineSpacingExtra="@dimen/dashboard_note_line_spacing" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btn_my_product"
+        android:id="@+id/summary_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dashboard_retry"
+        style="@style/Widget.ShoppingApp.Dashboard.Button" />
+
+    <LinearLayout
+        android:id="@+id/summary_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Card 1: Summary -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dashboard_spacing"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/dashboard_spacing">
+
+                <TextView
+                    android:id="@+id/summary_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/dashboard_filter_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="@string/dashboard_summary" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#F8FAFC"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <TextView
+                        android:id="@+id/summary_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/dashboard_text_size"
+                        android:lineSpacingExtra="6dp" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/money_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/dashboard_secondary_text"
+                    android:textSize="12sp"
+                    android:text="@string/dashboard_money_note"
+                    android:lineSpacingExtra="@dimen/dashboard_note_line_spacing" />
+
+                <TextView
+                    android:id="@+id/undated_warning"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textColor="@color/dashboard_secondary_text"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="@dimen/dashboard_note_line_spacing" />
+
+                <TextView
+                    android:id="@+id/summary_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/dashboard_text_size"
+                    android:text="@string/dashboard_empty" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 2: Order Statuses -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dashboard_spacing"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/dashboard_spacing">
+
+                <TextView
+                    android:id="@+id/status_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/dashboard_filter_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="@string/dashboard_statuses" />
+
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/chart_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dashboard_chart_height"
+                    android:layout_marginBottom="8dp"
+                    android:importantForAccessibility="no" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#F8FAFC"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <TextView
+                        android:id="@+id/status_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/dashboard_text_size"
+                        android:lineSpacingExtra="5dp" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 3: Daily Sales -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dashboard_spacing"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/dashboard_spacing">
+
+                <TextView
+                    android:id="@+id/daily_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/dashboard_filter_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="@string/dashboard_daily" />
+
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/chart_daily"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dashboard_chart_height"
+                    android:importantForAccessibility="no" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 4: Top Products -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dashboard_spacing"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/dashboard_spacing">
+
+                <TextView
+                    android:id="@+id/top_heading"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/dashboard_filter_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:text="@string/dashboard_top" />
+
+                <TextView
+                    android:id="@+id/top_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/dashboard_text_size"
+                    android:text="@string/dashboard_top_empty" />
+
+                <LinearLayout
+                    android:id="@+id/top_products"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+    <!-- Monthly Section -->
+    <TextView
+        android:id="@+id/monthly_heading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textColor="@color/dashboard_filter_text"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="@string/dashboard_monthly"
+        android:layout_marginTop="4dp" />
+
+    <ProgressBar
+        android:id="@+id/monthly_progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="20dp"
-        android:text="@string/my_product"
-        android:textColor="@color/white"
-        app:backgroundTint="@color/button_color"
-        app:cornerRadius="10dp" />
+        android:indeterminateTint="@color/button_color" />
 
-    <View
-        android:layout_width="0dp"
-        android:layout_height="80dp"/>
+    <TextView
+        android:id="@+id/monthly_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/dashboard_small_spacing"
+        android:textColor="@color/dashboard_secondary_text"
+        android:textSize="@dimen/dashboard_text_size"
+        android:lineSpacingExtra="@dimen/dashboard_note_line_spacing" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/monthly_retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/dashboard_retry"
+        style="@style/Widget.ShoppingApp.Dashboard.Button" />
+
+    <LinearLayout
+        android:id="@+id/monthly_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Card 5: Monthly Analytics -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dashboard_spacing"
+            app:cardBackgroundColor="?attr/colorSurface"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:strokeColor="#E2E8F0"
+            app:strokeWidth="1dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/dashboard_spacing">
+
+                <TextView
+                    android:id="@+id/monthly_empty"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="@dimen/dashboard_text_size"
+                    android:text="@string/dashboard_monthly_empty" />
+
+                <TextView
+                    android:id="@+id/monthly_undated"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:textColor="@color/dashboard_secondary_text"
+                    android:textSize="12sp"
+                    android:lineSpacingExtra="@dimen/dashboard_note_line_spacing" />
+
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/chart_revenue"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/dashboard_chart_height"
+                    android:layout_marginBottom="8dp"
+                    android:importantForAccessibility="no" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="#F8FAFC"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="0dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <TextView
+                        android:id="@+id/monthly_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="12dp"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="@dimen/dashboard_text_size"
+                        android:lineSpacingExtra="5dp" />
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
 
 </LinearLayout>
