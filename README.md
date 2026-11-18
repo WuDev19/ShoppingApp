@@ -4,6 +4,18 @@ ShoppingApp là ứng dụng mua sắm trên Android, viết bằng Kotlin, ph�
 
 Repository này chứa ứng dụng Android. Các chức năng trực tuyến cần backend API và cấu hình dịch vụ tương ứng; chỉ build APK chưa đủ để sử dụng đầy đủ các luồng nghiệp vụ.
 
+## Mục lục
+
+- [Chức năng chính](#chức-năng-chính)
+- [Công nghệ](#công-nghệ)
+- [Kiến trúc và cấu trúc thư mục](#kiến-trúc-và-cấu-trúc-thư-mục)
+- [Yêu cầu môi trường](#yêu-cầu-môi-trường)
+- [Cài đặt và chạy](#cài-đặt-và-chạy)
+- [Lệnh build và kiểm thử](#lệnh-build-và-kiểm-thử)
+- [Xử lý lỗi thường gặp](#xử-lý-lỗi-thường-gặp)
+- [Tài liệu chi tiết](#tài-liệu-chi-tiết)
+- [Lưu ý khi phát triển](#lưu-ý-khi-phát-triển)
+
 ## Chức năng chính
 
 ### Người mua
@@ -24,7 +36,8 @@ Repository này chứa ứng dụng Android. Các chức năng trực tuyến c�
 - Đăng sản phẩm, tải ảnh và nhập thông tin chi tiết sản phẩm.
 - Xem sản phẩm của cửa hàng, tìm kiếm và phân loại theo danh mục.
 - Tạo và xem voucher của cửa hàng.
-- Các màn hình dashboard và sản phẩm bán chạy.
+- Xem dashboard thống kê đơn hàng, giá trị đơn hoàn tất, khoản thanh toán online, số lượng bán và tồn kho; lọc theo khoảng ngày và xem biểu đồ theo năm.
+- Xem sản phẩm bán chạy.
 
 Danh sách trên mô tả các luồng có trong mã nguồn, chưa phải cam kết mọi luồng đã được kiểm thử đầu cuối. Phần chat còn có mã khung/TODO, chưa nên coi là tính năng hoàn chỉnh.
 
@@ -88,6 +101,7 @@ ShoppingApp/
 │   └── build.gradle.kts
 ├── gradle/libs.versions.toml      # Phiên bản và alias dependency
 ├── gradle/wrapper/                # Gradle Wrapper
+├── docs/                         # Tài liệu dashboard và tích hợp đánh giá
 ├── build.gradle.kts              # Plugin và cấu hình build gốc
 ├── settings.gradle.kts           # Module và repository dependency
 └── AGENTS.md                     # Nguyên tắc code và quy trình làm việc
@@ -126,6 +140,18 @@ Thiết bị/emulator nên có Google Play Services để kiểm tra đăng nh�
 Khi cấu hình môi trường phát triển riêng, dùng URL mà emulator/thiết bị truy cập được, giữ đường dẫn gốc API và dấu `/` cuối URL. Retrofit và client có/không xác thực được cung cấp trong [APIModule.kt](app/src/main/java/com/example/shoppingapp/di/APIModule.kt).
 
 Backend cần cung cấp các API mà ứng dụng khai báo trong `data/remote/api/`, gồm tài khoản, sản phẩm, giỏ hàng, cửa hàng, đơn hàng, đánh giá, vận chuyển và thanh toán. Hướng dẫn khởi động backend thuộc repository backend tương ứng.
+
+Để kiểm thử với backend riêng trên bản debug, dự án hỗ trợ Gradle property `reviewTestBaseUrl`. Ví dụ khi backend chạy trên máy phát triển và lắng nghe cổng `18081`:
+
+```powershell
+# Chuyển tiếp cổng từ thiết bị/emulator về máy phát triển
+adb reverse tcp:18081 tcp:18081
+
+# Build và cài bản debug dùng backend thử nghiệm
+.\gradlew.bat :app:installDebug -PreviewTestBaseUrl=http://127.0.0.1:18081/api/
+```
+
+Ví dụ này yêu cầu backend tương thích đang chạy và thiết bị đã kết nối qua ADB. Property chỉ có hiệu lực trên bản debug; bản release dùng `BASE_URL`. Sau khi kiểm thử, build/cài lại không truyền property để quay về URL mặc định. Xem [hướng dẫn kiểm thử đánh giá](docs/product-reviews.md) nếu cần dữ liệu fixture và tham số instrumentation.
 
 ### Firebase
 
@@ -185,9 +211,39 @@ Sau khi build thành công, APK debug mặc định nằm tại:
 app/build/outputs/apk/debug/app-debug.apk
 ```
 
-Các test hiện có gồm test mẫu JVM/Android và `ReviewContractTest` kiểm tra một số hợp đồng dữ liệu đánh giá, mapping và việc truyền tiếp cancellation. `ClientTest.kt` chỉ có hàm `main()` rỗng. Bộ test hiện tại chưa bao phủ đầy đủ các luồng mua hàng và bán hàng.
+Các nhóm test hiện có:
+
+| Nhóm | Phạm vi |
+| --- | --- |
+| `ReviewContractTest` | Hợp đồng dữ liệu đánh giá, mapping và truyền tiếp cancellation |
+| `DashboardContractTest` | Bộ lọc ngày/năm, giới hạn khoảng ngày, mapping số tiền lớn và xử lý dữ liệu dashboard |
+| `ReviewDeviceTest` | Luồng đánh giá trên Android; một số ca cần backend, tài khoản và dữ liệu fixture riêng |
+| `DashboardDeviceTest` | Trạng thái tải/lỗi/thử lại, đổi bộ lọc, tách dữ liệu tài khoản và hiển thị dashboard với repository giả |
+| `ExampleUnitTest`, `ExampleInstrumentedTest` | Test mẫu phép cộng và application ID |
+
+`ClientTest.kt` chỉ có hàm `main()` rỗng. Bộ test hiện tại chưa bao phủ đầy đủ các luồng mua hàng và bán hàng. Các ca kiểm thử đánh giá cần fixture có thể được bỏ qua khi thiếu tham số; xem tài liệu chi tiết trước khi chạy để hiểu phạm vi thực tế.
 
 Các lệnh trên là hướng dẫn chạy; README này không xác nhận build, test hoặc tích hợp dịch vụ đã thành công trong môi trường hiện tại.
+
+## Xử lý lỗi thường gặp
+
+| Hiện tượng | Cách kiểm tra |
+| --- | --- |
+| Gradle báo thiếu Java hoặc JVM không phù hợp | Chạy `.\gradlew.bat --version`, kiểm tra `JAVA_HOME` và Gradle JDK trong Android Studio; dùng JDK 17 cho cấu hình dự án. |
+| Không tìm thấy Android SDK hoặc Platform 35 | Cài Android SDK Platform 35 trong SDK Manager, kiểm tra `sdk.dir` trong `local.properties` của máy. |
+| Gradle Sync không tải được dependency | Kiểm tra kết nối mạng, proxy và quyền truy cập Google Maven, Maven Central, JitPack; xem dependency cụ thể trong log lỗi. |
+| Build được nhưng không tải được dữ liệu | Kiểm tra `BASE_URL`, tình trạng backend/ngrok và khả năng truy cập từ thiết bị; `localhost` trên thiết bị không tự trỏ về máy phát triển. |
+| Đăng nhập Google thất bại | Kiểm tra Google Play Services, Firebase project, application ID, phương thức đăng nhập và chứng chỉ ký SHA của bản đang chạy. |
+| Upload ảnh thất bại | Kiểm tra kết nối mạng, cloud name, upload preset và giới hạn ảnh theo luồng chức năng; với đánh giá, xem tài liệu tích hợp bên dưới. |
+| Thanh toán không quay về ứng dụng | Kiểm tra URL callback backend và deep link `shoppingapp://payment-result` trong Manifest; xác minh trên môi trường thử nghiệm. |
+| Không chạy được instrumented test | Dùng `adb devices` kiểm tra thiết bị đã kết nối/được cấp quyền, rồi kiểm tra fixture và tham số mà nhóm test yêu cầu. |
+
+## Tài liệu chi tiết
+
+- [Dashboard người bán](docs/seller-dashboard.md): ý nghĩa số liệu, bộ lọc, trạng thái UI, cách kiểm thử và phạm vi đã xác minh.
+- [Tích hợp đánh giá sản phẩm](docs/product-reviews.md): upload ảnh, quyền truy cập URI, khôi phục bản nháp, fixture và cách chạy test trên thiết bị.
+
+Các tài liệu này hiện được viết bằng tiếng Anh. Kết quả kiểm thử ghi trong đó gắn với thời điểm và môi trường được mô tả.
 
 ## Lưu ý khi phát triển
 
